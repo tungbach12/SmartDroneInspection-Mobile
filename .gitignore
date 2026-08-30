@@ -1,0 +1,21 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+android/.gradle/
+android/local.properties
+ios/Pods/
+ios/.symlinks/
+**/generated_plugin_registrant.*
+
+# Secrets
+*.env
+.env*
+
+# OS
+.DS_Store
+Thumbs.db
