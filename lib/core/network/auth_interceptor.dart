@@ -25,7 +25,10 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode != 401) {
       return handler.next(err);
     }
@@ -46,10 +49,9 @@ class AuthInterceptor extends Interceptor {
       if (refresh == null) {
         throw DioException(requestOptions: err.requestOptions);
       }
-      final response = await _ref.read(refreshDioProvider).post(
-        '/auth/refresh',
-        data: {'refreshToken': refresh},
-      );
+      final response = await _ref
+          .read(refreshDioProvider)
+          .post('/mobile/auth/refresh', data: {'refreshToken': refresh});
       await _tokens.save(
         access: response.data['accessToken'] as String,
         refresh: response.data['refreshToken'] as String,
