@@ -12,11 +12,14 @@ class AssetRepository {
 
   Future<ApiResult<List<Asset>>> list({int page = 1, String? search}) async {
     try {
-      final response = await _dio.get('/assets', queryParameters: {
-        'page': page,
-        'pageSize': 20,
-        if (search != null && search.isNotEmpty) 'search': search,
-      });
+      final response = await _dio.get(
+        '/assets',
+        queryParameters: {
+          'page': page,
+          'pageSize': 20,
+          if (search != null && search.isNotEmpty) 'search': search,
+        },
+      );
       final items = (response.data['items'] as List)
           .map((e) => Asset.fromJson(e as Map<String, dynamic>))
           .toList();

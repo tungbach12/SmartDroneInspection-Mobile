@@ -27,7 +27,10 @@ class AsyncValueWidget<T> extends StatelessWidget {
         message: error.toString(),
       ),
       data: (data) => emptyCheck != null && emptyCheck!(data)
-          ? const EmptyState(icon: Icons.inbox_outlined, title: 'Nothing here yet')
+          ? const EmptyState(
+              icon: Icons.inbox_outlined,
+              title: 'Nothing here yet',
+            )
           : builder(data),
     );
   }
