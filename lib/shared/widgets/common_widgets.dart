@@ -23,7 +23,11 @@ class ErrorRetryWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
+          ),
           const SizedBox(height: 12),
           Text(message ?? 'Something went wrong'),
           const SizedBox(height: 12),
@@ -40,7 +44,12 @@ class ErrorRetryWidget extends StatelessWidget {
 
 /// Empty state for lists.
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.icon, required this.title, this.hint});
+  const EmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.hint,
+  });
 
   final IconData icon;
   final String title;

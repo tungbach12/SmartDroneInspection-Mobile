@@ -8,8 +8,9 @@ class AppTheme {
 
   static ThemeData light() => _build(ColorScheme.fromSeed(seedColor: _seed));
 
-  static ThemeData dark() =>
-      _build(ColorScheme.fromSeed(seedColor: _seed, brightness: Brightness.dark));
+  static ThemeData dark() => _build(
+    ColorScheme.fromSeed(seedColor: _seed, brightness: Brightness.dark),
+  );
 
   static ThemeData _build(ColorScheme scheme) {
     return ThemeData(
@@ -20,7 +21,11 @@ class AppTheme {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ),
     );
   }

@@ -17,12 +17,14 @@ Dio refreshDio(Ref ref) {
 
 @Riverpod(keepAlive: true)
 Dio dio(Ref ref) {
-  final dio = Dio(BaseOptions(
-    baseUrl: AppEnvironment.apiBaseUrl,
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 30),
-    headers: {'Accept': 'application/json'},
-  ));
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: AppEnvironment.apiBaseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+      headers: {'Accept': 'application/json'},
+    ),
+  );
 
   dio.interceptors.add(AuthInterceptor(ref, dio));
 
