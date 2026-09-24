@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:smart_drone_inspection/core/env/app_environment.dart';
+import 'package:smart_drone_inspection/core/network/api_response_interceptor.dart';
 import 'package:smart_drone_inspection/core/network/auth_interceptor.dart';
 import 'package:smart_drone_inspection/core/network/token_store.dart';
 
@@ -12,7 +13,9 @@ final tokenStoreProvider = Provider<TokenStore>((ref) => TokenStore());
 /// Bare Dio for the refresh call — no auth interceptor, so refresh can't recurse.
 @Riverpod(keepAlive: true)
 Dio refreshDio(Ref ref) {
-  return Dio(BaseOptions(baseUrl: AppEnvironment.apiBaseUrl));
+  final dio = Dio(BaseOptions(baseUrl: AppEnvironment.apiBaseUrl));
+  dio.interceptors.add(ApiResponseInterceptor());
+  return dio;
 }
 
 @Riverpod(keepAlive: true)
@@ -26,7 +29,10 @@ Dio dio(Ref ref) {
     ),
   );
 
-  dio.interceptors.add(AuthInterceptor(ref, dio));
+  dio.interceptors.addAll([
+    ApiResponseInterceptor(),
+    AuthInterceptor(ref, dio),
+  ]);
 
   ref.onDispose(dio.close);
   return dio;
