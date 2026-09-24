@@ -51,7 +51,7 @@ final class RefreshDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$refreshDioHash() => r'cf338c1499539676b77b02932723fe9685852a5f';
+String _$refreshDioHash() => r'2af4c738462d9d2471ccb1b8ea822a2593a2e5ad';
 
 @ProviderFor(dio)
 final dioProvider = DioProvider._();
@@ -91,4 +91,4 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'feee72fa2014e2434d4fc3d1d87edf9e9ad9d966';
+String _$dioHash() => r'7ca5cab4c5baf853ed6e19c254e94df1ef234474';

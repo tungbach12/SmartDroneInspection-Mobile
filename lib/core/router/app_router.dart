@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/login_page.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspections_page.dart';
 import 'package:smart_drone_inspection/features/profile/presentation/profile_page.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.dart';
@@ -13,6 +14,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     errorBuilder: (context, state) => const NotFoundScreen(),
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/inspection/:inspectionId',
+        builder: (context, state) => InspectionDetailPage(
+          inspectionId: state.pathParameters['inspectionId']!,
+        ),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppScaffold(shell),
         branches: [

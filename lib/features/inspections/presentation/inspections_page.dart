@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:smart_drone_inspection/core/network/api_result.dart';
+import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_assignment.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_list_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
@@ -25,9 +28,22 @@ class InspectionsPage extends ConsumerWidget {
             separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (context, index) => _InspectionAssignmentTile(
               assignment: items[index],
-              onStart: () => ref
-                  .read(inspectionListProvider.notifier)
-                  .start(items[index].assignmentId),
+              onStart: () async {
+                final result = await ref
+                    .read(inspectionRepositoryProvider)
+                    .start(items[index].assignmentId);
+                if (!context.mounted) return;
+                switch (result) {
+                  case ApiSuccess(:final data):
+                    context.push('/inspection/${data.inspectionId}');
+                  case ApiError(:final failure):
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Could not open inspection: $failure'),
+                      ),
+                    );
+                }
+              },
             ),
           ),
         ),
