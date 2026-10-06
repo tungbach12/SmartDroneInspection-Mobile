@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/login_page.dart';
+import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspections_page.dart';
 import 'package:smart_drone_inspection/features/profile/presentation/profile_page.dart';
@@ -9,9 +10,35 @@ import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.da
 
 /// App router: auth redirect + bottom-nav shell with 3 branches.
 final routerProvider = Provider<GoRouter>((ref) {
+  // Re-run redirect whenever the session moves.
+  final refreshListenable = ValueNotifier<Object?>(null);
+  ref.listen(authNotifierProvider, (_, __) {
+    refreshListenable.value = Object();
+  });
+  ref.onDispose(refreshListenable.dispose);
+
   return GoRouter(
     initialLocation: '/home',
     errorBuilder: (context, state) => const NotFoundScreen(),
+    refreshListenable: refreshListenable,
+    redirect: (context, state) {
+      final session = ref.read(authNotifierProvider).value;
+      final location = state.matchedLocation;
+
+      // Still hydrating — let the splash overlay cover routing decisions.
+      if (session == null) return null;
+
+      final isAuthenticated = session.isAuthenticated;
+      final loggingIn = location == '/login';
+
+      if (!isAuthenticated && !loggingIn) {
+        return '/login';
+      }
+      if (isAuthenticated && loggingIn) {
+        return '/home';
+      }
+      return null;
+    },
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
