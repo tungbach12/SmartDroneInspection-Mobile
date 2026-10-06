@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/core/network/token_store.dart';
+import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 
 /// Wraps [Dio] with JWT attach and single-flight 401 refresh.
 class AuthInterceptor extends Interceptor {
@@ -61,6 +62,15 @@ class AuthInterceptor extends Interceptor {
       _refreshLock!.completeError(e);
       _refreshLock = null;
       await _tokens.clear();
+      // Mirror the sign-out into the session notifier so the router
+      // redirects to /login.
+      try {
+        _ref
+            .read(authNotifierProvider.notifier)
+            .invalidateSession();
+      } catch (_) {
+        // Notifier may not be ready yet — token clear above still wins.
+      }
       return handler.next(err);
     }
     _refreshLock = null;
