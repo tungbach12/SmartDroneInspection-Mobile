@@ -5,41 +5,42 @@ import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dar
 
 void main() {
   group('AuthUser.fromJson', () {
-    test('parses all six canonical roles', () {
+    test('parses and retains all four canonical enterprise roles', () {
+      const canonicalRoles = [
+        'ADMIN',
+        'ORG_ADMIN',
+        'INSPECTOR',
+        'MAINTENANCE_ENGINEER',
+      ];
       final user = AuthUser.fromJson({
         'id': 'u1',
         'email': 'a@b.c',
         'fullName': 'A B',
-        'roles': [
-          'PLATFORM_ADMIN',
-          'PLATFORM_OPERATOR',
-          'CLIENT',
-          'PROVIDER_MANAGER',
-          'INSPECTOR',
-          'MAINTENANCE_ENGINEER',
-        ],
+        'roles': canonicalRoles,
         'actorZone': 'PLATFORM',
         'organizationId': null,
       });
 
-      expect(user.roles, hasLength(6));
-      expect(user.roles, contains(UserRole.platformAdmin));
-      expect(user.roles, contains(UserRole.maintenanceEngineer));
+      expect(user.roles.map((role) => role.code), canonicalRoles);
+      expect(UserRole.values.map((role) => role.code), canonicalRoles);
       expect(user.actorZone, ActorZone.platform);
       expect(user.organizationId, isNull);
     });
 
-    test('drops unknown roles instead of crashing', () {
+    test('does not accept legacy client or provider roles', () {
+      expect(UserRole.parse('CLIENT'), isNull);
+      expect(UserRole.parse('PROVIDER_MANAGER'), isNull);
+
       final user = AuthUser.fromJson({
         'id': 'u1',
         'email': 'a@b.c',
         'fullName': 'A B',
-        'roles': ['CLIENT', 'LEGACY_SUPERUSER'],
+        'roles': ['ADMIN', 'CLIENT', 'PROVIDER_MANAGER', 'LEGACY_SUPERUSER'],
         'actorZone': 'CUSTOMER_ORGANIZATION',
         'organizationId': 'org-1',
       });
 
-      expect(user.roles, [UserRole.client]);
+      expect(user.roles.map((role) => role.code), ['ADMIN']);
       expect(user.actorZone, ActorZone.customerOrganization);
       expect(user.organizationId, 'org-1');
     });

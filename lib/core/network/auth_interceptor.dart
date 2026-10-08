@@ -65,9 +65,7 @@ class AuthInterceptor extends Interceptor {
       // Mirror the sign-out into the session notifier so the router
       // redirects to /login.
       try {
-        _ref
-            .read(authNotifierProvider.notifier)
-            .invalidateSession();
+        _ref.read(authNotifierProvider.notifier).invalidateSession();
       } catch (_) {
         // Notifier may not be ready yet — token clear above still wins.
       }

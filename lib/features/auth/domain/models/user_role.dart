@@ -1,8 +1,6 @@
 enum UserRole {
-  platformAdmin('PLATFORM_ADMIN'),
-  platformOperator('PLATFORM_OPERATOR'),
-  client('CLIENT'),
-  providerManager('PROVIDER_MANAGER'),
+  admin('ADMIN'),
+  orgAdmin('ORG_ADMIN'),
   inspector('INSPECTOR'),
   maintenanceEngineer('MAINTENANCE_ENGINEER');
 

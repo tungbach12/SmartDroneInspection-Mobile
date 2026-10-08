@@ -12,7 +12,7 @@ import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.da
 final routerProvider = Provider<GoRouter>((ref) {
   // Re-run redirect whenever the session moves.
   final refreshListenable = ValueNotifier<Object?>(null);
-  ref.listen(authNotifierProvider, (_, __) {
+  ref.listen(authNotifierProvider, (_, _) {
     refreshListenable.value = Object();
   });
   ref.onDispose(refreshListenable.dispose);
