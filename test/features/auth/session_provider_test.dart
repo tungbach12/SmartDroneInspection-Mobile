@@ -63,7 +63,7 @@ AuthUser _user() => const AuthUser(
   id: 'u1',
   email: 'a@b.c',
   fullName: 'A B',
-  roles: [UserRole.client],
+  roles: [UserRole.inspector],
 );
 
 void main() {
@@ -113,22 +113,24 @@ void main() {
     expect(tokens.refresh, 'refresh-2');
   });
 
-  test('hydrate with failed refresh clears tokens and yields anonymous',
-      () async {
-    final repo = FakeAuthRepository()
-      ..refreshResult = const ApiResult.failure(UnauthorizedFailure());
-    final tokens = FakeTokenStore(
-      accessValue: 'old-access',
-      refreshValue: 'old-refresh',
-    );
-    final container = makeContainer(tokens: tokens, repo: repo);
-    addTearDown(container.dispose);
+  test(
+    'hydrate with failed refresh clears tokens and yields anonymous',
+    () async {
+      final repo = FakeAuthRepository()
+        ..refreshResult = const ApiResult.failure(UnauthorizedFailure());
+      final tokens = FakeTokenStore(
+        accessValue: 'old-access',
+        refreshValue: 'old-refresh',
+      );
+      final container = makeContainer(tokens: tokens, repo: repo);
+      addTearDown(container.dispose);
 
-    final session = await container.read(authNotifierProvider.future);
-    expect(session.isAnonymous, isTrue);
-    expect(tokens.access, isNull);
-    expect(tokens.refresh, isNull);
-  });
+      final session = await container.read(authNotifierProvider.future);
+      expect(session.isAnonymous, isTrue);
+      expect(tokens.access, isNull);
+      expect(tokens.refresh, isNull);
+    },
+  );
 
   test('login success stores tokens and authenticates', () async {
     final repo = FakeAuthRepository()

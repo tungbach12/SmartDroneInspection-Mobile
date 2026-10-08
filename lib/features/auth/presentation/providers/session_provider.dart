@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
-import 'package:smart_drone_inspection/core/network/token_store.dart';
+import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/auth/data/auth_repository.dart';
 import 'package:smart_drone_inspection/features/auth/domain/models/auth_session.dart';
 
@@ -118,9 +118,7 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     final refresh = tokens.refresh;
     if (refresh != null && refresh.isNotEmpty) {
       try {
-        await ref
-            .read(authRepositoryProvider)
-            .logout(refreshToken: refresh);
+        await ref.read(authRepositoryProvider).logout(refreshToken: refresh);
       } catch (_) {
         // Best effort — local sign-out proceeds regardless.
       }
@@ -135,5 +133,6 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
   }
 }
 
-final authNotifierProvider =
-    AsyncNotifierProvider<AuthNotifier, AuthSession>(AuthNotifier.new);
+final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, AuthSession>(
+  AuthNotifier.new,
+);

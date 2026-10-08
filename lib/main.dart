@@ -40,9 +40,7 @@ class _HydrationGate extends ConsumerWidget {
       authNotifierProvider.select((value) => value.isLoading),
     );
     if (hydrating) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return child;
   }

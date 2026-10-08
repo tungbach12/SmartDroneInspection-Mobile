@@ -127,8 +127,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 TextFormField(
                   controller: _confirm,
                   obscureText: true,
-                  decoration:
-                      const InputDecoration(labelText: 'Confirm new password'),
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm new password',
+                  ),
                   validator: (v) =>
                       (v == null || v.isEmpty) ? 'Required' : null,
                 ),
@@ -153,10 +154,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       (v == null || v.isEmpty) ? 'Required' : null,
                 ),
                 const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _signIn,
-                  child: const Text('Sign in'),
-                ),
+                FilledButton(onPressed: _signIn, child: const Text('Sign in')),
               ],
               if (_error != null) ...[
                 const SizedBox(height: 16),

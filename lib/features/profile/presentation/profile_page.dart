@@ -45,9 +45,8 @@ class ProfilePage extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => ref
-                    .read(authNotifierProvider.notifier)
-                    .logout(),
+                onPressed: () =>
+                    ref.read(authNotifierProvider.notifier).logout(),
                 icon: const Icon(Icons.logout),
                 label: const Text('Sign out'),
               ),
