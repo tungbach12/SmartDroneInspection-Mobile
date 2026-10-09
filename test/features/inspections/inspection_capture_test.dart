@@ -190,7 +190,9 @@ class _FakeInspectionRepository extends InspectionRepository {
   }
 
   InspectionEvidence _evidence() => InspectionEvidence(
-    evidenceId: 'evidence-1',
+    id: 'evidence-1',
+    inspectionId: 'inspection-1',
+    fieldSessionId: null,
     fileName: 'span.jpg',
     contentType: 'image/jpeg',
     sizeBytes: 4,

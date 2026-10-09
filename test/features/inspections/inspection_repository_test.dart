@@ -144,7 +144,9 @@ void main() {
 }
 
 Map<String, dynamic> _evidenceResponse() => {
-  'evidenceId': 'evidence-1',
+  'id': 'evidence-1',
+  'inspectionId': 'inspection-1',
+  'fieldSessionId': null,
   'fileName': 'north-span.jpg',
   'contentType': 'image/jpeg',
   'sizeBytes': 4,
