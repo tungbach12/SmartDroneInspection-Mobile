@@ -153,6 +153,15 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
               'Inspection ${widget.inspectionId.substring(0, 8)}',
               style: Theme.of(context).textTheme.titleMedium,
             ),
+            const SizedBox(height: 8),
+            // MF2-09 to MF2-11 opens on its own screen. The session is started on site, which is a
+            // different act from reading the checklist and evidence recorded here.
+            OutlinedButton.icon(
+              onPressed: () =>
+                  context.push('/inspection/${widget.inspectionId}/session'),
+              icon: const Icon(Icons.flight_takeoff_outlined),
+              label: const Text('Open field session'),
+            ),
             if (_operationError != null) ...[
               const SizedBox(height: 12),
               _InlineError(message: _operationError!),

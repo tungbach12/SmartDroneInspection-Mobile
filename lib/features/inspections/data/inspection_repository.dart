@@ -7,6 +7,7 @@ import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_assignment.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/started_inspection.dart';
 
@@ -78,6 +79,88 @@ class InspectionRepository {
         data: {'responseValue': responseValue, 'notes': notes},
       );
       return const ApiResult.success(null);
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// MF2-10: starts a field session against the inspection's current approved readiness
+  /// decision. The server re-checks that decision at the moment of the start rather than trusting
+  /// it from when it was made, so a refusal here is the server catching a stale approval.
+  Future<ApiResult<FieldSession>> startFieldSession({
+    required String inspectionId,
+    required String? checklistTemplateId,
+    required String preFlightChecklistNote,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/inspections/$inspectionId/field-sessions',
+        data: {
+          'checklistTemplateId': checklistTemplateId,
+          'preFlightChecklistNote': preFlightChecklistNote,
+        },
+      );
+      return ApiResult.success(
+        FieldSession.fromJson(Map<String, dynamic>.from(response.data as Map)),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<List<FieldSession>>> listFieldSessions(
+    String inspectionId,
+  ) async {
+    try {
+      final response = await _dio.get(
+        '/inspections/$inspectionId/field-sessions',
+      );
+      final sessions = (response.data as List<dynamic>)
+          .map(
+            (item) =>
+                FieldSession.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
+          .toList();
+      return ApiResult.success(sessions);
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// MF2-09: weather or site safety stopped the session. The inspection stays startable.
+  Future<ApiResult<FieldSession>> postponeFieldSession({
+    required String inspectionId,
+    required String sessionId,
+    required String reason,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/inspections/$inspectionId/field-sessions/$sessionId/postponement',
+        data: {'reason': reason},
+      );
+      return ApiResult.success(
+        FieldSession.fromJson(Map<String, dynamic>.from(response.data as Map)),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// MF2-11: the session cannot continue. Distinct from a postponement, which the server treats as
+  /// an attempt the organization may retry.
+  Future<ApiResult<FieldSession>> abortFieldSession({
+    required String inspectionId,
+    required String sessionId,
+    required String reason,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/inspections/$inspectionId/field-sessions/$sessionId/abort',
+        data: {'reason': reason},
+      );
+      return ApiResult.success(
+        FieldSession.fromJson(Map<String, dynamic>.from(response.data as Map)),
+      );
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
     }
