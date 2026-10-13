@@ -23,7 +23,7 @@ abstract class EvidenceQualityDecision with _$EvidenceQualityDecision {
 }
 
 extension EvidenceQualityDecisionX on EvidenceQualityDecision {
-  /// A limited outcome still accepts the set for processing; it only discloses what was not observed.
-  bool get acceptsEvidenceSet =>
-      decision == 'ACCEPTED' || decision == 'LIMITED';
+  /// Only an ACCEPTED decision makes the set eligible for advisory detection and report drafting;
+  /// LIMITED stays ineligible on the backend (`EvidenceQualityDecision.isAccepted`).
+  bool get acceptsEvidenceSet => decision == 'ACCEPTED';
 }

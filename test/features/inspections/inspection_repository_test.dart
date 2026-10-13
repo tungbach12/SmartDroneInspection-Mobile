@@ -50,6 +50,16 @@ void main() {
             return;
           }
           if (options.method == 'POST') {
+            if (options.path.endsWith('/evidence-quality-decisions')) {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: _decisionResponse(options.data),
+                ),
+              );
+              return;
+            }
             handler.resolve(
               Response(
                 requestOptions: options,
@@ -99,6 +109,48 @@ void main() {
     },
   );
 
+  test('records each evidence-quality outcome with comparison and conditional reason', () async {
+    const outcomes = [
+      ('ACCEPTED', null),
+      ('LIMITED', 'The east face was not observed'),
+      ('REUPLOAD_REQUIRED', 'Blurry captures on the north pier'),
+      ('ADDITIONAL_SESSION_REQUIRED', 'East face needs a second flight'),
+    ];
+    for (final (decision, reason) in outcomes) {
+      final result = await repository.decideEvidenceQuality(
+        inspectionId: 'inspection-1',
+        decision: decision,
+        shotListComparison: 'Span covered except the east face',
+        limitationReason: reason,
+      );
+      expect(result, isA<ApiSuccess>());
+    }
+
+    final posts = requests
+        .where(
+          (request) =>
+              request.method == 'POST' &&
+              request.path.endsWith('/evidence-quality-decisions'),
+        )
+        .toList();
+    expect(posts.map((request) => request.data['decision']), [
+      'ACCEPTED',
+      'LIMITED',
+      'REUPLOAD_REQUIRED',
+      'ADDITIONAL_SESSION_REQUIRED',
+    ]);
+    for (final request in posts) {
+      expect(
+        request.data['shotListComparison'],
+        'Span covered except the east face',
+      );
+    }
+    // The accepted payload carries no limitation; the other three do.
+    expect(posts[0].data.containsKey('limitationReason'), isFalse);
+    for (final request in posts.skip(1)) {
+      expect(request.data['limitationReason'], isNotEmpty);
+    }
+  });
   test('uploads a captured file as multipart with server-verifiable source metadata', () async {
     final directory = await Directory.systemTemp.createTemp(
       'inspection-photo-',
@@ -158,4 +210,15 @@ Map<String, dynamic> _evidenceResponse() => {
   'externalReference': null,
   'uploadStatus': 'AVAILABLE',
   'createdAt': '2026-09-24T08:30:01Z',
+};
+
+Map<String, dynamic> _decisionResponse(Map<String, dynamic> request) => {
+  'id': 'decision-1',
+  'inspectionId': 'inspection-1',
+  'fieldSessionId': null,
+  'decision': request['decision'],
+  'shotListComparison': request['shotListComparison'],
+  'limitationReason': request['limitationReason'],
+  'decidedByUserId': 'inspector-1',
+  'decidedAt': '2026-10-12T00:00:00Z',
 };
