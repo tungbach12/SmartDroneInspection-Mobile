@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
@@ -102,11 +103,14 @@ void main() {
       await _pumpAsync(tester);
       expect(repository.saveAttempts, 1, reason: _visibleText(tester));
       expect(
-        find.textContaining('Checklist was not saved'),
+        find.textContaining('Checklist was not saved', skipOffstage: false),
         findsOneWidget,
         reason: _visibleText(tester),
       );
-      expect(find.textContaining('not authorized to access'), findsOneWidget);
+      expect(
+        find.textContaining('not authorized to access', skipOffstage: false),
+        findsOneWidget,
+      );
       expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
     },
   );
@@ -172,6 +176,10 @@ class _FakeInspectionRepository extends InspectionRepository {
     return const ApiResult.success(null);
   }
 
+  @override
+  Future<ApiResult<List<EvidenceQualityDecision>>> evidenceQualityHistory(
+    String inspectionId,
+  ) async => const ApiResult.success([]);
   @override
   Future<ApiResult<InspectionEvidence>> uploadEvidence({
     required String inspectionId,

@@ -6,7 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
+import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dart';
+import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
@@ -255,6 +258,195 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                       .toList(),
                 ),
               ),
+            ),
+            const SizedBox(height: 20),
+            _EvidenceQualitySection(
+              inspectionId: widget.inspectionId,
+              evidenceCount: evidence.value?.length ?? 0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Gates the adequacy card to active Inspectors only. When anonymous or another role,
+/// nothing renders and the parent page watches no extra provider.
+class _EvidenceQualitySection extends ConsumerWidget {
+  const _EvidenceQualitySection({
+    required this.inspectionId,
+    required this.evidenceCount,
+  });
+
+  final String inspectionId;
+  final int evidenceCount;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isInspector = ref.watch(
+      authNotifierProvider.select(
+        (session) => session.value?.user?.hasRole(UserRole.inspector) ?? false,
+      ),
+    );
+    if (!isInspector) return const SizedBox.shrink();
+    return _EvidenceQualityCard(
+      inspectionId: inspectionId,
+      evidenceCount: evidenceCount,
+    );
+  }
+}
+
+/// MF3-03: the assigned Inspector's substantive adequacy decision. Only an ACCEPTED decision
+/// makes the evidence set eligible for advisory detection and report drafting; the backend
+/// refuses LIMITED without a stated limitation, and any decision without a comparison.
+class _EvidenceQualityCard extends ConsumerStatefulWidget {
+  const _EvidenceQualityCard({
+    required this.inspectionId,
+    required this.evidenceCount,
+  });
+
+  final String inspectionId;
+  final int evidenceCount;
+
+  @override
+  ConsumerState<_EvidenceQualityCard> createState() =>
+      _EvidenceQualityCardState();
+}
+
+class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
+  final _comparisonController = TextEditingController();
+  final _reasonController = TextEditingController();
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _comparisonController.dispose();
+    _reasonController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _decide(String decision) async {
+    final comparison = _comparisonController.text.trim();
+    final reason = _reasonController.text.trim();
+    if (comparison.isEmpty) {
+      setState(() => _error = 'Write the shot-list comparison first.');
+      return;
+    }
+    if (decision != 'ACCEPTED' && reason.isEmpty) {
+      setState(
+        () => _error = 'State the limitation or reason for this decision.',
+      );
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    // The parent passes the inspection id it was routed with; no router lookup here.
+    final inspectionId = widget.inspectionId;
+    final result = await ref
+        .read(inspectionRepositoryProvider)
+        .decideEvidenceQuality(
+          inspectionId: inspectionId,
+          decision: decision,
+          shotListComparison: comparison,
+          limitationReason: reason.isEmpty ? null : reason,
+        );
+    if (!mounted) return;
+    switch (result) {
+      case ApiSuccess<EvidenceQualityDecision>():
+        ref.invalidate(evidenceQualityHistoryProvider(inspectionId));
+        setState(() => _busy = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Evidence decision recorded.')),
+        );
+      case ApiError<EvidenceQualityDecision>(:final failure):
+        setState(() {
+          _busy = false;
+          _error = _failureMessage(failure);
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final inspectionId = widget.inspectionId;
+    final history = ref.watch(evidenceQualityHistoryProvider(inspectionId));
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Evidence quality decision',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'MF3-03: compare the captured set against the shot-list. Only an ACCEPTED '
+              'decision unlocks detection and drafting.',
+            ),
+            const SizedBox(height: 8),
+            history.when(
+              data: (items) => items.isEmpty
+                  ? const Text('No decision recorded yet.')
+                  : Text(
+                      'Latest: ${items.first.decision.replaceAll('_', ' ')}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+              loading: () => const Text('Loading decision history…'),
+              error: (_, _) => const Text('Could not load decision history.'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              key: const Key('shot-list-comparison'),
+              controller: _comparisonController,
+              decoration: const InputDecoration(
+                labelText: 'Shot-list comparison',
+                helperText:
+                    'Required. What the set covers and what it does not.',
+              ),
+              maxLines: 3,
+              maxLength: 8000,
+            ),
+            TextField(
+              key: const Key('limitation-reason'),
+              controller: _reasonController,
+              decoration: const InputDecoration(
+                labelText: 'Limitation or reason',
+                helperText:
+                    'Required for limited, re-upload or additional session.',
+              ),
+              maxLines: 2,
+              maxLength: 2000,
+            ),
+            const SizedBox(height: 8),
+            if (_error != null) ...[
+              Text(
+                _error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              const SizedBox(height: 8),
+            ],
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final MapEntry(key: label, value: decision) in const [
+                  MapEntry('Accept', 'ACCEPTED'),
+                  MapEntry('Re-upload required', 'REUPLOAD_REQUIRED'),
+                  MapEntry('Additional session', 'ADDITIONAL_SESSION_REQUIRED'),
+                  MapEntry('Accept with limitation', 'LIMITED'),
+                ])
+                  FilledButton.tonal(
+                    onPressed: _busy || widget.evidenceCount == 0
+                        ? null
+                        : () => _decide(decision),
+                    child: Text(_busy ? 'Recording…' : label),
+                  ),
+              ],
             ),
           ],
         ),

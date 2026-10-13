@@ -238,8 +238,12 @@ class InspectionRepository {
         '/inspections/$inspectionId/evidence-quality-decisions',
         data: {
           'decision': decision,
-          ?shotListComparison: shotListComparison,
-          ?limitationReason: limitationReason,
+          ...?(shotListComparison == null
+              ? null
+              : {'shotListComparison': shotListComparison}),
+          ...?(limitationReason == null
+              ? null
+              : {'limitationReason': limitationReason}),
         },
       );
       return ApiResult.success(
