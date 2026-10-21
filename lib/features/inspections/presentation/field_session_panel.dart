@@ -136,9 +136,7 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
                 builder: (data) {
                   final open = data.where((s) => s.isOpen).firstOrNull;
                   final latest = data.isEmpty ? null : data.last;
-                  final abortedNeedsClosure = latest?.isAborted == true;
-                  final sessionToClose =
-                      open ?? (abortedNeedsClosure ? latest : null);
+                  final sessionToClose = open;
                   // A postponed visit may be attempted again under the same approval. A normally
                   // completed visit does not: the next session needs new preparation and an
                   // independent readiness decision first.

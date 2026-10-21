@@ -295,35 +295,20 @@ void main() {
     );
   });
 
-  testWidgets(
-    'records the outcome of an aborted session without offering abort again',
-    (tester) async {
-      final repository = _FakeFieldSessionRepository(
-        sessions: [_session(status: 'ABORTED')],
-      );
+  testWidgets('shows an aborted session as terminated', (tester) async {
+    final repository = _FakeFieldSessionRepository(
+      sessions: [_session(status: 'ABORTED')],
+    );
 
-      await tester.pumpWidget(_host(repository));
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(_host(repository));
+    await tester.pumpAndSettle();
 
-      expect(find.text('End field session'), findsOneWidget);
-      expect(find.text('Abort session'), findsNothing);
-      expect(find.text('Postpone'), findsNothing);
-
-      await tester.enterText(
-        find.byKey(const Key('session-outcome')),
-        'Visit aborted; east span still unobserved',
-      );
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('End field session'));
-      await tester.tap(find.text('End field session'));
-      await tester.pumpAndSettle();
-
-      expect(
-        repository.lastOutcomeNotes,
-        'Visit aborted; east span still unobserved',
-      );
-    },
-  );
+    expect(find.text('Start field session'), findsNothing);
+    expect(find.text('End field session'), findsNothing);
+    expect(find.text('Abort session'), findsNothing);
+    expect(find.text('Postpone'), findsNothing);
+    expect(find.text('Aborted'), findsOneWidget);
+  });
 
   testWidgets('does not offer another start after normal completion', (
     tester,
