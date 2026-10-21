@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'field_session.freezed.dart';
 part 'field_session.g.dart';
 
-/// MF2-09 to MF2-11: one field session under an inspection.
+/// MF2-09 to MF2-12: one field session under an inspection.
 ///
 /// The session records the readiness decision it started against, so a later audit can answer which
 /// approval the field work relied on rather than "some approval, at some point". `startedAt` is the
@@ -24,6 +24,7 @@ abstract class FieldSession with _$FieldSession {
     String? endedAt,
     String? postponementReason,
     String? abortReason,
+    String? outcomeNotes,
   }) = _FieldSession;
 
   const FieldSession._();
@@ -45,4 +46,7 @@ extension FieldSessionStatus on FieldSession {
 
   /// Whether the session ended and will not resume under this record.
   bool get isAborted => status == 'ABORTED';
+
+  /// Whether the session has ended and returned the inspection to MF3.
+  bool get isCompleted => status == 'FIELD_COMPLETED';
 }

@@ -12,6 +12,7 @@ import 'package:smart_drone_inspection/features/inspections/data/inspection_repo
 import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 
@@ -58,6 +59,21 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     final photo = _selectedPhoto;
     final captureTime = _captureTime;
     if (photo == null || captureTime == null) return;
+    final sessionsResult = await ref
+        .read(inspectionRepositoryProvider)
+        .listFieldSessions(widget.inspectionId);
+    if (!mounted) return;
+    final completedSessionId = switch (sessionsResult) {
+      ApiSuccess<List<FieldSession>>(:final data) =>
+        data.where((session) => session.isCompleted).lastOrNull?.id,
+      ApiError<List<FieldSession>>() => null,
+    };
+    if (completedSessionId == null) {
+      setState(() {
+        _uploadError = 'Complete the field session before attaching evidence.';
+      });
+      return;
+    }
     setState(() {
       _uploading = true;
       _uploadError = null;
@@ -69,6 +85,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
           inspectionId: widget.inspectionId,
           photo: photo,
           captureTime: captureTime,
+          fieldSessionId: completedSessionId,
         );
     if (!mounted) return;
     switch (result) {
@@ -164,6 +181,12 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   context.push('/inspection/${widget.inspectionId}/session'),
               icon: const Icon(Icons.flight_takeoff_outlined),
               label: const Text('Open field session'),
+            ),
+            OutlinedButton(
+              onPressed: () => context.push(
+                '/inspection/${widget.inspectionId}/preparation',
+              ),
+              child: const Text('Open MF2 Preparation'),
             ),
             if (_operationError != null) ...[
               const SizedBox(height: 12),
@@ -333,10 +356,8 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
       setState(() => _error = 'Write the shot-list comparison first.');
       return;
     }
-    if (decision != 'ACCEPTED' && reason.isEmpty) {
-      setState(
-        () => _error = 'State the limitation or reason for this decision.',
-      );
+    if (decision == 'ADDITIONAL_SESSION_REQUIRED' && reason.isEmpty) {
+      setState(() => _error = 'State why another field session is needed.');
       return;
     }
     setState(() {
@@ -359,7 +380,13 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
         ref.invalidate(evidenceQualityHistoryProvider(inspectionId));
         setState(() => _busy = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Evidence decision recorded.')),
+          SnackBar(
+            content: Text(
+              decision == 'ADDITIONAL_SESSION_REQUIRED'
+                  ? 'Additional field work requested. Continue in MF2 Preparation and wait for readiness review.'
+                  : 'Evidence set accepted for advisory analysis.',
+            ),
+          ),
         );
       case ApiError<EvidenceQualityDecision>(:final failure):
         setState(() {
@@ -385,8 +412,7 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
             ),
             const SizedBox(height: 4),
             const Text(
-              'MF3-03: compare the captured set against the shot-list. Only an ACCEPTED '
-              'decision unlocks detection and drafting.',
+              'MF3-03: compare the completed capture set against the shot-list. Choose to accept it or request another MF2 session; weather or site safety during work belongs to postponement/abort.',
             ),
             const SizedBox(height: 8),
             history.when(
@@ -415,9 +441,9 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
               key: const Key('limitation-reason'),
               controller: _reasonController,
               decoration: const InputDecoration(
-                labelText: 'Limitation or reason',
+                labelText: 'Why is another field session needed?',
                 helperText:
-                    'Required for limited, re-upload or additional session.',
+                    'Required only when requesting another MF2 session.',
               ),
               maxLines: 2,
               maxLength: 2000,
@@ -435,10 +461,11 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
               runSpacing: 8,
               children: [
                 for (final MapEntry(key: label, value: decision) in const [
-                  MapEntry('Accept', 'ACCEPTED'),
-                  MapEntry('Re-upload required', 'REUPLOAD_REQUIRED'),
-                  MapEntry('Additional session', 'ADDITIONAL_SESSION_REQUIRED'),
-                  MapEntry('Accept with limitation', 'LIMITED'),
+                  MapEntry('Accept evidence set', 'ACCEPTED'),
+                  MapEntry(
+                    'Additional session needed',
+                    'ADDITIONAL_SESSION_REQUIRED',
+                  ),
                 ])
                   FilledButton.tonal(
                     onPressed: _busy || widget.evidenceCount == 0
