@@ -18,6 +18,7 @@ class _FakeFieldSessionRepository implements InspectionRepository {
   String? lastNote;
   String? lastPostponeReason;
   String? lastAbortReason;
+  String? lastOutcomeNotes;
 
   @override
   Future<ApiResult<FieldSession>> startFieldSession({
@@ -42,6 +43,16 @@ class _FakeFieldSessionRepository implements InspectionRepository {
   }) async {
     lastPostponeReason = reason;
     return ApiResult.success(_session(status: 'POSTPONED'));
+  }
+
+  @override
+  Future<ApiResult<FieldSession>> completeFieldSession({
+    required String inspectionId,
+    required String sessionId,
+    required String outcomeNotes,
+  }) async {
+    lastOutcomeNotes = outcomeNotes;
+    return ApiResult.success(_session(status: 'FIELD_COMPLETED'));
   }
 
   @override
@@ -72,6 +83,7 @@ FieldSession _session({required String status}) => FieldSession(
   endedAt: status == 'IN_PROGRESS' ? null : '2026-11-01T09:30:00Z',
   postponementReason: status == 'POSTPONED' ? 'High wind' : null,
   abortReason: null,
+  outcomeNotes: status == 'FIELD_COMPLETED' ? 'Coverage recorded' : null,
 );
 
 Widget _host(_FakeFieldSessionRepository repository) => ProviderScope(
@@ -223,6 +235,22 @@ void main() {
     },
   );
 
+  testWidgets('shows a completed session without offering another start', (
+    tester,
+  ) async {
+    final repository = _FakeFieldSessionRepository(
+      sessions: [_session(status: 'FIELD_COMPLETED')],
+    );
+
+    await tester.pumpWidget(_host(repository));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Start field session'), findsNothing);
+    expect(find.text('Field completed'), findsOneWidget);
+    expect(find.text('Coverage recorded'), findsOneWidget);
+    expect(find.textContaining('Complete MF2 Preparation'), findsOneWidget);
+  });
+
   testWidgets('shows an open session instead of offering another start', (
     tester,
   ) async {
@@ -236,6 +264,64 @@ void main() {
     expect(find.text('Start field session'), findsNothing);
     expect(find.text('In progress'), findsOneWidget);
     expect(find.text('Postpone'), findsOneWidget);
+  });
+
+  testWidgets('requires an outcome and ends completed field work', (
+    tester,
+  ) async {
+    final repository = _FakeFieldSessionRepository(
+      sessions: [_session(status: 'IN_PROGRESS')],
+    );
+
+    await tester.pumpWidget(_host(repository));
+    await tester.pumpAndSettle();
+
+    final endButton = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, 'End field session'),
+    );
+    expect(endButton.onPressed, isNull);
+
+    await tester.enterText(
+      find.byKey(const Key('session-outcome')),
+      'East face not accessible; required coverage captured',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'End field session'));
+    await tester.pumpAndSettle();
+
+    expect(
+      repository.lastOutcomeNotes,
+      'East face not accessible; required coverage captured',
+    );
+  });
+
+  testWidgets('shows an aborted session as terminated', (tester) async {
+    final repository = _FakeFieldSessionRepository(
+      sessions: [_session(status: 'ABORTED')],
+    );
+
+    await tester.pumpWidget(_host(repository));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Start field session'), findsNothing);
+    expect(find.text('End field session'), findsNothing);
+    expect(find.text('Abort session'), findsNothing);
+    expect(find.text('Postpone'), findsNothing);
+    expect(find.text('Aborted'), findsOneWidget);
+  });
+
+  testWidgets('does not offer another start after normal completion', (
+    tester,
+  ) async {
+    final repository = _FakeFieldSessionRepository(
+      sessions: [_session(status: 'FIELD_COMPLETED')],
+    );
+
+    await tester.pumpWidget(_host(repository));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Start field session'), findsNothing);
+    expect(find.textContaining('Complete MF2 Preparation'), findsOneWidget);
   });
 
   testWidgets('offers a new attempt after a postponement', (tester) async {

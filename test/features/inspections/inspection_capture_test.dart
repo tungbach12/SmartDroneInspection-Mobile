@@ -7,6 +7,7 @@ import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
@@ -161,6 +162,12 @@ class _FakeInspectionRepository extends InspectionRepository {
     String inspectionId,
   ) async => ApiResult.success(hasEvidence ? [_evidence()] : []);
 
+  /// A completed field session, so evidence can be attached to the visit it came from.
+  @override
+  Future<ApiResult<List<FieldSession>>> listFieldSessions(
+    String inspectionId,
+  ) async => ApiResult.success([_completedSession()]);
+
   @override
   Future<ApiResult<void>> saveChecklistResponse({
     required String inspectionId,
@@ -185,6 +192,7 @@ class _FakeInspectionRepository extends InspectionRepository {
     required String inspectionId,
     required XFile photo,
     required DateTime captureTime,
+    String? fieldSessionId,
   }) async {
     uploadAttempts++;
     if (failNextUpload) {
@@ -196,6 +204,23 @@ class _FakeInspectionRepository extends InspectionRepository {
     hasEvidence = true;
     return ApiResult.success(_evidence());
   }
+
+  FieldSession _completedSession() => FieldSession(
+    id: 'session-1',
+    inspectionId: 'inspection-1',
+    organizationId: 'org-1',
+    inspectorUserId: 'inspector-1',
+    droneId: null,
+    readinessDecisionId: 'decision-1',
+    checklistTemplateId: null,
+    readinessVersion: 1,
+    status: 'FIELD_COMPLETED',
+    startedAt: '2026-09-24T08:00:00Z',
+    endedAt: '2026-09-24T09:00:00Z',
+    postponementReason: null,
+    abortReason: null,
+    outcomeNotes: 'Span surveyed',
+  );
 
   InspectionEvidence _evidence() => InspectionEvidence(
     id: 'evidence-1',

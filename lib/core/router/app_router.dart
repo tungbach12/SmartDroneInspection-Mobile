@@ -5,6 +5,7 @@ import 'package:smart_drone_inspection/features/auth/presentation/login_page.dar
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/field_session_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/inspection_preparation_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspections_page.dart';
 import 'package:smart_drone_inspection/features/profile/presentation/profile_page.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.dart';
@@ -48,8 +49,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           inspectionId: state.pathParameters['inspectionId']!,
         ),
       ),
-      // MF2-09 to MF2-11 sits on its own route rather than inside the inspection detail page: a
-      // field session is an on-site act by the Inspector, not part of the captured record.
+      GoRoute(
+        path: '/inspection/:inspectionId/preparation',
+        builder: (context, state) => InspectionPreparationPage(
+          inspectionId: state.pathParameters['inspectionId']!,
+        ),
+      ),
+      // MF2-09 to MF2-12 sits on its own route rather than inside the inspection detail page: field work is an on-site act by the Inspector.
       GoRoute(
         path: '/inspection/:inspectionId/session',
         builder: (context, state) => FieldSessionPage(

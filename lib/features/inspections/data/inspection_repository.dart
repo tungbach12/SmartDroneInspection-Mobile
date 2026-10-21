@@ -8,6 +8,7 @@ import 'package:smart_drone_inspection/features/inspections/domain/models/eviden
 import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_preparation.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspector_assignment.dart';
 
 class InspectionRepository {
@@ -52,6 +53,77 @@ class InspectionRepository {
       return ApiResult.success(
         InspectorAssignment.fromJson(
           Map<String, dynamic>.from(posted.data as Map),
+        ),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<List<InspectionPreparation>>> listPreparations(
+    String inspectionId,
+  ) async {
+    try {
+      final response = await _dio.get('/inspections/$inspectionId/preparation');
+      final preparations = (response.data as List<dynamic>)
+          .map(
+            (item) => InspectionPreparation.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
+          .toList();
+      return ApiResult.success(preparations);
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectionPreparation>> savePreparation({
+    required String inspectionId,
+    required String shotList,
+    String? evidenceTypes,
+    String? accessConstraints,
+    String? safetyObservations,
+    DateTime? plannedStartAt,
+    DateTime? plannedEndAt,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/inspections/$inspectionId/preparation',
+        data: {
+          'shotList': shotList,
+          'evidenceTypes': evidenceTypes,
+          'accessConstraints': accessConstraints,
+          'safetyObservations': safetyObservations,
+          if (plannedStartAt != null)
+            'plannedStartAt': plannedStartAt.toUtc().toIso8601String(),
+          if (plannedEndAt != null)
+            'plannedEndAt': plannedEndAt.toUtc().toIso8601String(),
+        },
+      );
+      return ApiResult.success(
+        InspectionPreparation.fromJson(
+          Map<String, dynamic>.from(response.data as Map),
+        ),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectionPreparation>> submitPreparation({
+    required String inspectionId,
+    required String preparationId,
+    required String acknowledgment,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/inspections/$inspectionId/preparation/$preparationId/submission',
+        data: {'acknowledgment': acknowledgment},
+      );
+      return ApiResult.success(
+        InspectionPreparation.fromJson(
+          Map<String, dynamic>.from(response.data as Map),
         ),
       );
     } on DioException catch (error) {
@@ -156,6 +228,25 @@ class InspectionRepository {
     }
   }
 
+  /// MF2-12: records the completed field outcome and hands the inspection back to MF3.
+  Future<ApiResult<FieldSession>> completeFieldSession({
+    required String inspectionId,
+    required String sessionId,
+    required String outcomeNotes,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/inspections/$inspectionId/field-sessions/$sessionId/completion',
+        data: {'outcomeNotes': outcomeNotes},
+      );
+      return ApiResult.success(
+        FieldSession.fromJson(Map<String, dynamic>.from(response.data as Map)),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
   /// MF2-11: the session cannot continue. Distinct from a postponement, which the server treats as
   /// an attempt the organization may retry.
   Future<ApiResult<FieldSession>> abortFieldSession({
@@ -198,6 +289,7 @@ class InspectionRepository {
     required String inspectionId,
     required XFile photo,
     required DateTime captureTime,
+    String? fieldSessionId,
   }) async {
     try {
       final file = await MultipartFile.fromFile(
@@ -208,6 +300,7 @@ class InspectionRepository {
         'file': file,
         'source': 'MOBILE_UPLOAD',
         'captureTime': captureTime.toUtc().toIso8601String(),
+        'fieldSessionId': ?fieldSessionId,
       });
       final response = await _dio.post(
         '/inspections/$inspectionId/evidence',

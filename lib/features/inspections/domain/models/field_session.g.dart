@@ -21,6 +21,7 @@ _FieldSession _$FieldSessionFromJson(Map<String, dynamic> json) =>
       endedAt: json['endedAt'] as String?,
       postponementReason: json['postponementReason'] as String?,
       abortReason: json['abortReason'] as String?,
+      outcomeNotes: json['outcomeNotes'] as String?,
     );
 
 Map<String, dynamic> _$FieldSessionToJson(_FieldSession instance) =>
@@ -38,4 +39,5 @@ Map<String, dynamic> _$FieldSessionToJson(_FieldSession instance) =>
       'endedAt': instance.endedAt,
       'postponementReason': instance.postponementReason,
       'abortReason': instance.abortReason,
+      'outcomeNotes': instance.outcomeNotes,
     };

@@ -31,6 +31,8 @@ void main() {
               ? 'POSTPONED'
               : options.path.endsWith('/abort')
               ? 'ABORTED'
+              : options.path.endsWith('/completion')
+              ? 'FIELD_COMPLETED'
               : 'IN_PROGRESS';
           handler.resolve(
             Response(
@@ -115,6 +117,30 @@ void main() {
     },
   );
 
+  test(
+    'records completed session outcome through the completion route',
+    () async {
+      final result = await repository.completeFieldSession(
+        inspectionId: 'inspection-1',
+        sessionId: 'session-1',
+        outcomeNotes: 'East face covered; no hazards observed',
+      );
+
+      expect(
+        (result as ApiSuccess<FieldSession>).data.status,
+        'FIELD_COMPLETED',
+      );
+      expect(
+        requests.single.path,
+        '/inspections/inspection-1/field-sessions/session-1/completion',
+      );
+      expect(
+        (requests.single.data as Map<String, dynamic>)['outcomeNotes'],
+        'East face covered; no hazards observed',
+      );
+    },
+  );
+
   test('names both the inspection and the session when closing one', () async {
     await repository.postponeFieldSession(
       inspectionId: 'inspection-1',
@@ -184,4 +210,7 @@ Map<String, dynamic> _sessionToJson(String status) => {
   'endedAt': status == 'IN_PROGRESS' ? null : '2026-11-01T09:30:00Z',
   'postponementReason': status == 'POSTPONED' ? 'High wind above 10 m/s' : null,
   'abortReason': status == 'ABORTED' ? 'Structure found unsafe on site' : null,
+  'outcomeNotes': status == 'FIELD_COMPLETED'
+      ? 'East face covered; no hazards observed'
+      : null,
 };

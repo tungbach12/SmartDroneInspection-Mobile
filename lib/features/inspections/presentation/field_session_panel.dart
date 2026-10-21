@@ -20,7 +20,7 @@ String _label(String status) => switch (status) {
   _ => status,
 };
 
-/// MF2-09 to MF2-11 on site: start, postpone or abort the field session.
+/// MF2-09 to MF2-12 on site: start, postpone, abort or normally complete the field session.
 ///
 /// The pre-flight note is typed rather than ticked. MF2-09 has the Inspector identify the assigned
 /// Drone and complete the current pre-flight checklist before asking to start, and a checkbox a
@@ -44,6 +44,7 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
   final _noteController = TextEditingController();
   final _postponeController = TextEditingController();
   final _abortController = TextEditingController();
+  final _outcomeController = TextEditingController();
 
   bool _busy = false;
   String? _error;
@@ -53,6 +54,7 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
     _noteController.dispose();
     _postponeController.dispose();
     _abortController.dispose();
+    _outcomeController.dispose();
     super.dispose();
   }
 
@@ -86,6 +88,7 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
           _noteController.clear();
           _postponeController.clear();
           _abortController.clear();
+          _outcomeController.clear();
         });
         ref.invalidate(fieldSessionsProvider(widget.inspectionId));
       case ApiError(:final failure):
@@ -101,95 +104,125 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Field session',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Starting a session is not flight clearance. It records that the paperwork and the '
-              'pre-flight checklist were in order.',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 12),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  _error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Field session',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            AsyncValueWidget<List<FieldSession>>(
-              value: sessions,
-              onRetry: () =>
-                  ref.invalidate(fieldSessionsProvider(widget.inspectionId)),
-              builder: (data) {
-                final open = data.where((s) => s.isOpen).firstOrNull;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (open != null)
-                      _OpenSession(
-                        session: open,
-                        busy: _busy,
-                        postponeController: _postponeController,
-                        abortController: _abortController,
-                        onChanged: () => setState(() {}),
-                        onPostpone: () => _run(
-                          () => repository.postponeFieldSession(
-                            inspectionId: widget.inspectionId,
-                            sessionId: open.id,
-                            reason: _postponeController.text.trim(),
-                          ),
-                        ),
-                        onAbort: () => _run(
-                          () => repository.abortFieldSession(
-                            inspectionId: widget.inspectionId,
-                            sessionId: open.id,
-                            reason: _abortController.text.trim(),
-                          ),
-                        ),
-                      )
-                    else
-                      _PreFlightForm(
-                        controller: _noteController,
-                        busy: _busy,
-                        onChanged: () => setState(() {}),
-                        onStart: () => _run(
-                          () => repository.startFieldSession(
-                            inspectionId: widget.inspectionId,
-                            checklistTemplateId: null,
-                            preFlightChecklistNote: _noteController.text.trim(),
-                          ),
-                        ),
-                      ),
-                    for (final session in data.where((s) => !s.isOpen))
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Row(
-                          children: [
-                            Chip(label: Text(_label(session.status))),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                session.postponementReason ??
-                                    session.abortReason ??
-                                    session.status,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
+              const SizedBox(height: 4),
+              Text(
+                'Starting a session is not flight clearance. It records that the paperwork and the '
+                'pre-flight checklist were in order.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    _error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              AsyncValueWidget<List<FieldSession>>(
+                value: sessions,
+                onRetry: () =>
+                    ref.invalidate(fieldSessionsProvider(widget.inspectionId)),
+                builder: (data) {
+                  final open = data.where((s) => s.isOpen).firstOrNull;
+                  final latest = data.isEmpty ? null : data.last;
+                  final sessionToClose = open;
+                  // A postponed visit may be attempted again under the same approval. A normally
+                  // completed visit does not: the next session needs new preparation and an
+                  // independent readiness decision first.
+                  final canOfferStart =
+                      data.isEmpty || latest?.isPostponed == true;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (sessionToClose != null)
+                        _OpenSession(
+                          session: sessionToClose,
+                          busy: _busy,
+                          postponeController: _postponeController,
+                          abortController: _abortController,
+                          outcomeController: _outcomeController,
+                          onChanged: () => setState(() {}),
+                          onPostpone: () => _run(
+                            () => repository.postponeFieldSession(
+                              inspectionId: widget.inspectionId,
+                              sessionId: sessionToClose.id,
+                              reason: _postponeController.text.trim(),
                             ),
-                          ],
+                          ),
+                          onAbort: () => _run(
+                            () => repository.abortFieldSession(
+                              inspectionId: widget.inspectionId,
+                              sessionId: sessionToClose.id,
+                              reason: _abortController.text.trim(),
+                            ),
+                          ),
+                          onComplete: () => _run(
+                            () => repository.completeFieldSession(
+                              inspectionId: widget.inspectionId,
+                              sessionId: sessionToClose.id,
+                              outcomeNotes: _outcomeController.text.trim(),
+                            ),
+                          ),
+                        )
+                      else if (canOfferStart)
+                        _PreFlightForm(
+                          controller: _noteController,
+                          busy: _busy,
+                          onChanged: () => setState(() {}),
+                          onStart: () => _run(
+                            () => repository.startFieldSession(
+                              inspectionId: widget.inspectionId,
+                              checklistTemplateId: null,
+                              preFlightChecklistNote: _noteController.text
+                                  .trim(),
+                            ),
+                          ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-          ],
+                      if (!canOfferStart && sessionToClose == null)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8),
+                          child: Text(
+                            'This inspection is not currently startable. Complete MF2 Preparation and independent readiness review first.',
+                          ),
+                        ),
+                      for (final session in data.where(
+                        (s) => !s.isOpen && s.id != sessionToClose?.id,
+                      ))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Row(
+                            children: [
+                              Chip(label: Text(_label(session.status))),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  session.postponementReason ??
+                                      session.abortReason ??
+                                      session.outcomeNotes ??
+                                      session.status,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -241,18 +274,25 @@ class _OpenSession extends StatelessWidget {
     required this.busy,
     required this.postponeController,
     required this.abortController,
+    required this.outcomeController,
     required this.onChanged,
     required this.onPostpone,
     required this.onAbort,
+    required this.onComplete,
   });
 
   final FieldSession session;
   final bool busy;
   final TextEditingController postponeController;
   final TextEditingController abortController;
+  final TextEditingController outcomeController;
   final VoidCallback onChanged;
   final VoidCallback onPostpone;
   final VoidCallback onAbort;
+  final VoidCallback onComplete;
+
+  /// An aborted session is already closed, so only the completion outcome can still be recorded.
+  bool get isOpen => session.isOpen;
 
   /// A mistaken tap on a phone in the field would end a session that cannot resume, so aborting
   /// asks once more. A postponement needs no confirmation because it hands the inspection back.
@@ -283,59 +323,85 @@ class _OpenSession extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Chip(label: Text(_label(session.status))),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Started ${session.startedAt ?? 'just now'} against readiness decision '
-                '${session.readinessDecisionId ?? 'unknown'}',
-                style: Theme.of(context).textTheme.bodySmall,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Chip(label: Text(_label(session.status))),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Started ${session.startedAt ?? 'just now'} against readiness decision '
+                  '${session.readinessDecisionId ?? 'unknown'}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+          if (isOpen) ...[
+            const SizedBox(height: 16),
+            TextField(
+              key: const Key('postpone-reason'),
+              controller: postponeController,
+              onChanged: (_) => onChanged(),
+              decoration: const InputDecoration(
+                labelText: 'Reason for postponing',
+                helperText: 'Weather or site safety. The mission can be attempted again.',
               ),
             ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: busy || postponeController.text.trim().isEmpty
+                  ? null
+                  : onPostpone,
+              child: const Text('Postpone'),
+            ),
           ],
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          key: const Key('postpone-reason'),
-          controller: postponeController,
-          onChanged: (_) => onChanged(),
-          decoration: const InputDecoration(
-            labelText: 'Reason for postponing',
-            helperText:
-                'Weather or site safety. The mission can be attempted again.',
+          const SizedBox(height: 16),
+          // Normal completion ends the visit and hands the inspection back to MF3, so it is
+          // offered before the abort control: aborting ends the session without a completed
+          // coverage outcome.
+          TextField(
+            key: const Key('session-outcome'),
+            controller: outcomeController,
+            maxLines: 3,
+            onChanged: (_) => onChanged(),
+            decoration: const InputDecoration(
+              labelText: 'Field session outcome',
+              helperText: 'Record coverage, observations, gaps and any incidents before ending the session.',
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(
-          onPressed: busy || postponeController.text.trim().isEmpty
-              ? null
-              : onPostpone,
-          child: const Text('Postpone'),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          key: const Key('abort-reason'),
-          controller: abortController,
-          onChanged: (_) => onChanged(),
-          decoration: const InputDecoration(
-            labelText: 'Reason for aborting',
-            helperText:
-                'This session ends and will not resume under this record.',
+          const SizedBox(height: 8),
+          FilledButton(
+            onPressed: busy || outcomeController.text.trim().isEmpty
+                ? null
+                : onComplete,
+            child: Text(busy ? 'Saving…' : 'End field session'),
           ),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(
-          onPressed: busy || abortController.text.trim().isEmpty
-              ? null
-              : () => _confirmAbort(context),
-          child: const Text('Abort session'),
-        ),
-      ],
+          if (isOpen) ...[
+            const SizedBox(height: 16),
+            TextField(
+              key: const Key('abort-reason'),
+              controller: abortController,
+              onChanged: (_) => onChanged(),
+              decoration: const InputDecoration(
+                labelText: 'Reason for aborting',
+                helperText:
+                    'This session ends and will not resume under this record.',
+              ),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: busy || abortController.text.trim().isEmpty
+                  ? null
+                  : () => _confirmAbort(context),
+              child: const Text('Abort session'),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
