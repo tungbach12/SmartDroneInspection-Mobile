@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 
 /// Standard loading spinner for async gaps.
 class CenteredSpinner extends StatelessWidget {
@@ -29,12 +30,12 @@ class ErrorRetryWidget extends StatelessWidget {
             color: Theme.of(context).colorScheme.error,
           ),
           const SizedBox(height: 12),
-          Text(message ?? 'Something went wrong'),
+          Text(message ?? context.l10n.somethingWentWrong),
           const SizedBox(height: 12),
           FilledButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
+            label: Text(context.l10n.retry),
           ),
         ],
       ),

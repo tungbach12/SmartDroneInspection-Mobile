@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/shared/widgets/common_widgets.dart';
 
 /// Builds UI from AsyncValue with standard loading/error/empty states.
@@ -24,12 +25,12 @@ class AsyncValueWidget<T> extends StatelessWidget {
       loading: () => const CenteredSpinner(),
       error: (error, stackTrace) => ErrorRetryWidget(
         onRetry: onRetry ?? () {},
-        message: error.toString(),
+        message: context.l10n.somethingWentWrong,
       ),
       data: (data) => emptyCheck != null && emptyCheck!(data)
-          ? const EmptyState(
+          ? EmptyState(
               icon: Icons.inbox_outlined,
-              title: 'Nothing here yet',
+              title: context.l10n.nothingHereYet,
             )
           : builder(data),
     );

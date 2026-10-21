@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_drone_inspection/core/localization/locale_provider.dart';
+import 'package:smart_drone_inspection/l10n/app_localizations.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
@@ -88,8 +90,11 @@ FieldSession _session({required String status}) => FieldSession(
 
 Widget _host(_FakeFieldSessionRepository repository) => ProviderScope(
   overrides: [inspectionRepositoryProvider.overrideWithValue(repository)],
-  child: const MaterialApp(
-    home: Scaffold(body: FieldSessionPanel(inspectionId: 'inspection-1')),
+  child: MaterialApp(
+    locale: const Locale('en'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: supportedAppLocales,
+    home: const Scaffold(body: FieldSessionPanel(inspectionId: 'inspection-1')),
   ),
 );
 

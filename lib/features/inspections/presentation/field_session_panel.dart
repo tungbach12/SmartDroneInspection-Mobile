@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
@@ -11,14 +12,8 @@ import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 ///
 /// The wire vocabulary is uppercase; showing it raw is fine but inconsistent with the rest of the
 /// app, which capitalises statuses for display.
-String _label(String status) => switch (status) {
-  'IN_PROGRESS' => 'In progress',
-  'POSTPONED' => 'Postponed',
-  'ABORTED' => 'Aborted',
-  'PLANNED' => 'Planned',
-  'FIELD_COMPLETED' => 'Field completed',
-  _ => status,
-};
+String _label(BuildContext context, String status) =>
+    localizedFieldSessionStatus(context.l10n, status);
 
 /// MF2-09 to MF2-12 on site: start, postpone, abort or normally complete the field session.
 ///
@@ -63,12 +58,11 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
       _busy = false;
       _error = switch (failure) {
         ValidationFailure(:final errors) => errors.values.join('\n'),
-        UnauthorizedFailure() =>
-          'You are not allowed to manage this field session.',
-        NotFoundFailure() => 'This inspection was not found, or it belongs to another organization.',
+        UnauthorizedFailure() => context.l10n.cannotManageSession,
+        NotFoundFailure() => context.l10n.preparationNotFound,
         ServerFailure(:final detail) =>
-          detail ?? 'The server refused this request.',
-        NetworkFailure() => 'The network is unavailable. The note you typed is kept, so try again.',
+          detail ?? context.l10n.preparationServerRefused,
+        NetworkFailure() => context.l10n.networkUnavailable,
         UnknownFailure(:final message) => message,
       };
     });
@@ -109,13 +103,12 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Field session',
+                context.l10n.fieldSession,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 4),
               Text(
-                'Starting a session is not flight clearance. It records that the paperwork and the '
-                'pre-flight checklist were in order.',
+                context.l10n.startingNotClearance,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
@@ -190,11 +183,9 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
                           ),
                         ),
                       if (!canOfferStart && sessionToClose == null)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 8),
-                          child: Text(
-                            'This inspection is not currently startable. Complete MF2 Preparation and independent readiness review first.',
-                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(context.l10n.notStartable),
                         ),
                       for (final session in data.where(
                         (s) => !s.isOpen && s.id != sessionToClose?.id,
@@ -203,14 +194,16 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
                           padding: const EdgeInsets.only(top: 8),
                           child: Row(
                             children: [
-                              Chip(label: Text(_label(session.status))),
+                              Chip(
+                                label: Text(_label(context, session.status)),
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   session.postponementReason ??
                                       session.abortReason ??
                                       session.outcomeNotes ??
-                                      session.status,
+                                      '',
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ),
@@ -253,15 +246,17 @@ class _PreFlightForm extends StatelessWidget {
           maxLines: 3,
           // The start button depends on this field having content, so typing has to rebuild it.
           onChanged: (_) => onChanged(),
-          decoration: const InputDecoration(
-            labelText: 'Pre-flight checklist note',
-            helperText: 'Identify the assigned Drone and record what you checked on site.',
+          decoration: InputDecoration(
+            labelText: context.l10n.preFlightChecklistNote,
+            helperText: context.l10n.preFlightChecklistHint,
           ),
         ),
         const SizedBox(height: 12),
         FilledButton(
           onPressed: busy || controller.text.trim().isEmpty ? null : onStart,
-          child: Text(busy ? 'Starting…' : 'Start field session'),
+          child: Text(
+            busy ? context.l10n.starting : context.l10n.startFieldSession,
+          ),
         ),
       ],
     );
@@ -300,18 +295,16 @@ class _OpenSession extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Abort this session?'),
-        content: const Text(
-          'The session ends and will not resume under this record. This cannot be undone.',
-        ),
+        title: Text(context.l10n.abortSessionQuestion),
+        content: Text(context.l10n.abortIrreversible),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Keep going'),
+            child: Text(context.l10n.keepGoing),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Abort'),
+            child: Text(context.l10n.abort),
           ),
         ],
       ),
@@ -329,12 +322,14 @@ class _OpenSession extends StatelessWidget {
         children: [
           Row(
             children: [
-              Chip(label: Text(_label(session.status))),
+              Chip(label: Text(_label(context, session.status))),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Started ${session.startedAt ?? 'just now'} against readiness decision '
-                  '${session.readinessDecisionId ?? 'unknown'}',
+                  context.l10n.startedAt(
+                    session.startedAt ?? context.l10n.justNow,
+                    session.readinessDecisionId ?? context.l10n.unknown,
+                  ),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -346,9 +341,9 @@ class _OpenSession extends StatelessWidget {
               key: const Key('postpone-reason'),
               controller: postponeController,
               onChanged: (_) => onChanged(),
-              decoration: const InputDecoration(
-                labelText: 'Reason for postponing',
-                helperText: 'Weather or site safety. The mission can be attempted again.',
+              decoration: InputDecoration(
+                labelText: context.l10n.reasonPostponing,
+                helperText: context.l10n.postponeHint,
               ),
             ),
             const SizedBox(height: 8),
@@ -356,7 +351,7 @@ class _OpenSession extends StatelessWidget {
               onPressed: busy || postponeController.text.trim().isEmpty
                   ? null
                   : onPostpone,
-              child: const Text('Postpone'),
+              child: Text(context.l10n.postpone),
             ),
           ],
           const SizedBox(height: 16),
@@ -368,9 +363,9 @@ class _OpenSession extends StatelessWidget {
             controller: outcomeController,
             maxLines: 3,
             onChanged: (_) => onChanged(),
-            decoration: const InputDecoration(
-              labelText: 'Field session outcome',
-              helperText: 'Record coverage, observations, gaps and any incidents before ending the session.',
+            decoration: InputDecoration(
+              labelText: context.l10n.fieldSessionOutcome,
+              helperText: context.l10n.fieldSessionOutcomeHint,
             ),
           ),
           const SizedBox(height: 8),
@@ -378,7 +373,9 @@ class _OpenSession extends StatelessWidget {
             onPressed: busy || outcomeController.text.trim().isEmpty
                 ? null
                 : onComplete,
-            child: Text(busy ? 'Saving…' : 'End field session'),
+            child: Text(
+              busy ? context.l10n.saving : context.l10n.endFieldSession,
+            ),
           ),
           if (isOpen) ...[
             const SizedBox(height: 16),
@@ -386,10 +383,9 @@ class _OpenSession extends StatelessWidget {
               key: const Key('abort-reason'),
               controller: abortController,
               onChanged: (_) => onChanged(),
-              decoration: const InputDecoration(
-                labelText: 'Reason for aborting',
-                helperText:
-                    'This session ends and will not resume under this record.',
+              decoration: InputDecoration(
+                labelText: context.l10n.reasonAborting,
+                helperText: context.l10n.abortIrreversibleShort,
               ),
             ),
             const SizedBox(height: 8),
@@ -397,7 +393,7 @@ class _OpenSession extends StatelessWidget {
               onPressed: busy || abortController.text.trim().isEmpty
                   ? null
                   : () => _confirmAbort(context),
-              child: const Text('Abort session'),
+              child: Text(context.l10n.abortSession),
             ),
           ],
         ],

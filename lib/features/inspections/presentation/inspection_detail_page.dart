@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dart';
@@ -50,7 +51,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     } on Exception {
       if (!mounted) return;
       setState(() {
-        _operationError = 'Camera could not be opened. Check device permission and try again.';
+        _operationError = context.l10n.cameraPermissionError;
       });
     }
   }
@@ -70,7 +71,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     };
     if (completedSessionId == null) {
       setState(() {
-        _uploadError = 'Complete the field session before attaching evidence.';
+        _uploadError = context.l10n.completeSessionBeforeEvidence;
       });
       return;
     }
@@ -96,13 +97,13 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
           _captureTime = null;
           _uploading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Evidence uploaded securely.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.evidenceUploaded)));
       case ApiError<InspectionEvidence>(:final failure):
         setState(() {
           _uploading = false;
-          _uploadError = _failureMessage(failure);
+          _uploadError = _failureMessage(context, failure);
         });
     }
   }
@@ -135,8 +136,9 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
       case ApiError<void>(:final failure):
         setState(() {
           _savingItemId = null;
-          _operationError =
-              'Checklist was not saved: ${_failureMessage(failure)}';
+          _operationError = context.l10n.checklistSaveFailed(
+            _failureMessage(context, failure),
+          );
         });
     }
   }
@@ -153,9 +155,9 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back to assignments',
+          tooltip: context.l10n.backToAssignments,
         ),
-        title: const Text('Inspection record'),
+        title: Text(context.l10n.inspectionRecord),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -170,7 +172,9 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              'Inspection ${widget.inspectionId.substring(0, 8)}',
+              context.l10n.inspectionNumber(
+                widget.inspectionId.substring(0, 8),
+              ),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -180,20 +184,23 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
               onPressed: () =>
                   context.push('/inspection/${widget.inspectionId}/session'),
               icon: const Icon(Icons.flight_takeoff_outlined),
-              label: const Text('Open field session'),
+              label: Text(context.l10n.openFieldSession),
             ),
             OutlinedButton(
               onPressed: () => context.push(
                 '/inspection/${widget.inspectionId}/preparation',
               ),
-              child: const Text('Open MF2 Preparation'),
+              child: Text(context.l10n.openPreparation),
             ),
             if (_operationError != null) ...[
               const SizedBox(height: 12),
               _InlineError(message: _operationError!),
             ],
             const SizedBox(height: 16),
-            Text('Checklist', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              context.l10n.checklist,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 8),
             AsyncValueWidget<List<InspectionChecklistItem>>(
               value: checklist,
@@ -219,7 +226,10 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Evidence', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              context.l10n.evidence,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 8),
             Card(
               child: Padding(
@@ -230,29 +240,28 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                     OutlinedButton.icon(
                       onPressed: _uploading ? null : _capturePhoto,
                       icon: const Icon(Icons.photo_camera_outlined),
-                      label: const Text('Capture inspection photo'),
+                      label: Text(context.l10n.captureInspectionPhoto),
                     ),
                     if (_selectedPhoto != null) ...[
                       const SizedBox(height: 8),
-                      Text('Selected: ${_selectedPhoto!.name}'),
+                      Text(context.l10n.selectedFile(_selectedPhoto!.name)),
                       const SizedBox(height: 8),
                       FilledButton.icon(
                         onPressed: _uploading ? null : _uploadPhoto,
                         icon: const Icon(Icons.cloud_upload_outlined),
                         label: Text(
                           _uploading
-                              ? 'Uploading…'
+                              ? context.l10n.uploading
                               : _uploadError == null
-                              ? 'Upload photo'
-                              : 'Retry upload',
+                              ? context.l10n.uploadPhoto
+                              : context.l10n.retryUpload,
                         ),
                       ),
                     ],
                     if (_uploadError != null) ...[
                       const SizedBox(height: 8),
                       _InlineError(
-                        message:
-                            'Upload failed: $_uploadError. The selected photo is kept so you can retry.',
+                        message: context.l10n.uploadFailed(_uploadError!),
                       ),
                     ],
                   ],
@@ -273,7 +282,13 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                           leading: const Icon(Icons.image_outlined),
                           title: Text(item.fileName),
                           subtitle: Text(
-                            '${item.contentType} · ${item.sizeBytes} bytes · ${item.source}',
+                            context.l10n.evidenceDetails(
+                              item.contentType,
+                              item.sizeBytes.toString(),
+                              item.source == 'MOBILE_UPLOAD'
+                                  ? context.l10n.evidenceSourceMobileUpload
+                                  : item.source,
+                            ),
                           ),
                           trailing: const Icon(Icons.verified_user_outlined),
                         ),
@@ -353,11 +368,11 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
     final comparison = _comparisonController.text.trim();
     final reason = _reasonController.text.trim();
     if (comparison.isEmpty) {
-      setState(() => _error = 'Write the shot-list comparison first.');
+      setState(() => _error = context.l10n.writeShotListComparison);
       return;
     }
     if (decision == 'ADDITIONAL_SESSION_REQUIRED' && reason.isEmpty) {
-      setState(() => _error = 'State why another field session is needed.');
+      setState(() => _error = context.l10n.stateWhySessionNeeded);
       return;
     }
     setState(() {
@@ -383,15 +398,15 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
           SnackBar(
             content: Text(
               decision == 'ADDITIONAL_SESSION_REQUIRED'
-                  ? 'Additional field work requested. Continue in MF2 Preparation and wait for readiness review.'
-                  : 'Evidence set accepted for advisory analysis.',
+                  ? context.l10n.additionalWorkRequested
+                  : context.l10n.evidenceSetAccepted,
             ),
           ),
         );
       case ApiError<EvidenceQualityDecision>(:final failure):
         setState(() {
           _busy = false;
-          _error = _failureMessage(failure);
+          _error = _failureMessage(context, failure);
         });
     }
   }
@@ -407,32 +422,31 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Evidence quality decision',
+              context.l10n.evidenceQualityDecision,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 4),
-            const Text(
-              'MF3-03: compare the completed capture set against the shot-list. Choose to accept it or request another MF2 session; weather or site safety during work belongs to postponement/abort.',
-            ),
+            Text(context.l10n.evidenceQualityExplanation),
             const SizedBox(height: 8),
             history.when(
               data: (items) => items.isEmpty
-                  ? const Text('No decision recorded yet.')
+                  ? Text(context.l10n.noDecisionRecorded)
                   : Text(
-                      'Latest: ${items.first.decision.replaceAll('_', ' ')}',
+                      context.l10n.latestDecision(
+                        localizedDecision(context.l10n, items.first.decision),
+                      ),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-              loading: () => const Text('Loading decision history…'),
-              error: (_, _) => const Text('Could not load decision history.'),
+              loading: () => Text(context.l10n.loadingDecisionHistory),
+              error: (_, _) => Text(context.l10n.decisionHistoryFailed),
             ),
             const SizedBox(height: 8),
             TextField(
               key: const Key('shot-list-comparison'),
               controller: _comparisonController,
-              decoration: const InputDecoration(
-                labelText: 'Shot-list comparison',
-                helperText:
-                    'Required. What the set covers and what it does not.',
+              decoration: InputDecoration(
+                labelText: context.l10n.shotListComparison,
+                helperText: context.l10n.shotListComparisonHint,
               ),
               maxLines: 3,
               maxLength: 8000,
@@ -440,10 +454,9 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
             TextField(
               key: const Key('limitation-reason'),
               controller: _reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Why is another field session needed?',
-                helperText:
-                    'Required only when requesting another MF2 session.',
+              decoration: InputDecoration(
+                labelText: context.l10n.whyAnotherSession,
+                helperText: context.l10n.anotherSessionHint,
               ),
               maxLines: 2,
               maxLength: 2000,
@@ -460,10 +473,10 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (final MapEntry(key: label, value: decision) in const [
-                  MapEntry('Accept evidence set', 'ACCEPTED'),
+                for (final MapEntry(key: label, value: decision) in [
+                  MapEntry(context.l10n.acceptEvidenceSet, 'ACCEPTED'),
                   MapEntry(
-                    'Additional session needed',
+                    context.l10n.additionalSessionNeeded,
                     'ADDITIONAL_SESSION_REQUIRED',
                   ),
                 ])
@@ -471,7 +484,7 @@ class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
                     onPressed: _busy || widget.evidenceCount == 0
                         ? null
                         : () => _decide(decision),
-                    child: Text(_busy ? 'Recording…' : label),
+                    child: Text(_busy ? context.l10n.recording : label),
                   ),
               ],
             ),
@@ -519,7 +532,9 @@ class _ChecklistItemCardState extends State<_ChecklistItemCard> {
   }
 
   List<String> _choiceOptions() {
-    if (widget.item.responseType == 'PASS_FAIL') return ['PASS', 'FAIL'];
+    if (widget.item.responseType == 'PASS_FAIL') {
+      return ['PASS', 'FAIL'];
+    }
     if (widget.item.responseType == 'BOOLEAN') return ['true', 'false'];
     if (widget.item.responseType != 'CHOICE' ||
         widget.item.validationConfig == null) {
@@ -572,17 +587,13 @@ class _ChecklistItemCardState extends State<_ChecklistItemCard> {
             if (choices.isNotEmpty)
               DropdownButtonFormField<String>(
                 initialValue: _answer.text.isEmpty ? null : _answer.text,
-                decoration: const InputDecoration(labelText: 'Response'),
+                decoration: InputDecoration(labelText: context.l10n.response),
                 items: choices
                     .map(
                       (choice) => DropdownMenuItem(
                         value: choice,
                         child: Text(
-                          choice == 'true'
-                              ? 'Yes'
-                              : choice == 'false'
-                              ? 'No'
-                              : choice,
+                          localizedChecklistChoice(context.l10n, choice),
                         ),
                       ),
                     )
@@ -599,16 +610,16 @@ class _ChecklistItemCardState extends State<_ChecklistItemCard> {
                     : TextInputType.text,
                 decoration: InputDecoration(
                   labelText: item.responseType == 'NUMBER'
-                      ? 'Numeric response'
-                      : 'Response',
+                      ? context.l10n.numericResponse
+                      : context.l10n.response,
                 ),
               ),
             const SizedBox(height: 10),
             TextField(
               controller: _notes,
               maxLength: 4000,
-              decoration: const InputDecoration(
-                labelText: 'Notes (optional)',
+              decoration: InputDecoration(
+                labelText: context.l10n.notesOptional,
                 border: OutlineInputBorder(),
               ),
               minLines: 1,
@@ -626,13 +637,17 @@ class _ChecklistItemCardState extends State<_ChecklistItemCard> {
                             widget.onSave(value, _notes.text.trim());
                           }
                         },
-                  child: Text(widget.isSaving ? 'Saving…' : 'Save response'),
+                  child: Text(
+                    widget.isSaving
+                        ? context.l10n.saving
+                        : context.l10n.saveResponse,
+                  ),
                 ),
                 if (widget.isSaved) ...[
                   const SizedBox(width: 8),
                   const Icon(Icons.check_circle_outline, color: Colors.green),
                   const SizedBox(width: 4),
-                  const Text('Saved'),
+                  Text(context.l10n.saved),
                 ],
               ],
             ),
@@ -658,12 +673,12 @@ class _InlineError extends StatelessWidget {
   );
 }
 
-String _failureMessage(ApiFailure failure) => switch (failure) {
-  NetworkFailure() => 'Check your connection and try again.',
-  ValidationFailure(:final errors) => errors.values.join(' '),
-  UnauthorizedFailure() => 'You are not authorized to access this inspection.',
-  NotFoundFailure() => 'This inspection is no longer available.',
-  ServerFailure(:final detail) =>
-    detail ?? 'The server could not complete this request.',
-  UnknownFailure(:final message) => message,
-};
+String _failureMessage(BuildContext context, ApiFailure failure) =>
+    switch (failure) {
+      NetworkFailure() => context.l10n.checkConnection,
+      ValidationFailure(:final errors) => errors.values.join(' '),
+      UnauthorizedFailure() => context.l10n.unauthorizedInspection,
+      NotFoundFailure() => context.l10n.inspectionUnavailable,
+      ServerFailure(:final detail) => detail ?? context.l10n.requestFailed,
+      UnknownFailure(:final message) => message,
+    };
