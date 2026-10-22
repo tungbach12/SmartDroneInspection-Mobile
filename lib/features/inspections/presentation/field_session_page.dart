@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/field_session_panel.dart';
 
 /// MF2-09 to MF2-11 on its own screen, reached from the inspection detail page.
@@ -15,7 +16,7 @@ class FieldSessionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Field session')),
+      appBar: AppBar(title: Text(context.l10n.fieldSession)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),

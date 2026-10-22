@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/login_page.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/field_session_page.dart';
@@ -108,21 +109,21 @@ class AppScaffold extends StatelessWidget {
         selectedIndex: shell.currentIndex,
         onDestinationSelected: (index) =>
             shell.goBranch(index, initialLocation: index == shell.currentIndex),
-        destinations: const [
+        destinations: [
           NavigationDestination(
             icon: Icon(Icons.flight_takeoff_outlined),
             selectedIcon: Icon(Icons.flight_takeoff),
-            label: 'Inspections',
+            label: context.l10n.navInspections,
           ),
           NavigationDestination(
             icon: Icon(Icons.build_outlined),
             selectedIcon: Icon(Icons.build),
-            label: 'Tasks',
+            label: context.l10n.navTasks,
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            label: context.l10n.navProfile,
           ),
         ],
       ),
@@ -136,8 +137,8 @@ class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Not found')),
-      body: const Center(child: Text('Page not found')),
+      appBar: AppBar(title: Text(context.l10n.notFound)),
+      body: Center(child: Text(context.l10n.pageNotFound)),
     );
   }
 }

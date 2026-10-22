@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/features/assets/presentation/providers/asset_list_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 
@@ -13,7 +14,7 @@ class AssetsPage extends ConsumerWidget {
     final assetsAsync = ref.watch(assetListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Assets')),
+      appBar: AppBar(title: Text(context.l10n.assets)),
       body: AsyncValueWidget(
         value: assetsAsync,
         onRetry: () => ref.invalidate(assetListProvider),
@@ -29,7 +30,9 @@ class AssetsPage extends ConsumerWidget {
                 leading: const Icon(Icons.apartment),
                 title: Text(asset.name),
                 subtitle: Text('${asset.assetCode} · ${asset.location ?? '—'}'),
-                trailing: Chip(label: Text(asset.status)),
+                trailing: Chip(
+                  label: Text(localizedAssetStatus(context.l10n, asset.status)),
+                ),
                 onTap: () => context.push('/home'),
               );
             },

@@ -15,6 +15,22 @@ sealed class ApiFailure with _$ApiFailure {
   const factory ApiFailure.unknown(String message) = UnknownFailure;
 }
 
+class ApiFailureException implements Exception {
+  const ApiFailureException(this.failure);
+
+  final ApiFailure failure;
+
+  @override
+  String toString() => switch (failure) {
+    NetworkFailure() => 'NetworkFailure',
+    ValidationFailure(:final errors) => errors.values.join(' '),
+    UnauthorizedFailure() => 'UnauthorizedFailure',
+    NotFoundFailure() => 'NotFoundFailure',
+    ServerFailure(:final detail) => detail ?? 'ServerFailure',
+    UnknownFailure(:final message) => message,
+  };
+}
+
 /// Maps DioException to typed ApiFailure (ProblemDetails-aware).
 ApiFailure mapDioError(DioException e) => switch (e.type) {
   DioExceptionType.connectionTimeout ||

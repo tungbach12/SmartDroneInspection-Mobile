@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
@@ -78,8 +79,7 @@ class _InspectionPreparationPageState
     if (isAdditionalSession && (start == null || end == null)) {
       setState(() {
         _busy = false;
-        _error =
-            'Set both planned start and end for the additional field session.';
+        _error = context.l10n.bothPlannedTimes;
       });
       return;
     }
@@ -112,7 +112,9 @@ class _InspectionPreparationPageState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Preparation version ${data.preparationVersion} saved.',
+              context.l10n.preparationVersionSaved(
+                data.preparationVersion.toString(),
+              ),
             ),
           ),
         );
@@ -142,11 +144,7 @@ class _InspectionPreparationPageState
         setState(() => _busy = false);
         ref.invalidate(inspectionPreparationsProvider(widget.inspectionId));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Preparation submitted for independent readiness review.',
-            ),
-          ),
+          SnackBar(content: Text(context.l10n.preparationSubmitted)),
         );
       case ApiError<InspectionPreparation>(:final failure):
         setState(() {
@@ -159,10 +157,10 @@ class _InspectionPreparationPageState
   String _failureText(ApiFailure failure) => switch (failure) {
     ValidationFailure(:final errors) => errors.values.join('\n'),
     ServerFailure(:final detail) =>
-      detail ?? 'The server refused this request.',
-    NetworkFailure() => 'Network unavailable. Try again when connected.',
-    UnauthorizedFailure() => 'You are not allowed to edit this preparation.',
-    NotFoundFailure() => 'This inspection was not found in your organization.',
+      detail ?? context.l10n.preparationServerRefused,
+    NetworkFailure() => context.l10n.networkRetry,
+    UnauthorizedFailure() => context.l10n.cannotEditPreparation,
+    NotFoundFailure() => context.l10n.inspectionNotInOrganization,
     UnknownFailure(:final message) => message,
   };
 
@@ -183,7 +181,7 @@ class _InspectionPreparationPageState
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
         ),
-        title: const Text('MF2 Preparation'),
+        title: Text(context.l10n.preparation),
       ),
       body: AsyncValueWidget<List<InspectionPreparation>>(
         value: query,
@@ -193,37 +191,41 @@ class _InspectionPreparationPageState
           padding: const EdgeInsets.all(16),
           children: [
             if (isAdditionalSession)
-              const Card(
+              Card(
                 child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Text(
-                    'Additional field session requested. Update the plan/window and submit it. An independent ORG_ADMIN must approve current readiness before Start becomes available.',
-                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Text(context.l10n.additionalSessionRequested),
                 ),
               ),
             if (current != null)
               Text(
-                'Version ${current.preparationVersion} · ${current.status ?? 'DRAFT'}',
+                context.l10n.preparationVersionStatus(
+                  current.preparationVersion.toString(),
+                  localizedWorkflowStatus(
+                    context.l10n,
+                    current.status ?? 'DRAFT',
+                  ),
+                ),
               ),
             TextField(
               controller: _shotList,
-              decoration: const InputDecoration(
-                labelText: 'Component shot-list (JSON)',
+              decoration: InputDecoration(
+                labelText: context.l10n.componentShotListJson,
               ),
               maxLines: 4,
               enabled: editable,
             ),
             TextField(
               controller: _evidenceTypes,
-              decoration: const InputDecoration(
-                labelText: 'Evidence types (JSON)',
+              decoration: InputDecoration(
+                labelText: context.l10n.evidenceTypesJson,
               ),
               enabled: editable,
             ),
             TextField(
               controller: _accessConstraints,
-              decoration: const InputDecoration(
-                labelText: 'Access constraints',
+              decoration: InputDecoration(
+                labelText: context.l10n.accessConstraints,
               ),
               maxLines: 2,
               enabled: editable,
@@ -231,16 +233,16 @@ class _InspectionPreparationPageState
             if (isAdditionalSession) ...[
               TextField(
                 controller: _plannedStart,
-                decoration: const InputDecoration(
-                  labelText: 'Planned session start (local time)',
+                decoration: InputDecoration(
+                  labelText: context.l10n.plannedSessionStart,
                 ),
                 keyboardType: TextInputType.datetime,
                 enabled: editable,
               ),
               TextField(
                 controller: _plannedEnd,
-                decoration: const InputDecoration(
-                  labelText: 'Planned session end (local time)',
+                decoration: InputDecoration(
+                  labelText: context.l10n.plannedSessionEnd,
                 ),
                 keyboardType: TextInputType.datetime,
                 enabled: editable,
@@ -248,8 +250,8 @@ class _InspectionPreparationPageState
             ],
             TextField(
               controller: _safetyObservations,
-              decoration: const InputDecoration(
-                labelText: 'Safety observations',
+              decoration: InputDecoration(
+                labelText: context.l10n.safetyObservations,
               ),
               maxLines: 2,
               enabled: editable,
@@ -257,24 +259,28 @@ class _InspectionPreparationPageState
             if (editable)
               FilledButton(
                 onPressed: _busy ? null : _save,
-                child: Text(_busy ? 'Saving…' : 'Save draft'),
+                child: Text(
+                  _busy ? context.l10n.saving : context.l10n.saveDraft,
+                ),
               ),
             if (submitted) ...[
               TextField(
                 controller: _acknowledgment,
-                decoration: const InputDecoration(
-                  labelText: 'Safety acknowledgment',
+                decoration: InputDecoration(
+                  labelText: context.l10n.safetyAcknowledgment,
                 ),
               ),
               FilledButton(
                 onPressed: _busy ? null : () => _submit(current!),
-                child: Text(_busy ? 'Submitting…' : 'Submit preparation'),
+                child: Text(
+                  _busy
+                      ? context.l10n.submitting
+                      : context.l10n.submitPreparation,
+                ),
               ),
             ],
             if (current?.status == 'READY')
-              const Text(
-                'Preparation is approved. Readiness is bound to this version; changes require another review.',
-              ),
+              Text(context.l10n.preparationApproved),
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
