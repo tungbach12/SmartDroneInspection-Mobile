@@ -10,6 +10,7 @@ import 'package:smart_drone_inspection/features/inspections/presentation/inspect
 import 'package:smart_drone_inspection/features/inspections/presentation/inspections_page.dart';
 import 'package:smart_drone_inspection/features/profile/presentation/profile_page.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.dart';
+import 'package:smart_drone_inspection/features/tasks/presentation/work_order_detail_page.dart';
 
 /// App router: auth redirect + bottom-nav shell with 3 branches.
 final routerProvider = Provider<GoRouter>((ref) {
@@ -61,6 +62,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/inspection/:inspectionId/session',
         builder: (context, state) => FieldSessionPage(
           inspectionId: state.pathParameters['inspectionId']!,
+        ),
+      ),
+      GoRoute(
+        path: '/tasks/:workOrderId',
+        builder: (context, state) => WorkOrderDetailPage(
+          workOrderId: state.pathParameters['workOrderId']!,
         ),
       ),
       StatefulShellRoute.indexedStack(
