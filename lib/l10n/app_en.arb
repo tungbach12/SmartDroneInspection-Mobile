@@ -183,5 +183,7 @@
   "assignmentStatusActive": "Active",
   "assignmentResponseAccepted": "Accepted",
   "assignmentResponseRejected": "Declined",
-  "assetStatusActive": "Active"
+  "assetStatusActive": "Active",
+  "assetStatusInactive": "Inactive",
+  "assetStatusRetired": "Retired"
 }

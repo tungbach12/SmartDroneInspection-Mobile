@@ -579,4 +579,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetStatusActive => 'Active';
+
+  @override
+  String get assetStatusInactive => 'Inactive';
+
+  @override
+  String get assetStatusRetired => 'Retired';
 }

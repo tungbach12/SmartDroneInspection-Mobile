@@ -11,6 +11,17 @@ void main() {
     expect(localizedWorkflowStatus(english, 'READY'), 'Ready');
     expect(localizedWorkflowStatus(vietnamese, 'READY'), 'Sẵn sàng');
     expect(localizedWorkflowStatus(vietnamese, 'FUTURE_STATE'), 'FUTURE_STATE');
+    expect(localizedAssetStatus(english, 'INACTIVE'), 'Inactive');
+    expect(localizedAssetStatus(english, 'RETIRED'), 'Retired');
+    expect(localizedAssetStatus(vietnamese, 'INACTIVE'), 'Ngừng hoạt động');
+    expect(localizedAssetStatus(vietnamese, 'RETIRED'), 'Đã ngừng sử dụng');
+    expect(localizedAssetStatus(vietnamese, 'UNKNOWN'), 'UNKNOWN');
+
+    // The mapping only changes the displayed label, not the supplied protocol value.
+    const protocolValue = 'INACTIVE';
+    localizedAssetStatus(vietnamese, protocolValue);
+    expect(protocolValue, 'INACTIVE');
+
     expect(
       localizedDecision(vietnamese, 'ADDITIONAL_SESSION_REQUIRED'),
       'Yêu cầu phiên bổ sung',

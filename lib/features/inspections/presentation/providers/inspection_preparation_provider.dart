@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
+import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_preparation.dart';
 
@@ -10,6 +11,6 @@ final inspectionPreparationsProvider =
           .listPreparations(id);
       return switch (result) {
         ApiSuccess(:final data) => data,
-        ApiError(:final failure) => throw Exception(failure),
+        ApiError(:final failure) => throw ApiFailureException(failure),
       };
     });

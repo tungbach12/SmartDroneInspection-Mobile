@@ -183,5 +183,7 @@
   "assignmentStatusActive": "Đang hoạt động",
   "assignmentResponseAccepted": "Đã chấp nhận",
   "assignmentResponseRejected": "Đã từ chối",
-  "assetStatusActive": "Đang hoạt động"
+  "assetStatusActive": "Đang hoạt động",
+  "assetStatusInactive": "Ngừng hoạt động",
+  "assetStatusRetired": "Đã ngừng sử dụng"
 }

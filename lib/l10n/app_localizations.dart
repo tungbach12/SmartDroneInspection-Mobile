@@ -1129,6 +1129,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Active'**
   String get assetStatusActive;
+
+  /// No description provided for @assetStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get assetStatusInactive;
+
+  /// No description provided for @assetStatusRetired.
+  ///
+  /// In en, this message translates to:
+  /// **'Retired'**
+  String get assetStatusRetired;
 }
 
 class _AppLocalizationsDelegate

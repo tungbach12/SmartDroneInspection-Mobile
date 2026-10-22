@@ -583,4 +583,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get assetStatusActive => 'Đang hoạt động';
+
+  @override
+  String get assetStatusInactive => 'Ngừng hoạt động';
+
+  @override
+  String get assetStatusRetired => 'Đã ngừng sử dụng';
 }

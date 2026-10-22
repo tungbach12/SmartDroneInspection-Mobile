@@ -77,7 +77,8 @@ String localizedAssignmentResponse(AppLocalizations l10n, String response) =>
 
 String localizedAssetStatus(AppLocalizations l10n, String status) =>
     switch (status) {
-      'ACTIVE' => l10n.assetStatusActive,
-      'Active' => l10n.assetStatusActive,
+      'ACTIVE' || 'Active' => l10n.assetStatusActive,
+      'INACTIVE' => l10n.assetStatusInactive,
+      'RETIRED' => l10n.assetStatusRetired,
       _ => status,
     };
