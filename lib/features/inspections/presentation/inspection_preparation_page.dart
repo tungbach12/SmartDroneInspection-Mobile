@@ -6,7 +6,10 @@ import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_preparation.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/providers/field_session_provider.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_preparation_provider.dart';
 
 class InspectionPreparationPage extends ConsumerStatefulWidget {
@@ -28,6 +31,7 @@ class _InspectionPreparationPageState
   final _plannedStart = TextEditingController();
   final _plannedEnd = TextEditingController();
   final _acknowledgment = TextEditingController();
+  final _additionalSessionReason = TextEditingController();
   String? _initializedFor;
   bool _busy = false;
   String? _error;
@@ -41,6 +45,7 @@ class _InspectionPreparationPageState
     _plannedStart.dispose();
     _plannedEnd.dispose();
     _acknowledgment.dispose();
+    _additionalSessionReason.dispose();
     super.dispose();
   }
 
@@ -126,6 +131,41 @@ class _InspectionPreparationPageState
     }
   }
 
+  Future<void> _requestAdditionalSession() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final result = await ref
+        .read(inspectionRepositoryProvider)
+        .requestAdditionalSession(
+          inspectionId: widget.inspectionId,
+          reason: _additionalSessionReason.text.trim(),
+        );
+    if (!mounted) return;
+    switch (result) {
+      case ApiSuccess<InspectionPreparation>(:final data):
+        setState(() {
+          _busy = false;
+          _initializedFor = null;
+          _additionalSessionReason.clear();
+        });
+        ref.invalidate(inspectionPreparationsProvider(widget.inspectionId));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Additional field session requested. Preparation version ${data.preparationVersion} is ready to update.',
+            ),
+          ),
+        );
+      case ApiError<InspectionPreparation>(:final failure):
+        setState(() {
+          _busy = false;
+          _error = _failureText(failure);
+        });
+    }
+  }
+
   Future<void> _submit(InspectionPreparation preparation) async {
     setState(() {
       _busy = true;
@@ -170,8 +210,25 @@ class _InspectionPreparationPageState
       inspectionPreparationsProvider(widget.inspectionId),
     );
     final current = query.asData?.value.firstOrNull;
+    final sessions = ref.watch(fieldSessionsProvider(widget.inspectionId));
+    final evidence = ref.watch(inspectionEvidenceProvider(widget.inspectionId));
     _seed(current);
     final isAdditionalSession = (current?.preparationVersion ?? 1) > 1;
+    final latestCompletedSession = sessions.asData?.value
+        .where((session) => session.isCompleted)
+        .lastOrNull;
+    final hasActiveEvidence =
+        evidence.asData?.value.any(
+          (item) =>
+              item.fieldSessionId == latestCompletedSession?.id &&
+              item.uploadStatus == 'AVAILABLE' &&
+              item.retiredAt == null,
+        ) ??
+        false;
+    final canRequestAdditionalSession =
+        current?.status == 'READY' &&
+        latestCompletedSession != null &&
+        hasActiveEvidence;
     final editable = current?.status == 'DRAFT' || current == null;
     final submitted = current?.status == 'SUBMITTED';
 
@@ -207,6 +264,43 @@ class _InspectionPreparationPageState
                   ),
                 ),
               ),
+            if (sessions.isLoading || evidence.isLoading)
+              const Text('Checking completed session and active evidence…'),
+            if (sessions.hasError || evidence.hasError) ...[
+              const Text(
+                'Could not verify field-session evidence. Refresh before requesting another session.',
+              ),
+              TextButton(
+                onPressed: () {
+                  ref.invalidate(fieldSessionsProvider(widget.inspectionId));
+                  ref.invalidate(
+                    inspectionEvidenceProvider(widget.inspectionId),
+                  );
+                },
+                child: const Text('Refresh session and evidence'),
+              ),
+            ],
+            if (canRequestAdditionalSession) ...[
+              const SizedBox(height: 12),
+              TextField(
+                key: const Key('additional-session-reason'),
+                controller: _additionalSessionReason,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  labelText: 'Why is another field session needed?',
+                  helperText: 'Use this after the completed field session when its active evidence does not cover the required scope.',
+                ),
+                maxLines: 2,
+              ),
+              FilledButton.tonal(
+                onPressed: _busy || _additionalSessionReason.text.trim().isEmpty
+                    ? null
+                    : _requestAdditionalSession,
+                child: Text(
+                  _busy ? 'Requesting…' : 'Request additional field session',
+                ),
+              ),
+            ],
             TextField(
               controller: _shotList,
               decoration: InputDecoration(
