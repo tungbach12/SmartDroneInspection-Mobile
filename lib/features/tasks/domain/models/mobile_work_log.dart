@@ -17,7 +17,9 @@ class MobileWorkLog {
       id: json['id'] as String,
       taskId: json['taskId'] as String,
       engineerUserId: json['engineerUserId'] as String,
-      workHours: (json['workHours'] as num?)?.toDouble() ?? 1.0,
+      workHours: (json['hours'] as num?)?.toDouble() ??
+          (json['workHours'] as num?)?.toDouble() ??
+          1.0,
       asLeftCondition: json['asLeftCondition'] as String?,
       testReadings: json['testReadings'] as String?,
       status: json['status'] as String? ?? 'DRAFT',
