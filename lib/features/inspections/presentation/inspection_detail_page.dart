@@ -6,10 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
-import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dart';
-import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
@@ -273,207 +270,16 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                           leading: const Icon(Icons.image_outlined),
                           title: Text(item.fileName),
                           subtitle: Text(
-                            '${item.contentType} · ${item.sizeBytes} bytes · ${item.source}',
+                            '${item.contentType} · ${item.sizeBytes} bytes',
                           ),
-                          trailing: const Icon(Icons.verified_user_outlined),
+                          trailing: item.retiredAt == null
+                              ? null
+                              : const Chip(label: Text('Retired')),
                         ),
                       )
                       .toList(),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            _EvidenceQualitySection(
-              inspectionId: widget.inspectionId,
-              evidenceCount: evidence.value?.length ?? 0,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Gates the adequacy card to active Inspectors only. When anonymous or another role,
-/// nothing renders and the parent page watches no extra provider.
-class _EvidenceQualitySection extends ConsumerWidget {
-  const _EvidenceQualitySection({
-    required this.inspectionId,
-    required this.evidenceCount,
-  });
-
-  final String inspectionId;
-  final int evidenceCount;
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isInspector = ref.watch(
-      authNotifierProvider.select(
-        (session) => session.value?.user?.hasRole(UserRole.inspector) ?? false,
-      ),
-    );
-    if (!isInspector) return const SizedBox.shrink();
-    return _EvidenceQualityCard(
-      inspectionId: inspectionId,
-      evidenceCount: evidenceCount,
-    );
-  }
-}
-
-/// MF3-03: the assigned Inspector's substantive adequacy decision. Only an ACCEPTED decision
-/// makes the evidence set eligible for advisory detection and report drafting; the backend
-/// refuses LIMITED without a stated limitation, and any decision without a comparison.
-class _EvidenceQualityCard extends ConsumerStatefulWidget {
-  const _EvidenceQualityCard({
-    required this.inspectionId,
-    required this.evidenceCount,
-  });
-
-  final String inspectionId;
-  final int evidenceCount;
-
-  @override
-  ConsumerState<_EvidenceQualityCard> createState() =>
-      _EvidenceQualityCardState();
-}
-
-class _EvidenceQualityCardState extends ConsumerState<_EvidenceQualityCard> {
-  final _comparisonController = TextEditingController();
-  final _reasonController = TextEditingController();
-  bool _busy = false;
-  String? _error;
-
-  @override
-  void dispose() {
-    _comparisonController.dispose();
-    _reasonController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _decide(String decision) async {
-    final comparison = _comparisonController.text.trim();
-    final reason = _reasonController.text.trim();
-    if (comparison.isEmpty) {
-      setState(() => _error = 'Write the shot-list comparison first.');
-      return;
-    }
-    if (decision == 'ADDITIONAL_SESSION_REQUIRED' && reason.isEmpty) {
-      setState(() => _error = 'State why another field session is needed.');
-      return;
-    }
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    // The parent passes the inspection id it was routed with; no router lookup here.
-    final inspectionId = widget.inspectionId;
-    final result = await ref
-        .read(inspectionRepositoryProvider)
-        .decideEvidenceQuality(
-          inspectionId: inspectionId,
-          decision: decision,
-          shotListComparison: comparison,
-          limitationReason: reason.isEmpty ? null : reason,
-        );
-    if (!mounted) return;
-    switch (result) {
-      case ApiSuccess<EvidenceQualityDecision>():
-        ref.invalidate(evidenceQualityHistoryProvider(inspectionId));
-        setState(() => _busy = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              decision == 'ADDITIONAL_SESSION_REQUIRED'
-                  ? 'Additional field work requested. Continue in MF2 Preparation and wait for readiness review.'
-                  : 'Evidence set accepted for advisory analysis.',
-            ),
-          ),
-        );
-      case ApiError<EvidenceQualityDecision>(:final failure):
-        setState(() {
-          _busy = false;
-          _error = _failureMessage(failure);
-        });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final inspectionId = widget.inspectionId;
-    final history = ref.watch(evidenceQualityHistoryProvider(inspectionId));
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Evidence quality decision',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'MF3-03: compare the completed capture set against the shot-list. Choose to accept it or request another MF2 session; weather or site safety during work belongs to postponement/abort.',
-            ),
-            const SizedBox(height: 8),
-            history.when(
-              data: (items) => items.isEmpty
-                  ? const Text('No decision recorded yet.')
-                  : Text(
-                      'Latest: ${items.first.decision.replaceAll('_', ' ')}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-              loading: () => const Text('Loading decision history…'),
-              error: (_, _) => const Text('Could not load decision history.'),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              key: const Key('shot-list-comparison'),
-              controller: _comparisonController,
-              decoration: const InputDecoration(
-                labelText: 'Shot-list comparison',
-                helperText:
-                    'Required. What the set covers and what it does not.',
-              ),
-              maxLines: 3,
-              maxLength: 8000,
-            ),
-            TextField(
-              key: const Key('limitation-reason'),
-              controller: _reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Why is another field session needed?',
-                helperText:
-                    'Required only when requesting another MF2 session.',
-              ),
-              maxLines: 2,
-              maxLength: 2000,
-            ),
-            const SizedBox(height: 8),
-            if (_error != null) ...[
-              Text(
-                _error!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              const SizedBox(height: 8),
-            ],
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final MapEntry(key: label, value: decision) in const [
-                  MapEntry('Accept evidence set', 'ACCEPTED'),
-                  MapEntry(
-                    'Additional session needed',
-                    'ADDITIONAL_SESSION_REQUIRED',
-                  ),
-                ])
-                  FilledButton.tonal(
-                    onPressed: _busy || widget.evidenceCount == 0
-                        ? null
-                        : () => _decide(decision),
-                    child: Text(_busy ? 'Recording…' : label),
-                  ),
-              ],
             ),
           ],
         ),

@@ -50,12 +50,12 @@ void main() {
             return;
           }
           if (options.method == 'POST') {
-            if (options.path.endsWith('/evidence-quality-decisions')) {
+            if (options.path.endsWith('/additional-session')) {
               handler.resolve(
                 Response(
                   requestOptions: options,
                   statusCode: 200,
-                  data: _decisionResponse(options.data),
+                  data: _preparationResponse(),
                 ),
               );
               return;
@@ -70,7 +70,13 @@ void main() {
             return;
           }
           handler.resolve(
-            Response(requestOptions: options, statusCode: 200, data: []),
+            Response(
+              requestOptions: options,
+              statusCode: 200,
+              data: options.path.endsWith('/evidence')
+                  ? [_evidenceResponse(retiredAt: '2026-09-25T08:30:00Z')]
+                  : [],
+            ),
           );
         },
       ),
@@ -109,49 +115,43 @@ void main() {
     },
   );
 
-  test('records each evidence-quality outcome with comparison and conditional reason', () async {
-    const outcomes = [
-      ('ACCEPTED', null),
-      ('LIMITED', 'The east face was not observed'),
-      ('REUPLOAD_REQUIRED', 'Blurry captures on the north pier'),
-      ('ADDITIONAL_SESSION_REQUIRED', 'East face needs a second flight'),
-    ];
-    for (final (decision, reason) in outcomes) {
-      final result = await repository.decideEvidenceQuality(
+  test(
+    'requests an additional field session through MF2 preparation',
+    () async {
+      final result = await repository.requestAdditionalSession(
         inspectionId: 'inspection-1',
-        decision: decision,
-        shotListComparison: 'Span covered except the east face',
-        limitationReason: reason,
+        reason: 'The east face was not covered during the completed session.',
       );
-      expect(result, isA<ApiSuccess>());
-    }
 
-    final posts = requests
-        .where(
-          (request) =>
-              request.method == 'POST' &&
-              request.path.endsWith('/evidence-quality-decisions'),
-        )
-        .toList();
-    expect(posts.map((request) => request.data['decision']), [
-      'ACCEPTED',
-      'LIMITED',
-      'REUPLOAD_REQUIRED',
-      'ADDITIONAL_SESSION_REQUIRED',
-    ]);
-    for (final request in posts) {
+      expect(result, isA<ApiSuccess>());
+      expect((result as ApiSuccess).data.preparationVersion, 2);
+      expect(requests.single.method, 'POST');
       expect(
-        request.data['shotListComparison'],
-        'Span covered except the east face',
+        requests.single.path,
+        '/inspections/inspection-1/field-sessions/additional-session',
       );
-    }
-    // The accepted payload carries no limitation; the other three do.
-    expect(posts[0].data.containsKey('limitationReason'), isFalse);
-    for (final request in posts.skip(1)) {
-      expect(request.data['limitationReason'], isNotEmpty);
-    }
+      expect(requests.single.data, {
+        'reason': 'The east face was not covered during the completed session.',
+      });
+    },
+  );
+
+  test('parses evidence responses without retired API fields and retains retiredAt', () async {
+    final result = await repository.listEvidence('inspection-1');
+
+    expect(result, isA<ApiSuccess>());
+    final evidence = (result as ApiSuccess).data.single;
+    expect(evidence.retiredAt, '2026-09-25T08:30:00Z');
+    expect(evidence.toJson().keys, contains('retiredAt'));
+    expect(evidence.toJson().keys, isNot(contains('checksumSha256')));
+    expect(evidence.toJson().keys, isNot(contains('source')));
+    expect(evidence.toJson().keys, isNot(contains('externalReference')));
+    expect(evidence.toJson().keys, isNot(contains('uploadedByUserId')));
+    expect(evidence.toJson().keys, isNot(contains('retiredByUserId')));
+    expect(evidence.toJson().keys, isNot(contains('retirementReason')));
   });
-  test('uploads a captured file as multipart with server-verifiable source metadata', () async {
+
+  test('uploads a captured file as multipart without a source field', () async {
     final directory = await Directory.systemTemp.createTemp(
       'inspection-photo-',
     );
@@ -172,12 +172,7 @@ void main() {
     expect(request.method, 'POST');
     expect(request.path, '/inspections/inspection-1/evidence');
     final form = request.data as FormData;
-    expect(
-      form.fields.any(
-        (entry) => entry.key == 'source' && entry.value == 'MOBILE_UPLOAD',
-      ),
-      isTrue,
-    );
+    expect(form.fields.map((entry) => entry.key), isNot(contains('source')));
     expect(
       form.fields.any(
         (entry) =>
@@ -188,37 +183,38 @@ void main() {
     );
     expect(form.files.single.key, 'file');
     expect(form.files.single.value.filename, 'north-span.jpg');
-    expect(
-      form.fields.map((entry) => entry.key),
-      isNot(contains('checksumSha256')),
-    );
   });
 }
 
-Map<String, dynamic> _evidenceResponse() => {
+Map<String, dynamic> _evidenceResponse({String? retiredAt}) => {
   'id': 'evidence-1',
   'inspectionId': 'inspection-1',
   'fieldSessionId': null,
   'fileName': 'north-span.jpg',
   'contentType': 'image/jpeg',
   'sizeBytes': 4,
-  'checksumSha256': 'a' * 64,
-  'source': 'MOBILE_UPLOAD',
   'captureTime': '2026-09-24T08:30:00Z',
   'latitude': null,
   'longitude': null,
-  'externalReference': null,
   'uploadStatus': 'AVAILABLE',
   'createdAt': '2026-09-24T08:30:01Z',
+  'retiredAt': retiredAt,
 };
 
-Map<String, dynamic> _decisionResponse(Map<String, dynamic> request) => {
-  'id': 'decision-1',
+Map<String, dynamic> _preparationResponse() => {
+  'id': 'preparation-2',
   'inspectionId': 'inspection-1',
-  'fieldSessionId': null,
-  'decision': request['decision'],
-  'shotListComparison': request['shotListComparison'],
-  'limitationReason': request['limitationReason'],
-  'decidedByUserId': 'inspector-1',
-  'decidedAt': '2026-10-12T00:00:00Z',
+  'inspectorUserId': 'inspector-1',
+  'preparationVersion': 2,
+  'plannedStartAt': '2026-11-01T09:00:00Z',
+  'plannedEndAt': '2026-11-01T10:00:00Z',
+  'shotList': '{"areas": ["east face"]}',
+  'evidenceTypes': null,
+  'accessConstraints': null,
+  'safetyObservations': null,
+  'permitDocumentReferences': null,
+  'status': 'DRAFT',
+  'submittedAt': null,
+  'createdAt': '2026-10-12T00:00:00Z',
+  'updatedAt': '2026-10-12T00:00:00Z',
 };

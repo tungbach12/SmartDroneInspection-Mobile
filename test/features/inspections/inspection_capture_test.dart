@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
@@ -184,10 +183,6 @@ class _FakeInspectionRepository extends InspectionRepository {
   }
 
   @override
-  Future<ApiResult<List<EvidenceQualityDecision>>> evidenceQualityHistory(
-    String inspectionId,
-  ) async => const ApiResult.success([]);
-  @override
   Future<ApiResult<InspectionEvidence>> uploadEvidence({
     required String inspectionId,
     required XFile photo,
@@ -229,13 +224,11 @@ class _FakeInspectionRepository extends InspectionRepository {
     fileName: 'span.jpg',
     contentType: 'image/jpeg',
     sizeBytes: 4,
-    checksumSha256: 'b' * 64,
-    source: 'MOBILE_UPLOAD',
     captureTime: '2026-09-24T08:30:00Z',
     latitude: null,
     longitude: null,
-    externalReference: null,
     uploadStatus: 'AVAILABLE',
     createdAt: '2026-09-24T08:31:00Z',
+    retiredAt: null,
   );
 }
