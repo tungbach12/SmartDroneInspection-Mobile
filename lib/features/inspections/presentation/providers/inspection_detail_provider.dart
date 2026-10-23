@@ -36,4 +36,3 @@ final inspectionEvidenceProvider =
         ApiError(:final failure) => throw ApiFailureException(failure),
       };
     });
-

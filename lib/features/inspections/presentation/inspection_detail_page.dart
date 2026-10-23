@@ -296,12 +296,6 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     );
   }
 }
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _ChecklistItemCard extends StatefulWidget {
   const _ChecklistItemCard({
