@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_work_order.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/providers/maintenance_providers.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/widgets/record_work_log_sheet.dart';
@@ -21,7 +22,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order #${workOrderId.substring(0, 8)}'),
+        title: Text(context.l10n.workOrderTitle(workOrderId.substring(0, 8))),
       ),
       body: AsyncValueWidget<MobileWorkOrder>(
         value: orderAsync,
@@ -49,7 +50,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Priority: ${order.priority}',
+                              context.l10n.orderPriority(order.priority),
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Chip(
@@ -63,7 +64,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Corrective Scope:',
+                          context.l10n.correctiveScope,
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -74,7 +75,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                             order.acceptanceCriteria!.isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Text(
-                            'Acceptance Criteria:',
+                            context.l10n.acceptanceCriteria,
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                 if (order.isReady) ...[
                   FilledButton.icon(
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Start Execution on Site'),
+                    label: Text(context.l10n.startExecutionOnSite),
                     onPressed: () async {
                       final repo = ref.read(maintenanceRepositoryProvider);
                       final res = await repo.startWork(workOrderId);
@@ -102,7 +103,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           ref.invalidate(maintenanceWorkOrderProvider(workOrderId));
                           ref.invalidate(maintenanceWorkOrdersProvider);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Execution started')),
+                            SnackBar(content: Text(context.l10n.executionStarted)),
                           );
                         },
                         failure: (err) {
@@ -122,7 +123,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.edit_note),
-                          label: const Text('Record Log'),
+                          label: Text(context.l10n.recordLog),
                           onPressed: () {
                             final tasks = tasksAsync.value ?? [];
                             RecordWorkLogSheet.show(
@@ -137,7 +138,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                       Expanded(
                         child: FilledButton.icon(
                           icon: const Icon(Icons.check_circle_outline),
-                          label: const Text('Declare Complete'),
+                          label: Text(context.l10n.declareComplete),
                           onPressed: () async {
                             final repo = ref.read(maintenanceRepositoryProvider);
                             final res = await repo.declareComplete(workOrderId);
@@ -146,7 +147,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                                 ref.invalidate(maintenanceWorkOrderProvider(workOrderId));
                                 ref.invalidate(maintenanceWorkOrdersProvider);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Work declared completed')),
+                                  SnackBar(content: Text(context.l10n.workDeclaredCompleted)),
                                 );
                               },
                               failure: (err) {
@@ -165,7 +166,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
 
                 // Tasks Section
                 Text(
-                  'Planned Tasks',
+                  context.l10n.plannedTasks,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -174,9 +175,9 @@ class WorkOrderDetailPage extends ConsumerWidget {
                 tasksAsync.when(
                   data: (tasks) {
                     if (tasks.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Text('No tasks planned yet for this order.'),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(context.l10n.noTasksPlanned),
                       );
                     }
                     return Column(
@@ -209,7 +210,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
 
                 // Work Logs Section
                 Text(
-                  'Work Logs',
+                  context.l10n.workLogs,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -218,9 +219,9 @@ class WorkOrderDetailPage extends ConsumerWidget {
                 logsAsync.when(
                   data: (logs) {
                     if (logs.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Text('No work logs recorded yet.'),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(context.l10n.noWorkLogs),
                       );
                     }
                     return Column(
@@ -229,14 +230,14 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             leading: const Icon(Icons.timer_outlined),
-                            title: Text('${log.workHours} hours worked'),
+                            title: Text(context.l10n.hoursWorkedLabel(log.workHours)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (log.asLeftCondition != null)
-                                  Text('As-left: ${log.asLeftCondition}'),
-                                if (log.testReadings != null)
-                                  Text('Test: ${log.testReadings}'),
+                                if (log.asLeftCondition != null && log.asLeftCondition!.isNotEmpty)
+                                  Text(context.l10n.asLeftLabel(log.asLeftCondition!)),
+                                if (log.testReadings != null && log.testReadings!.isNotEmpty)
+                                  Text(context.l10n.testReadingsLabel(log.testReadings!)),
                               ],
                             ),
                             trailing: Chip(

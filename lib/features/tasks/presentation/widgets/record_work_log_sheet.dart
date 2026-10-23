@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_task_item.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/providers/maintenance_providers.dart';
 
@@ -86,7 +87,7 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
         ref.invalidate(maintenanceLogsProvider(widget.workOrderId));
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Work log submitted for verification')),
+          SnackBar(content: Text(context.l10n.workLogSubmitted)),
         );
       },
       failure: (failure) {
@@ -115,7 +116,7 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Record Work Log',
+                context.l10n.recordWorkLog,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -146,9 +147,9 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
           if (widget.tasks.isNotEmpty) ...[
             DropdownButtonFormField<String>(
               value: _selectedTaskId,
-              decoration: const InputDecoration(
-                labelText: 'Task',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.task,
+                border: const OutlineInputBorder(),
               ),
               items: widget.tasks.map((t) {
                 return DropdownMenuItem(
@@ -165,9 +166,9 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
           TextField(
             controller: _hoursController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'Hours Worked',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.hoursWorked,
+              border: const OutlineInputBorder(),
               hintText: 'e.g. 2.5',
             ),
           ),
@@ -175,9 +176,9 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
           TextField(
             controller: _conditionController,
             maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'As-Left Condition',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.asLeftCondition,
+              border: const OutlineInputBorder(),
               hintText: 'e.g. Welded and protective primer applied',
             ),
           ),
@@ -185,9 +186,9 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
           TextField(
             controller: _readingsController,
             maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Test Readings / Measurements',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.testReadings,
+              border: const OutlineInputBorder(),
               hintText: 'e.g. Torque checked at 85 Nm, ultrasonic bond pass',
             ),
           ),
@@ -200,7 +201,7 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : const Text('Submit Work Log'),
+                : Text(context.l10n.submitWorkLog),
           ),
         ],
       ),

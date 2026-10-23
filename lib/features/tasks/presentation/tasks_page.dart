@@ -31,15 +31,15 @@ class TasksPage extends ConsumerWidget {
                     child: Column(
                       children: [
                         Icon(Icons.build_circle_outlined, size: 56, color: Colors.grey),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Text(
-                          'No assigned maintenance tasks',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          context.l10n.noAssignedTasks,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'Work orders assigned to your team will appear here.',
-                          style: TextStyle(color: Colors.grey),
+                          context.l10n.assignedWorkOrdersDescription,
+                          style: const TextStyle(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -76,7 +76,7 @@ class TasksPage extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'WO #${order.id.substring(0, 8)}',
+                                context.l10n.workOrderTitle(order.id.substring(0, 8)),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
