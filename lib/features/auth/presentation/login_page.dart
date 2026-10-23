@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
@@ -52,7 +53,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _completeSetup() async {
     if (!_formKey.currentState!.validate()) return;
     if (_next.text != _confirm.text) {
-      setState(() => _error = 'New passwords do not match.');
+      setState(() => _error = context.l10n.passwordsDoNotMatch);
       return;
     }
     setState(() => _error = null);
@@ -72,12 +73,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   String _describe(ApiFailure f) => switch (f) {
-    UnauthorizedFailure() => 'Invalid credentials.',
+    UnauthorizedFailure() => context.l10n.invalidCredentials,
     ValidationFailure(:final errors) =>
       errors.entries.map((e) => '${e.key}: ${e.value}').join('\n'),
-    ServerFailure(:final detail) => detail ?? 'Server error.',
-    NetworkFailure() => 'Cannot reach the server.',
-    NotFoundFailure() => 'Not found.',
+    ServerFailure(:final detail) => detail ?? context.l10n.serverError,
+    NetworkFailure() => context.l10n.cannotReachServer,
+    NotFoundFailure() => context.l10n.notFoundError,
     UnknownFailure(:final message) => message,
   };
 
@@ -87,7 +88,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final requiresChange = session?.requiresPasswordChange == true;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in')),
+      appBar: AppBar(title: Text(context.l10n.signIn)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -95,66 +96,69 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: ListView(
             children: [
               if (requiresChange) ...[
-                const Text(
-                  'You must set a new password before continuing.',
+                Text(
+                  context.l10n.passwordSetupNotice,
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _email,
                   enabled: false,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: context.l10n.email),
                 ),
                 TextFormField(
                   controller: _current,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Current password',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.currentPassword,
                   ),
                   validator: (v) =>
-                      (v == null || v.isEmpty) ? 'Required' : null,
+                      (v == null || v.isEmpty) ? context.l10n.required : null,
                 ),
                 TextFormField(
                   controller: _next,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'New password (15+ characters)',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.newPasswordRequirement,
                   ),
                   validator: (v) => (v == null || v.length < 15)
-                      ? 'Minimum 15 characters'
+                      ? context.l10n.minimum15Characters
                       : null,
                 ),
                 TextFormField(
                   controller: _confirm,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirm new password',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.confirmNewPassword,
                   ),
                   validator: (v) =>
-                      (v == null || v.isEmpty) ? 'Required' : null,
+                      (v == null || v.isEmpty) ? context.l10n.required : null,
                 ),
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: _completeSetup,
-                  child: const Text('Set new password'),
+                  child: Text(context.l10n.setNewPassword),
                 ),
               ] else ...[
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: context.l10n.email),
                   validator: (v) =>
-                      (v == null || v.isEmpty) ? 'Required' : null,
+                      (v == null || v.isEmpty) ? context.l10n.required : null,
                 ),
                 TextFormField(
                   controller: _password,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(labelText: context.l10n.password),
                   validator: (v) =>
-                      (v == null || v.isEmpty) ? 'Required' : null,
+                      (v == null || v.isEmpty) ? context.l10n.required : null,
                 ),
                 const SizedBox(height: 16),
-                FilledButton(onPressed: _signIn, child: const Text('Sign in')),
+                FilledButton(
+                  onPressed: _signIn,
+                  child: Text(context.l10n.signIn),
+                ),
               ],
               if (_error != null) ...[
                 const SizedBox(height: 16),

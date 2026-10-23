@@ -25,7 +25,12 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Capture inspection evidence for the assigned infrastructure inspection.</string>
+	<string>$(NSCameraUsageDescription)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>vi</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

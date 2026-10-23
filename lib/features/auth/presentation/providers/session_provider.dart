@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/locale_provider.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/auth/data/auth_repository.dart';
@@ -10,6 +11,10 @@ import 'package:smart_drone_inspection/features/auth/domain/models/auth_session.
 class AuthNotifier extends AsyncNotifier<AuthSession> {
   @override
   Future<AuthSession> build() async {
+    // The first refresh is a backend-managed response and must use the
+    // persisted locale rather than the temporary English startup fallback.
+    await ref.read(localeNotifierProvider.future);
+
     final tokens = ref.watch(tokenStoreProvider);
     await tokens.load();
     final refresh = tokens.refresh;

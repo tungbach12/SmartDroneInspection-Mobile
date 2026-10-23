@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_drone_inspection/core/localization/locale_provider.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/token_store.dart';
@@ -44,9 +46,12 @@ class FakeAuthRepository extends AuthRepository {
 
   ApiResult<AuthFlow>? refreshResult;
   ApiResult<AuthFlow>? loginResult;
+  String? Function()? localeAtRefresh;
+  String? localeObservedDuringRefresh;
 
   @override
   Future<ApiResult<AuthFlow>> refresh({required String refreshToken}) async {
+    localeObservedDuringRefresh = localeAtRefresh?.call();
     return refreshResult!;
   }
 
@@ -71,8 +76,10 @@ void main() {
     required FakeTokenStore tokens,
     required FakeAuthRepository repo,
   }) {
+    SharedPreferences.setMockInitialValues({});
     return ProviderContainer(
       overrides: [
+        localeNotifierProvider.overrideWith(LocaleNotifier.new),
         tokenStoreProvider.overrideWithValue(tokens),
         authRepositoryProvider.overrideWithValue(repo),
       ],
@@ -88,6 +95,36 @@ void main() {
 
     final session = await container.read(authNotifierProvider.future);
     expect(session.isAnonymous, isTrue);
+  });
+
+  test('loads saved locale before refreshing an existing session', () async {
+    SharedPreferences.setMockInitialValues({'app_locale': 'vi'});
+    late final ProviderContainer container;
+    final repo = FakeAuthRepository();
+    repo.localeAtRefresh = () =>
+        container.read(localeNotifierProvider).value?.languageCode;
+    repo.refreshResult = ApiResult.success(
+      AuthFlow(
+        step: 'AUTHENTICATED',
+        accessToken: 'access-2',
+        refreshToken: 'refresh-2',
+        accessTokenExpiresInSeconds: 3600,
+        user: _user(),
+      ),
+    );
+    container = ProviderContainer(
+      overrides: [
+        tokenStoreProvider.overrideWithValue(
+          FakeTokenStore(refreshValue: 'refresh-1'),
+        ),
+        authRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(authNotifierProvider.future);
+
+    expect(repo.localeObservedDuringRefresh, 'vi');
   });
 
   test('hydrate with valid refresh token yields authenticated', () async {

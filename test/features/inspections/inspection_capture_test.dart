@@ -39,7 +39,7 @@ void main() {
 
       await tester.tap(find.byType(DropdownButtonFormField<String>));
       await _pumpAsync(tester);
-      await tester.tap(find.text('PASS').last);
+      await tester.tap(find.text('Pass').last);
       await _pumpAsync(tester);
       await tester.ensureVisible(find.text('Save response'));
       await tester.tap(find.text('Save response'));
@@ -96,7 +96,7 @@ void main() {
       await _pumpAsync(tester);
       await tester.tap(find.byType(DropdownButtonFormField<String>));
       await _pumpAsync(tester);
-      await tester.tap(find.text('PASS').last);
+      await tester.tap(find.text('Pass').last);
       await _pumpAsync(tester);
       await tester.ensureVisible(find.text('Save response'));
       await tester.tap(find.text('Save response'));

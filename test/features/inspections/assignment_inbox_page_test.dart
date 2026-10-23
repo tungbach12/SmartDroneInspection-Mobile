@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_drone_inspection/core/localization/locale_provider.dart';
+import 'package:smart_drone_inspection/l10n/app_localizations.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
@@ -64,7 +66,12 @@ InspectorAssignment _assignment({String status = 'ACTIVE'}) =>
 
 Widget _host(_FakeAssignmentRepository repository) => ProviderScope(
   overrides: [inspectionRepositoryProvider.overrideWithValue(repository)],
-  child: const MaterialApp(home: InspectionsPage()),
+  child: MaterialApp(
+    locale: const Locale('en'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: supportedAppLocales,
+    home: const InspectionsPage(),
+  ),
 );
 
 void main() {

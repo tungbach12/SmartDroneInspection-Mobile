@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
@@ -21,7 +22,7 @@ class InspectionsPage extends ConsumerWidget {
     final assignments = ref.watch(assignmentInboxProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Assignments')),
+      appBar: AppBar(title: Text(context.l10n.assignments)),
       body: AsyncValueWidget<List<InspectorAssignment>>(
         value: assignments,
         onRetry: () => ref.invalidate(assignmentInboxProvider),
@@ -33,13 +34,12 @@ class InspectionsPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 Text(
-                  'Accepting records that you took the work. It does not mean the mission may fly: '
-                  'a named organization reviewer decides that from the paperwork.',
+                  context.l10n.acceptingDoesNotClear,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 16),
                 if (open.isEmpty)
-                  const _EmptyInbox()
+                  _EmptyInbox(message: context.l10n.nothingToAnswer)
                 else
                   for (final assignment in open)
                     Padding(
@@ -53,8 +53,15 @@ class InspectionsPage extends ConsumerWidget {
                     title: Text(assignment.assetName),
                     subtitle: Text(
                       assignment.reason ??
-                          assignment.assignmentResponse ??
-                          assignment.status,
+                          (assignment.assignmentResponse != null
+                              ? localizedAssignmentResponse(
+                                  context.l10n,
+                                  assignment.assignmentResponse!,
+                                )
+                              : localizedAssignmentStatus(
+                                  context.l10n,
+                                  assignment.status,
+                                )),
                     ),
                   ),
               ],
@@ -67,7 +74,9 @@ class InspectionsPage extends ConsumerWidget {
 }
 
 class _EmptyInbox extends StatelessWidget {
-  const _EmptyInbox();
+  const _EmptyInbox({required this.message});
+
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +85,7 @@ class _EmptyInbox extends StatelessWidget {
         const Icon(Icons.inbox_outlined, size: 40),
         const SizedBox(height: 8),
         Text(
-          'Nothing to answer. An organization administrator pairs you with a Drone before '
-          'preparation can start.',
+          message,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -135,11 +143,10 @@ class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
           _busy = false;
           _error = switch (failure) {
             ServerFailure(:final detail) =>
-              detail ?? 'The server refused this response.',
-            UnauthorizedFailure() =>
-              'You are not allowed to answer this assignment.',
-            NotFoundFailure() => 'This assignment was not found, or it belongs to another organization.',
-            _ => failure.toString(),
+              detail ?? context.l10n.serverRefusedResponse,
+            UnauthorizedFailure() => context.l10n.cannotAnswerAssignment,
+            NotFoundFailure() => context.l10n.assignmentNotFound,
+            _ => context.l10n.somethingWentWrong,
           };
         });
     }
@@ -160,8 +167,11 @@ class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Drone ${assignment.droneSerialNumber} · valid from '
-              '${_day(assignment.validFrom)} to ${_day(assignment.validUntil)}',
+              context.l10n.droneValidity(
+                assignment.droneSerialNumber,
+                _day(context, assignment.validFrom),
+                _day(context, assignment.validUntil),
+              ),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (_error != null)
@@ -177,9 +187,9 @@ class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
               key: const Key('decline-reason'),
               controller: _reasonController,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                labelText: 'Reason for declining',
-                helperText: 'Required only when declining, so an administrator knows what to fix.',
+              decoration: InputDecoration(
+                labelText: context.l10n.declineReason,
+                helperText: context.l10n.declineReasonHint,
               ),
               maxLines: 2,
             ),
@@ -188,14 +198,16 @@ class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
               children: [
                 FilledButton(
                   onPressed: _busy ? null : () => _respond('ACCEPTED'),
-                  child: Text(_busy ? 'Recording…' : 'Accept'),
+                  child: Text(
+                    _busy ? context.l10n.recording : context.l10n.accept,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 OutlinedButton(
                   onPressed: _busy || _reasonController.text.trim().isEmpty
                       ? null
                       : () => _respond('REJECTED'),
-                  child: const Text('Decline'),
+                  child: Text(context.l10n.decline),
                 ),
               ],
             ),
@@ -206,4 +218,5 @@ class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
   }
 }
 
-String _day(String? iso) => iso == null ? 'unspecified' : iso.substring(0, 10);
+String _day(BuildContext context, String? iso) =>
+    iso == null ? context.l10n.unspecified : iso.substring(0, 10);
