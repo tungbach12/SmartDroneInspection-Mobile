@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/evidence_quality_decision.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 
@@ -32,20 +31,6 @@ final inspectionEvidenceProvider =
       final result = await ref
           .watch(inspectionRepositoryProvider)
           .listEvidence(id);
-      return switch (result) {
-        ApiSuccess(:final data) => data,
-        ApiError(:final failure) => throw ApiFailureException(failure),
-      };
-    });
-
-final evidenceQualityHistoryProvider =
-    FutureProvider.family<List<EvidenceQualityDecision>, String>((
-      ref,
-      id,
-    ) async {
-      final result = await ref
-          .watch(inspectionRepositoryProvider)
-          .evidenceQualityHistory(id);
       return switch (result) {
         ApiSuccess(:final data) => data,
         ApiError(:final failure) => throw ApiFailureException(failure),
