@@ -281,7 +281,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                           subtitle: Text(
                             '${item.contentType} · ${item.sizeBytes} bytes',
                           ),
-                          trailing: item.retiredAt == null
+                          trailing: !item.isDeleted
                               ? null
                               : const Chip(label: Text('Retired')),
                         ),

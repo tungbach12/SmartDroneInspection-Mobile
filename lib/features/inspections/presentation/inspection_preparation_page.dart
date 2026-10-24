@@ -221,8 +221,7 @@ class _InspectionPreparationPageState
         evidence.asData?.value.any(
           (item) =>
               item.fieldSessionId == latestCompletedSession?.id &&
-              item.uploadStatus == 'AVAILABLE' &&
-              item.retiredAt == null,
+              !item.isDeleted,
         ) ??
         false;
     final canRequestAdditionalSession =

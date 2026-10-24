@@ -74,7 +74,7 @@ void main() {
               requestOptions: options,
               statusCode: 200,
               data: options.path.endsWith('/evidence')
-                  ? [_evidenceResponse(retiredAt: '2026-09-25T08:30:00Z')]
+                  ? [_evidenceResponse(isDeleted: true)]
                   : [],
             ),
           );
@@ -136,13 +136,15 @@ void main() {
     },
   );
 
-  test('parses evidence responses without retired API fields and retains retiredAt', () async {
+  test('parses evidence responses without retired API fields and retains isDeleted', () async {
     final result = await repository.listEvidence('inspection-1');
 
     expect(result, isA<ApiSuccess>());
     final evidence = (result as ApiSuccess).data.single;
-    expect(evidence.retiredAt, '2026-09-25T08:30:00Z');
-    expect(evidence.toJson().keys, contains('retiredAt'));
+    expect(evidence.isDeleted, isTrue);
+    expect(evidence.toJson().keys, contains('isDeleted'));
+    expect(evidence.toJson().keys, isNot(contains('uploadStatus')));
+    expect(evidence.toJson().keys, isNot(contains('retiredAt')));
     expect(evidence.toJson().keys, isNot(contains('checksumSha256')));
     expect(evidence.toJson().keys, isNot(contains('source')));
     expect(evidence.toJson().keys, isNot(contains('externalReference')));
@@ -186,7 +188,7 @@ void main() {
   });
 }
 
-Map<String, dynamic> _evidenceResponse({String? retiredAt}) => {
+Map<String, dynamic> _evidenceResponse({bool isDeleted = false}) => {
   'id': 'evidence-1',
   'inspectionId': 'inspection-1',
   'fieldSessionId': null,
@@ -196,9 +198,8 @@ Map<String, dynamic> _evidenceResponse({String? retiredAt}) => {
   'captureTime': '2026-09-24T08:30:00Z',
   'latitude': null,
   'longitude': null,
-  'uploadStatus': 'AVAILABLE',
   'createdAt': '2026-09-24T08:30:01Z',
-  'retiredAt': retiredAt,
+  'isDeleted': isDeleted,
 };
 
 Map<String, dynamic> _preparationResponse() => {
