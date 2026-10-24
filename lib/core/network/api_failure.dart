@@ -31,6 +31,10 @@ class ApiFailureException implements Exception {
   };
 }
 
+extension ApiFailureMessage on ApiFailure {
+  String get message => ApiFailureException(this).toString();
+}
+
 /// Maps DioException to typed ApiFailure (ProblemDetails-aware).
 ApiFailure mapDioError(DioException e) => switch (e.type) {
   DioExceptionType.connectionTimeout ||

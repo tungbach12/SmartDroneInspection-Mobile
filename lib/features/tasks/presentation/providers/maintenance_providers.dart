@@ -1,9 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/tasks/data/maintenance_repository.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_task_item.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_work_log.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_work_order.dart';
+
+export 'package:smart_drone_inspection/core/network/api_failure.dart';
+export 'package:smart_drone_inspection/core/network/api_result.dart';
 
 final maintenanceRepositoryProvider = Provider<MaintenanceRepository>((ref) {
   return MaintenanceRepository(ref.watch(dioProvider));

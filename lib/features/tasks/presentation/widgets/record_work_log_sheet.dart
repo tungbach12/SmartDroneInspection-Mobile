@@ -146,7 +146,7 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
           ],
           if (widget.tasks.isNotEmpty) ...[
             DropdownButtonFormField<String>(
-              value: _selectedTaskId,
+              initialValue: _selectedTaskId,
               decoration: InputDecoration(
                 labelText: context.l10n.task,
                 border: const OutlineInputBorder(),
