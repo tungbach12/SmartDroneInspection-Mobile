@@ -346,7 +346,7 @@ class WorkOrderDetailPage extends ConsumerWidget {
                                       style: const TextStyle(fontSize: 11)),
                                   visualDensity: VisualDensity.compact,
                                   backgroundColor: log.status == 'VERIFIED'
-                                      ? Colors.green.withOpacity(0.15)
+                                      ? Colors.green.withValues(alpha: 0.15)
                                       : null,
                                 ),
                               ],

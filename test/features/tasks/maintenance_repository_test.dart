@@ -94,8 +94,8 @@ void main() {
   test('listMyWorkOrders fetches and parses assigned work orders', () async {
     final result = await repository.listMyWorkOrders();
 
-    expect(result, isA<ApiResultSuccess<List<MobileWorkOrder>>>());
-    final orders = (result as ApiResultSuccess<List<MobileWorkOrder>>).data;
+    expect(result, isA<ApiSuccess<List<MobileWorkOrder>>>());
+    final orders = (result as ApiSuccess<List<MobileWorkOrder>>).data;
     expect(orders.length, 1);
     expect(orders.first.id, 'wo-12345678-abcd');
     expect(orders.first.priority, 'HIGH');
@@ -106,8 +106,8 @@ void main() {
   test('getTasks fetches task list for an order', () async {
     final result = await repository.getTasks('wo-1');
 
-    expect(result, isA<ApiResultSuccess<List<MobileTaskItem>>>());
-    final tasks = (result as ApiResultSuccess<List<MobileTaskItem>>).data;
+    expect(result, isA<ApiSuccess<List<MobileTaskItem>>>());
+    final tasks = (result as ApiSuccess<List<MobileTaskItem>>).data;
     expect(tasks.length, 1);
     expect(tasks.first.name, 'Surface prep and weld');
     expect(tasks.first.taskNumber, 1);
@@ -116,7 +116,7 @@ void main() {
   test('startWork sends POST request to start endpoint', () async {
     final result = await repository.startWork('wo-123');
 
-    expect(result, isA<ApiResultSuccess<void>>());
+    expect(result, isA<ApiSuccess<void>>());
     expect(requests.last.path, '/maintenance/work-orders/wo-123/start');
     expect(requests.last.method, 'POST');
   });
@@ -130,7 +130,7 @@ void main() {
       testReadings: 'Passed',
     );
 
-    expect(result, isA<ApiResultSuccess<void>>());
+    expect(result, isA<ApiSuccess<void>>());
     expect(
         requests
             .any((r) => r.path == '/maintenance/work-orders/wo-123/work-logs'),
@@ -147,7 +147,7 @@ void main() {
       () async {
     final result = await repository.declareComplete('wo-123');
 
-    expect(result, isA<ApiResultSuccess<void>>());
+    expect(result, isA<ApiSuccess<void>>());
     expect(
         requests.last.path, '/maintenance/work-orders/wo-123/declare-complete');
     expect(requests.last.method, 'POST');
@@ -157,16 +157,16 @@ void main() {
       'releaseWork, verifyWorkLog and resumeAfterRework call their named endpoints',
       () async {
     expect(
-        await repository.releaseWork('wo-123'), isA<ApiResultSuccess<void>>());
+        await repository.releaseWork('wo-123'), isA<ApiSuccess<void>>());
     expect(requests.last.path, '/maintenance/work-orders/wo-123/release');
 
     expect(await repository.verifyWorkLog('wo-123', 'log-1'),
-        isA<ApiResultSuccess<void>>());
+        isA<ApiSuccess<void>>());
     expect(requests.last.path,
         '/maintenance/work-orders/wo-123/work-logs/log-1/verify');
 
     expect(await repository.resumeAfterRework('wo-123'),
-        isA<ApiResultSuccess<void>>());
+        isA<ApiSuccess<void>>());
     expect(requests.last.path,
         '/maintenance/work-orders/wo-123/resume-after-rework');
   });
