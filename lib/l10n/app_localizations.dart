@@ -1141,6 +1141,33 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retired'**
   String get assetStatusRetired;
+
+  String get maintenanceWorkOrders;
+  String get noAssignedTasks;
+  String get assignedWorkOrdersDescription;
+  String workOrderTitle(Object id);
+  String orderPriority(Object priority);
+  String get correctiveScope;
+  String get acceptanceCriteria;
+  String get startExecutionOnSite;
+  String get recordLog;
+  String get declareComplete;
+  String get plannedTasks;
+  String get noTasksPlanned;
+  String get workLogs;
+  String get noWorkLogs;
+  String hoursWorkedLabel(Object hours);
+  String asLeftLabel(Object condition);
+  String testReadingsLabel(Object readings);
+  String get recordWorkLog;
+  String get task;
+  String get hoursWorked;
+  String get asLeftCondition;
+  String get testReadings;
+  String get submitWorkLog;
+  String get executionStarted;
+  String get workDeclaredCompleted;
+  String get workLogSubmitted;
 }
 
 class _AppLocalizationsDelegate
