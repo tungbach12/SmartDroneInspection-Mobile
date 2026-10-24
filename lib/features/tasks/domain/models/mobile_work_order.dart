@@ -39,7 +39,15 @@ class MobileWorkOrder {
   final String? teamLeadUserId;
   final String? reportAuthorUserId;
 
+  bool get isApproved => status == 'APPROVED';
   bool get isReady => status == 'READY';
   bool get isInProgress => status == 'IN_PROGRESS';
-  bool get isCompleted => status == 'WORK_COMPLETED' || status == 'ACCEPTED' || status == 'CLOSED';
+  bool get isReworkRequired =>
+      status == 'REWORK_REQUIRED' || status == 'REINSPECTION_REQUIRED';
+  bool get isCompleted =>
+      status == 'WORK_COMPLETED' ||
+      status == 'SUBMITTED_FOR_ACCEPTANCE' ||
+      status == 'ACCEPTED' ||
+      status == 'COST_RECONCILED' ||
+      status == 'CLOSED';
 }

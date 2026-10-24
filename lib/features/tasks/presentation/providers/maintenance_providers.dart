@@ -21,8 +21,8 @@ final maintenanceWorkOrdersProvider =
 });
 
 /// Fetches a single work order header by ID.
-final maintenanceWorkOrderProvider =
-    FutureProvider.autoDispose.family<MobileWorkOrder, String>((ref, workOrderId) async {
+final maintenanceWorkOrderProvider = FutureProvider.autoDispose
+    .family<MobileWorkOrder, String>((ref, workOrderId) async {
   final repository = ref.watch(maintenanceRepositoryProvider);
   final result = await repository.getWorkOrder(workOrderId);
   return result.when(
@@ -32,8 +32,8 @@ final maintenanceWorkOrderProvider =
 });
 
 /// Fetches the planned task list for a work order.
-final maintenanceTasksProvider =
-    FutureProvider.autoDispose.family<List<MobileTaskItem>, String>((ref, workOrderId) async {
+final maintenanceTasksProvider = FutureProvider.autoDispose
+    .family<List<MobileTaskItem>, String>((ref, workOrderId) async {
   final repository = ref.watch(maintenanceRepositoryProvider);
   final result = await repository.getTasks(workOrderId);
   return result.when(
@@ -43,8 +43,8 @@ final maintenanceTasksProvider =
 });
 
 /// Fetches the recorded work logs for a work order.
-final maintenanceLogsProvider =
-    FutureProvider.autoDispose.family<List<MobileWorkLog>, String>((ref, workOrderId) async {
+final maintenanceLogsProvider = FutureProvider.autoDispose
+    .family<List<MobileWorkLog>, String>((ref, workOrderId) async {
   final repository = ref.watch(maintenanceRepositoryProvider);
   final result = await repository.getWorkLogs(workOrderId);
   return result.when(

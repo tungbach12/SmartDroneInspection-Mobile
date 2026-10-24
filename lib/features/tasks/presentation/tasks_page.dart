@@ -23,18 +23,21 @@ class TasksPage extends ConsumerWidget {
         builder: (orders) {
           if (orders.isEmpty) {
             return RefreshIndicator(
-              onRefresh: () => ref.refresh(maintenanceWorkOrdersProvider.future),
+              onRefresh: () =>
+                  ref.refresh(maintenanceWorkOrdersProvider.future),
               child: ListView(
-                children: const [
-                  SizedBox(height: 120),
+                children: [
+                  const SizedBox(height: 120),
                   Center(
                     child: Column(
                       children: [
-                        Icon(Icons.build_circle_outlined, size: 56, color: Colors.grey),
+                        const Icon(Icons.build_circle_outlined,
+                            size: 56, color: Colors.grey),
                         const SizedBox(height: 12),
                         Text(
                           context.l10n.noAssignedTasks,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -76,7 +79,8 @@ class TasksPage extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                context.l10n.workOrderTitle(order.id.substring(0, 8)),
+                                context.l10n
+                                    .workOrderTitle(order.id.substring(0, 8)),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -85,7 +89,9 @@ class TasksPage extends ConsumerWidget {
                               Chip(
                                 label: Text(
                                   order.status,
-                                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 visualDensity: VisualDensity.compact,
                               ),
@@ -104,13 +110,16 @@ class TasksPage extends ConsumerWidget {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.flag_outlined, size: 16, color: Colors.grey),
+                                  const Icon(Icons.flag_outlined,
+                                      size: 16, color: Colors.grey),
                                   const SizedBox(width: 4),
                                   Text(
                                     order.priority,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: order.priority == 'CRITICAL' || order.priority == 'HIGH'
+                                      color: order.priority == 'CRITICAL' ||
+                                              order.priority == 'URGENT' ||
+                                              order.priority == 'HIGH'
                                           ? Theme.of(context).colorScheme.error
                                           : Colors.grey[700],
                                       fontWeight: FontWeight.bold,
@@ -118,7 +127,8 @@ class TasksPage extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 14, color: Colors.grey),
                             ],
                           ),
                         ],

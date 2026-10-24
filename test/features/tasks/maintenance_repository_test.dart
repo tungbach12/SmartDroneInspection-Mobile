@@ -57,7 +57,10 @@ void main() {
             return;
           }
           if (options.path.contains('/submit') ||
+              options.path.contains('/verify') ||
+              options.path.endsWith('/release') ||
               options.path.endsWith('/start') ||
+              options.path.endsWith('/resume-after-rework') ||
               options.path.endsWith('/declare-complete')) {
             handler.resolve(
               Response(
@@ -128,18 +131,43 @@ void main() {
     );
 
     expect(result, isA<ApiResultSuccess<void>>());
-    expect(requests.any((r) => r.path == '/maintenance/work-orders/wo-123/work-logs'), isTrue);
     expect(
-      requests.any((r) => r.path == '/maintenance/work-orders/wo-123/work-logs/log-new-1/submit'),
+        requests
+            .any((r) => r.path == '/maintenance/work-orders/wo-123/work-logs'),
+        isTrue);
+    expect(
+      requests.any((r) =>
+          r.path ==
+          '/maintenance/work-orders/wo-123/work-logs/log-new-1/submit'),
       isTrue,
     );
   });
 
-  test('declareComplete sends POST request to declare-complete endpoint', () async {
+  test('declareComplete sends POST request to declare-complete endpoint',
+      () async {
     final result = await repository.declareComplete('wo-123');
 
     expect(result, isA<ApiResultSuccess<void>>());
-    expect(requests.last.path, '/maintenance/work-orders/wo-123/declare-complete');
+    expect(
+        requests.last.path, '/maintenance/work-orders/wo-123/declare-complete');
     expect(requests.last.method, 'POST');
+  });
+
+  test(
+      'releaseWork, verifyWorkLog and resumeAfterRework call their named endpoints',
+      () async {
+    expect(
+        await repository.releaseWork('wo-123'), isA<ApiResultSuccess<void>>());
+    expect(requests.last.path, '/maintenance/work-orders/wo-123/release');
+
+    expect(await repository.verifyWorkLog('wo-123', 'log-1'),
+        isA<ApiResultSuccess<void>>());
+    expect(requests.last.path,
+        '/maintenance/work-orders/wo-123/work-logs/log-1/verify');
+
+    expect(await repository.resumeAfterRework('wo-123'),
+        isA<ApiResultSuccess<void>>());
+    expect(requests.last.path,
+        '/maintenance/work-orders/wo-123/resume-after-rework');
   });
 }

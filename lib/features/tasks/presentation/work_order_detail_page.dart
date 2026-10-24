@@ -26,7 +26,8 @@ class WorkOrderDetailPage extends ConsumerWidget {
       ),
       body: AsyncValueWidget<MobileWorkOrder>(
         value: orderAsync,
-        onRetry: () => ref.invalidate(maintenanceWorkOrderProvider(workOrderId)),
+        onRetry: () =>
+            ref.invalidate(maintenanceWorkOrderProvider(workOrderId)),
         builder: (order) {
           return RefreshIndicator(
             onRefresh: () async {
@@ -51,12 +52,14 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           children: [
                             Text(
                               context.l10n.orderPriority(order.priority),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Chip(
                               label: Text(
                                 order.status,
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                               visualDensity: VisualDensity.compact,
                             ),
@@ -65,7 +68,10 @@ class WorkOrderDetailPage extends ConsumerWidget {
                         const SizedBox(height: 8),
                         Text(
                           context.l10n.correctiveScope,
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -76,7 +82,10 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           const SizedBox(height: 8),
                           Text(
                             context.l10n.acceptanceCriteria,
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -91,6 +100,30 @@ class WorkOrderDetailPage extends ConsumerWidget {
                 const SizedBox(height: 16),
 
                 // Status execution action buttons
+                if (order.isApproved) ...[
+                  FilledButton.icon(
+                    icon: const Icon(Icons.task_alt),
+                    label: const Text('Release work order (Mark Ready)'),
+                    onPressed: () async {
+                      final repo = ref.read(maintenanceRepositoryProvider);
+                      final res = await repo.releaseWork(workOrderId);
+                      res.when(
+                        success: (_) {
+                          ref.invalidate(
+                              maintenanceWorkOrderProvider(workOrderId));
+                          ref.invalidate(maintenanceWorkOrdersProvider);
+                        },
+                        failure: (err) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${err.message}')),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
                 if (order.isReady) ...[
                   FilledButton.icon(
                     icon: const Icon(Icons.play_arrow),
@@ -100,11 +133,37 @@ class WorkOrderDetailPage extends ConsumerWidget {
                       final res = await repo.startWork(workOrderId);
                       res.when(
                         success: (_) {
-                          ref.invalidate(maintenanceWorkOrderProvider(workOrderId));
+                          ref.invalidate(
+                              maintenanceWorkOrderProvider(workOrderId));
                           ref.invalidate(maintenanceWorkOrdersProvider);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(context.l10n.executionStarted)),
+                            SnackBar(
+                                content: Text(context.l10n.executionStarted)),
                           );
+                        },
+                        failure: (err) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${err.message}')),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                if (order.isReworkRequired) ...[
+                  FilledButton.icon(
+                    icon: const Icon(Icons.replay),
+                    label: const Text('Resume execution'),
+                    onPressed: () async {
+                      final repo = ref.read(maintenanceRepositoryProvider);
+                      final res = await repo.resumeAfterRework(workOrderId);
+                      res.when(
+                        success: (_) {
+                          ref.invalidate(
+                              maintenanceWorkOrderProvider(workOrderId));
+                          ref.invalidate(maintenanceWorkOrdersProvider);
                         },
                         failure: (err) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -140,19 +199,24 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           icon: const Icon(Icons.check_circle_outline),
                           label: Text(context.l10n.declareComplete),
                           onPressed: () async {
-                            final repo = ref.read(maintenanceRepositoryProvider);
+                            final repo =
+                                ref.read(maintenanceRepositoryProvider);
                             final res = await repo.declareComplete(workOrderId);
                             res.when(
                               success: (_) {
-                                ref.invalidate(maintenanceWorkOrderProvider(workOrderId));
+                                ref.invalidate(
+                                    maintenanceWorkOrderProvider(workOrderId));
                                 ref.invalidate(maintenanceWorkOrdersProvider);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(context.l10n.workDeclaredCompleted)),
+                                  SnackBar(
+                                      content: Text(
+                                          context.l10n.workDeclaredCompleted)),
                                 );
                               },
                               failure: (err) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: ${err.message}')),
+                                  SnackBar(
+                                      content: Text('Error: ${err.message}')),
                                 );
                               },
                             );
@@ -188,10 +252,14 @@ class WorkOrderDetailPage extends ConsumerWidget {
                             leading: CircleAvatar(
                               child: Text('${task.taskNumber}'),
                             ),
-                            title: Text(task.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                            subtitle: task.method != null ? Text(task.method!) : null,
+                            title: Text(task.name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                            subtitle:
+                                task.method != null ? Text(task.method!) : null,
                             trailing: Chip(
-                              label: Text(task.status, style: const TextStyle(fontSize: 11)),
+                              label: Text(task.status,
+                                  style: const TextStyle(fontSize: 11)),
                               visualDensity: VisualDensity.compact,
                             ),
                           ),
@@ -230,22 +298,58 @@ class WorkOrderDetailPage extends ConsumerWidget {
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             leading: const Icon(Icons.timer_outlined),
-                            title: Text(context.l10n.hoursWorkedLabel(log.workHours)),
+                            title: Text(
+                                context.l10n.hoursWorkedLabel(log.workHours)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (log.asLeftCondition != null && log.asLeftCondition!.isNotEmpty)
-                                  Text(context.l10n.asLeftLabel(log.asLeftCondition!)),
-                                if (log.testReadings != null && log.testReadings!.isNotEmpty)
-                                  Text(context.l10n.testReadingsLabel(log.testReadings!)),
+                                if (log.asLeftCondition != null &&
+                                    log.asLeftCondition!.isNotEmpty)
+                                  Text(context.l10n
+                                      .asLeftLabel(log.asLeftCondition!)),
+                                if (log.testReadings != null &&
+                                    log.testReadings!.isNotEmpty)
+                                  Text(context.l10n
+                                      .testReadingsLabel(log.testReadings!)),
                               ],
                             ),
-                            trailing: Chip(
-                              label: Text(log.status, style: const TextStyle(fontSize: 11)),
-                              visualDensity: VisualDensity.compact,
-                              backgroundColor: log.status == 'VERIFIED'
-                                  ? Colors.green.withOpacity(0.15)
-                                  : null,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (log.status == 'SUBMITTED')
+                                  TextButton(
+                                    onPressed: () async {
+                                      final repo = ref
+                                          .read(maintenanceRepositoryProvider);
+                                      final res = await repo.verifyWorkLog(
+                                          workOrderId, log.id);
+                                      res.when(
+                                        success: (_) {
+                                          ref.invalidate(
+                                              maintenanceLogsProvider(
+                                                  workOrderId));
+                                        },
+                                        failure: (err) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'Error: ${err.message}')),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text('Verify'),
+                                  ),
+                                Chip(
+                                  label: Text(log.status,
+                                      style: const TextStyle(fontSize: 11)),
+                                  visualDensity: VisualDensity.compact,
+                                  backgroundColor: log.status == 'VERIFIED'
+                                      ? Colors.green.withOpacity(0.15)
+                                      : null,
+                                ),
+                              ],
                             ),
                           ),
                         );

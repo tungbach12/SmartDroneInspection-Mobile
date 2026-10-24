@@ -154,7 +154,8 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
               items: widget.tasks.map((t) {
                 return DropdownMenuItem(
                   value: t.id,
-                  child: Text('#${t.taskNumber} ${t.name}', overflow: TextOverflow.ellipsis),
+                  child: Text('#${t.taskNumber} ${t.name}',
+                      overflow: TextOverflow.ellipsis),
                 );
               }).toList(),
               onChanged: (val) {
@@ -199,7 +200,8 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
                   )
                 : Text(context.l10n.submitWorkLog),
           ),
