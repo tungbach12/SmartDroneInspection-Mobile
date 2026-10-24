@@ -17,9 +17,8 @@ _InspectionEvidence _$InspectionEvidenceFromJson(Map<String, dynamic> json) =>
       captureTime: json['captureTime'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
-      uploadStatus: json['uploadStatus'] as String,
       createdAt: json['createdAt'] as String,
-      retiredAt: json['retiredAt'] as String?,
+      isDeleted: json['isDeleted'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$InspectionEvidenceToJson(_InspectionEvidence instance) =>
@@ -33,7 +32,6 @@ Map<String, dynamic> _$InspectionEvidenceToJson(_InspectionEvidence instance) =>
       'captureTime': instance.captureTime,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
-      'uploadStatus': instance.uploadStatus,
       'createdAt': instance.createdAt,
-      'retiredAt': instance.retiredAt,
+      'isDeleted': instance.isDeleted,
     };

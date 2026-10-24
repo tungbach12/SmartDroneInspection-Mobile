@@ -217,7 +217,7 @@ class _FakeInspectionRepository extends InspectionRepository {
     outcomeNotes: 'Span surveyed',
   );
 
-  InspectionEvidence _evidence() => InspectionEvidence(
+  InspectionEvidence _evidence() => const InspectionEvidence(
     id: 'evidence-1',
     inspectionId: 'inspection-1',
     fieldSessionId: null,
@@ -227,8 +227,7 @@ class _FakeInspectionRepository extends InspectionRepository {
     captureTime: '2026-09-24T08:30:00Z',
     latitude: null,
     longitude: null,
-    uploadStatus: 'AVAILABLE',
     createdAt: '2026-09-24T08:31:00Z',
-    retiredAt: null,
+    isDeleted: false,
   );
 }

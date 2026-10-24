@@ -16,9 +16,8 @@ abstract class InspectionEvidence with _$InspectionEvidence {
     String? captureTime,
     double? latitude,
     double? longitude,
-    required String uploadStatus,
     required String createdAt,
-    String? retiredAt,
+    @Default(false) bool isDeleted,
   }) = _InspectionEvidence;
 
   factory InspectionEvidence.fromJson(Map<String, dynamic> json) =>

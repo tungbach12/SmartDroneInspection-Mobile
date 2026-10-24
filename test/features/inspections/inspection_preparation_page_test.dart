@@ -73,9 +73,8 @@ InspectionEvidence _activeEvidence() => const InspectionEvidence(
   captureTime: null,
   latitude: null,
   longitude: null,
-  uploadStatus: 'AVAILABLE',
   createdAt: '2026-10-12T09:01:00Z',
-  retiredAt: null,
+  isDeleted: false,
 );
 
 void main() {
