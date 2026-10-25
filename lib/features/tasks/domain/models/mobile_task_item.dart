@@ -5,8 +5,10 @@ class MobileTaskItem {
     required this.taskNumber,
     required this.name,
     this.method,
-    this.status = 'PENDING',
+    this.status = 'PLANNED',
     this.assignedEngineerUserId,
+    this.plannedStartAt,
+    this.plannedEndAt,
     this.acceptanceCriteria,
   });
 
@@ -16,8 +18,10 @@ class MobileTaskItem {
       taskNumber: (json['taskNumber'] as num?)?.toInt() ?? 1,
       name: json['name'] as String? ?? '',
       method: json['method'] as String?,
-      status: json['status'] as String? ?? 'PENDING',
+      status: json['status'] as String? ?? 'PLANNED',
       assignedEngineerUserId: json['assignedEngineerUserId'] as String?,
+      plannedStartAt: json['plannedStartAt'] as String?,
+      plannedEndAt: json['plannedEndAt'] as String?,
       acceptanceCriteria: json['acceptanceCriteria'] as String?,
     );
   }
@@ -28,5 +32,7 @@ class MobileTaskItem {
   final String? method;
   final String status;
   final String? assignedEngineerUserId;
+  final String? plannedStartAt;
+  final String? plannedEndAt;
   final String? acceptanceCriteria;
 }
