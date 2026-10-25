@@ -14,9 +14,7 @@ class TasksPage extends ConsumerWidget {
     final workOrdersAsync = ref.watch(maintenanceWorkOrdersProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.tasks),
-      ),
+      appBar: AppBar(title: Text(context.l10n.tasks)),
       body: AsyncValueWidget<List<MobileWorkOrder>>(
         value: workOrdersAsync,
         onRetry: () => ref.invalidate(maintenanceWorkOrdersProvider),
@@ -31,13 +29,18 @@ class TasksPage extends ConsumerWidget {
                   Center(
                     child: Column(
                       children: [
-                        const Icon(Icons.build_circle_outlined,
-                            size: 56, color: Colors.grey),
+                        const Icon(
+                          Icons.build_circle_outlined,
+                          size: 56,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           context.l10n.noAssignedTasks,
                           style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -79,8 +82,9 @@ class TasksPage extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                context.l10n
-                                    .workOrderTitle(order.id.substring(0, 8)),
+                                context.l10n.workOrderTitle(
+                                  order.id.substring(0, 8),
+                                ),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -90,8 +94,9 @@ class TasksPage extends ConsumerWidget {
                                 label: Text(
                                   order.status,
                                   style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 visualDensity: VisualDensity.compact,
                               ),
@@ -110,14 +115,18 @@ class TasksPage extends ConsumerWidget {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.flag_outlined,
-                                      size: 16, color: Colors.grey),
+                                  const Icon(
+                                    Icons.flag_outlined,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     order.priority,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: order.priority == 'CRITICAL' ||
+                                      color:
+                                          order.priority == 'CRITICAL' ||
                                               order.priority == 'URGENT' ||
                                               order.priority == 'HIGH'
                                           ? Theme.of(context).colorScheme.error
@@ -127,8 +136,11 @@ class TasksPage extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              const Icon(Icons.arrow_forward_ios,
-                                  size: 14, color: Colors.grey),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                                color: Colors.grey,
+                              ),
                             ],
                           ),
                         ],

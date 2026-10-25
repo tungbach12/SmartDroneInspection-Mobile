@@ -22,10 +22,8 @@ class RecordWorkLogSheet extends ConsumerStatefulWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => RecordWorkLogSheet(
-        workOrderId: workOrderId,
-        tasks: tasks,
-      ),
+      builder: (context) =>
+          RecordWorkLogSheet(workOrderId: workOrderId, tasks: tasks),
     );
   }
 
@@ -86,9 +84,9 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
       success: (_) {
         ref.invalidate(maintenanceLogsProvider(widget.workOrderId));
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.workLogSubmitted)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.workLogSubmitted)));
       },
       failure: (failure) {
         setState(() {
@@ -117,9 +115,8 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
             children: [
               Text(
                 context.l10n.recordWorkLog,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -154,8 +151,10 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
               items: widget.tasks.map((t) {
                 return DropdownMenuItem(
                   value: t.id,
-                  child: Text('#${t.taskNumber} ${t.name}',
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    '#${t.taskNumber} ${t.name}',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 );
               }).toList(),
               onChanged: (val) {
@@ -201,7 +200,9 @@ class _RecordWorkLogSheetState extends ConsumerState<RecordWorkLogSheet> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : Text(context.l10n.submitWorkLog),
           ),

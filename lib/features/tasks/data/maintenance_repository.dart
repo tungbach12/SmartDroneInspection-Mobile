@@ -22,8 +22,11 @@ class MaintenanceRepository {
         rawList = data;
       }
       final orders = rawList
-          .map((item) =>
-              MobileWorkOrder.fromJson(Map<String, dynamic>.from(item as Map)))
+          .map(
+            (item) => MobileWorkOrder.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
           .toList();
       return ApiResult.success(orders);
     } on DioException catch (error) {
@@ -36,7 +39,8 @@ class MaintenanceRepository {
     try {
       final response = await _dio.get('/maintenance/work-orders/$workOrderId');
       final order = MobileWorkOrder.fromJson(
-          Map<String, dynamic>.from(response.data as Map));
+        Map<String, dynamic>.from(response.data as Map),
+      );
       return ApiResult.success(order);
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
@@ -46,11 +50,14 @@ class MaintenanceRepository {
   /// Fetches the planned task list for a work order.
   Future<ApiResult<List<MobileTaskItem>>> getTasks(String workOrderId) async {
     try {
-      final response =
-          await _dio.get('/maintenance/work-orders/$workOrderId/tasks');
+      final response = await _dio.get(
+        '/maintenance/work-orders/$workOrderId/tasks',
+      );
       final list = (response.data as List<dynamic>)
-          .map((item) =>
-              MobileTaskItem.fromJson(Map<String, dynamic>.from(item as Map)))
+          .map(
+            (item) =>
+                MobileTaskItem.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
           .toList();
       return ApiResult.success(list);
     } on DioException catch (error) {
@@ -61,11 +68,14 @@ class MaintenanceRepository {
   /// Fetches the recorded work logs for a work order.
   Future<ApiResult<List<MobileWorkLog>>> getWorkLogs(String workOrderId) async {
     try {
-      final response =
-          await _dio.get('/maintenance/work-orders/$workOrderId/work-logs');
+      final response = await _dio.get(
+        '/maintenance/work-orders/$workOrderId/work-logs',
+      );
       final list = (response.data as List<dynamic>)
-          .map((item) =>
-              MobileWorkLog.fromJson(Map<String, dynamic>.from(item as Map)))
+          .map(
+            (item) =>
+                MobileWorkLog.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
           .toList();
       return ApiResult.success(list);
     } on DioException catch (error) {
@@ -96,8 +106,9 @@ class MaintenanceRepository {
   /// Resumes execution after rework or re-inspection (MF4-18).
   Future<ApiResult<void>> resumeAfterRework(String workOrderId) async {
     try {
-      await _dio
-          .post('/maintenance/work-orders/$workOrderId/resume-after-rework');
+      await _dio.post(
+        '/maintenance/work-orders/$workOrderId/resume-after-rework',
+      );
       return const ApiResult.success(null);
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
@@ -106,10 +117,13 @@ class MaintenanceRepository {
 
   /// Verifies a submitted work log as the team lead (MF4-11).
   Future<ApiResult<void>> verifyWorkLog(
-      String workOrderId, String logId) async {
+    String workOrderId,
+    String logId,
+  ) async {
     try {
       await _dio.post(
-          '/maintenance/work-orders/$workOrderId/work-logs/$logId/verify');
+        '/maintenance/work-orders/$workOrderId/work-logs/$logId/verify',
+      );
       return const ApiResult.success(null);
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
@@ -144,7 +158,8 @@ class MaintenanceRepository {
 
       final logId = (response.data as Map)['id'] as String;
       await _dio.post(
-          '/maintenance/work-orders/$workOrderId/work-logs/$logId/submit');
+        '/maintenance/work-orders/$workOrderId/work-logs/$logId/submit',
+      );
 
       return const ApiResult.success(null);
     } on DioException catch (error) {

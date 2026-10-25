@@ -12,35 +12,35 @@ void main() {
   late List<RequestOptions> requests;
 
   Map<String, dynamic> sampleWorkOrder() => {
-        'id': 'wo-12345678-abcd',
-        'assetId': 'asset-1',
-        'status': 'READY',
-        'priority': 'HIGH',
-        'correctiveScope': 'Repair cracked beam',
-        'acceptanceCriteria': 'Pass ultrasonic inspection',
-        'dueAt': null,
-        'createdAt': '2026-10-15T00:00:00Z',
-      };
+    'id': 'wo-12345678-abcd',
+    'assetId': 'asset-1',
+    'status': 'READY',
+    'priority': 'HIGH',
+    'correctiveScope': 'Repair cracked beam',
+    'acceptanceCriteria': 'Pass ultrasonic inspection',
+    'dueAt': null,
+    'createdAt': '2026-10-15T00:00:00Z',
+  };
 
   Map<String, dynamic> sampleTask() => {
-        'id': 'task-1',
-        'taskNumber': 1,
-        'name': 'Surface prep and weld',
-        'method': 'MIG welding',
-        'status': 'PLANNED',
-      };
+    'id': 'task-1',
+    'taskNumber': 1,
+    'name': 'Surface prep and weld',
+    'method': 'MIG welding',
+    'status': 'PLANNED',
+  };
 
   Map<String, dynamic> sampleWorkLog() => {
-        'id': 'log-1',
-        'taskId': 'task-1',
-        'engineerUserId': 'eng-1',
-        'startedAt': '2026-10-15T08:00:00Z',
-        'endedAt': '2026-10-15T10:30:00Z',
-        'hours': 2.5,
-        'asLeftCondition': 'Clean and welded',
-        'testReadings': 'UPV >= 90%',
-        'status': 'SUBMITTED',
-      };
+    'id': 'log-1',
+    'taskId': 'task-1',
+    'engineerUserId': 'eng-1',
+    'startedAt': '2026-10-15T08:00:00Z',
+    'endedAt': '2026-10-15T10:30:00Z',
+    'hours': 2.5,
+    'asLeftCondition': 'Clean and welded',
+    'testReadings': 'UPV >= 90%',
+    'status': 'SUBMITTED',
+  };
 
   setUp(() {
     requests = [];
@@ -167,41 +167,55 @@ void main() {
 
     expect(result, isA<ApiSuccess<void>>());
     expect(
-        requests
-            .any((r) => r.path == '/maintenance/work-orders/wo-123/work-logs'),
-        isTrue);
+      requests.any(
+        (r) => r.path == '/maintenance/work-orders/wo-123/work-logs',
+      ),
+      isTrue,
+    );
     expect(
-      requests.any((r) =>
-          r.path ==
-          '/maintenance/work-orders/wo-123/work-logs/log-new-1/submit'),
+      requests.any(
+        (r) =>
+            r.path ==
+            '/maintenance/work-orders/wo-123/work-logs/log-new-1/submit',
+      ),
       isTrue,
     );
   });
 
-  test('declareComplete sends POST request to declare-complete endpoint',
-      () async {
-    final result = await repository.declareComplete('wo-123');
-
-    expect(result, isA<ApiSuccess<void>>());
-    expect(
-        requests.last.path, '/maintenance/work-orders/wo-123/declare-complete');
-    expect(requests.last.method, 'POST');
-  });
-
   test(
-      'releaseWork, verifyWorkLog and resumeAfterRework call their named endpoints',
-      () async {
+    'declareComplete sends POST request to declare-complete endpoint',
+    () async {
+      final result = await repository.declareComplete('wo-123');
+
+      expect(result, isA<ApiSuccess<void>>());
+      expect(
+        requests.last.path,
+        '/maintenance/work-orders/wo-123/declare-complete',
+      );
+      expect(requests.last.method, 'POST');
+    },
+  );
+
+  test('releaseWork, verifyWorkLog and resumeAfterRework call their named endpoints', () async {
     expect(await repository.releaseWork('wo-123'), isA<ApiSuccess<void>>());
     expect(requests.last.path, '/maintenance/work-orders/wo-123/release');
 
-    expect(await repository.verifyWorkLog('wo-123', 'log-1'),
-        isA<ApiSuccess<void>>());
-    expect(requests.last.path,
-        '/maintenance/work-orders/wo-123/work-logs/log-1/verify');
+    expect(
+      await repository.verifyWorkLog('wo-123', 'log-1'),
+      isA<ApiSuccess<void>>(),
+    );
+    expect(
+      requests.last.path,
+      '/maintenance/work-orders/wo-123/work-logs/log-1/verify',
+    );
 
     expect(
-        await repository.resumeAfterRework('wo-123'), isA<ApiSuccess<void>>());
-    expect(requests.last.path,
-        '/maintenance/work-orders/wo-123/resume-after-rework');
+      await repository.resumeAfterRework('wo-123'),
+      isA<ApiSuccess<void>>(),
+    );
+    expect(
+      requests.last.path,
+      '/maintenance/work-orders/wo-123/resume-after-rework',
+    );
   });
 }

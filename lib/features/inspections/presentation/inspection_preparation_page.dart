@@ -228,8 +228,11 @@ class _InspectionPreparationPageState
         current?.status == 'READY' &&
         latestCompletedSession != null &&
         hasActiveEvidence;
-    final editable = current?.status == 'DRAFT' || current == null;
-    final submitted = current?.status == 'SUBMITTED';
+    final editable =
+        current == null ||
+        current.status == 'DRAFT' ||
+        current.status == 'RETURNED';
+    final canSubmit = current != null && current.status == 'DRAFT';
 
     return Scaffold(
       appBar: AppBar(
@@ -261,6 +264,13 @@ class _InspectionPreparationPageState
                     context.l10n,
                     current.status ?? 'DRAFT',
                   ),
+                ),
+              ),
+            if (current?.status == 'RETURNED' && current?.reviewReason != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(current!.reviewReason!),
                 ),
               ),
             if (sessions.isLoading || evidence.isLoading)
@@ -356,7 +366,7 @@ class _InspectionPreparationPageState
                   _busy ? context.l10n.saving : context.l10n.saveDraft,
                 ),
               ),
-            if (submitted) ...[
+            if (canSubmit) ...[
               TextField(
                 controller: _acknowledgment,
                 decoration: InputDecoration(
@@ -364,7 +374,7 @@ class _InspectionPreparationPageState
                 ),
               ),
               FilledButton(
-                onPressed: _busy ? null : () => _submit(current!),
+                onPressed: _busy ? null : () => _submit(current),
                 child: Text(
                   _busy
                       ? context.l10n.submitting
@@ -372,6 +382,8 @@ class _InspectionPreparationPageState
                 ),
               ),
             ],
+            if (current?.status == 'SUBMITTED')
+              Text(context.l10n.preparationSubmitted),
             if (current?.status == 'READY')
               Text(context.l10n.preparationApproved),
             if (_error != null)

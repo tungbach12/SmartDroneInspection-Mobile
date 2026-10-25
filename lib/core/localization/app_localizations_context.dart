@@ -47,7 +47,8 @@ String localizedDecision(AppLocalizations l10n, String decision) =>
 
 String localizedRole(AppLocalizations l10n, String role) => switch (role) {
   'ADMIN' => l10n.userRoleAdmin,
-  'ORG_ADMIN' => l10n.userRoleOrgAdmin,
+  'PLATFORM_MANAGER' => l10n.userRolePlatformManager,
+  'ORG_MANAGER' => l10n.userRoleOrgManager,
   'INSPECTOR' => l10n.userRoleInspector,
   'MAINTENANCE_ENGINEER' => l10n.userRoleMaintenanceEngineer,
   'CLIENT' => l10n.userRoleClient,

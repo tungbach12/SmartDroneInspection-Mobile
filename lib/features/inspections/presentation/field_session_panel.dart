@@ -176,7 +176,6 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
                           onStart: () => _run(
                             () => repository.startFieldSession(
                               inspectionId: widget.inspectionId,
-                              checklistTemplateId: null,
                               preFlightChecklistNote: _noteController.text
                                   .trim(),
                             ),
@@ -328,7 +327,7 @@ class _OpenSession extends StatelessWidget {
                 child: Text(
                   context.l10n.startedAt(
                     session.startedAt ?? context.l10n.justNow,
-                    session.readinessDecisionId ?? context.l10n.unknown,
+                    session.preparationId ?? context.l10n.unknown,
                   ),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),

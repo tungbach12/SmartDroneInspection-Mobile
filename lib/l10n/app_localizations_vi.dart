@@ -100,7 +100,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get nothingToAnswer =>
-      'Không có phân công nào cần phản hồi. Quản trị viên tổ chức sẽ ghép bạn với máy bay không người lái trước khi bắt đầu chuẩn bị.';
+      'Không có phân công nào cần phản hồi. Quản lý tổ chức sẽ ghép bạn với máy bay không người lái trước khi bắt đầu chuẩn bị.';
 
   @override
   String droneValidity(Object serial, Object from, Object until) {
@@ -495,7 +495,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get additionalSessionRequested =>
-      'Đã yêu cầu thêm phiên hiện trường. Hãy cập nhật kế hoạch/khung giờ và gửi lại. ORG_ADMIN độc lập phải phê duyệt mức độ sẵn sàng hiện tại trước khi có thể bắt đầu.';
+      'Đã yêu cầu thêm phiên hiện trường. Hãy cập nhật kế hoạch/khung giờ và gửi lại. ORG_MANAGER độc lập phải phê duyệt mức độ sẵn sàng hiện tại trước khi có thể bắt đầu.';
 
   @override
   String preparationVersionStatus(Object version, Object status) {
@@ -552,7 +552,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get userRoleAdmin => 'Quản trị viên';
 
   @override
-  String get userRoleOrgAdmin => 'Quản trị viên tổ chức';
+  String get userRolePlatformManager => 'Quản lý nền tảng';
+
+  @override
+  String get userRoleOrgManager => 'Quản lý tổ chức';
 
   @override
   String get userRoleInspector => 'Thanh tra viên';
@@ -597,7 +600,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noAssignedTasks => 'Chưa có nhiệm vụ bảo trì nào được giao';
 
   @override
-  String get assignedWorkOrdersDescription => 'Các lệnh bảo trì được giao cho đội của bạn sẽ hiển thị tại đây.';
+  String get assignedWorkOrdersDescription =>
+      'Các lệnh bảo trì được giao cho đội của bạn sẽ hiển thị tại đây.';
 
   @override
   String workOrderTitle(Object id) => 'Lệnh #$id';

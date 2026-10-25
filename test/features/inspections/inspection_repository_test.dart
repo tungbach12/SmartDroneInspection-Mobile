@@ -205,7 +205,6 @@ Map<String, dynamic> _evidenceResponse({bool isDeleted = false}) => {
 Map<String, dynamic> _preparationResponse() => {
   'id': 'preparation-2',
   'inspectionId': 'inspection-1',
-  'inspectorUserId': 'inspector-1',
   'preparationVersion': 2,
   'plannedStartAt': '2026-11-01T09:00:00Z',
   'plannedEndAt': '2026-11-01T10:00:00Z',

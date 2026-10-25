@@ -100,7 +100,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nothingToAnswer =>
-      'Nothing to answer. An organization administrator pairs you with a Drone before preparation can start.';
+      'Nothing to answer. An Organization Manager pairs you with a Drone before preparation can start.';
 
   @override
   String droneValidity(Object serial, Object from, Object until) {
@@ -491,7 +491,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get additionalSessionRequested =>
-      'Additional field session requested. Update the plan/window and submit it. An independent ORG_ADMIN must approve current readiness before Start becomes available.';
+      'Additional field session requested. Update the plan/window and submit it. An independent ORG_MANAGER must approve current readiness before Start becomes available.';
 
   @override
   String preparationVersionStatus(Object version, Object status) {
@@ -548,7 +548,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userRoleAdmin => 'Administrator';
 
   @override
-  String get userRoleOrgAdmin => 'Organization administrator';
+  String get userRolePlatformManager => 'Platform Manager';
+
+  @override
+  String get userRoleOrgManager => 'Organization Manager';
 
   @override
   String get userRoleInspector => 'Inspector';
@@ -593,7 +596,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAssignedTasks => 'No assigned maintenance tasks';
 
   @override
-  String get assignedWorkOrdersDescription => 'Work orders assigned to your team will appear here.';
+  String get assignedWorkOrdersDescription =>
+      'Work orders assigned to your team will appear here.';
 
   @override
   String workOrderTitle(Object id) => 'Order #$id';
