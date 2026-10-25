@@ -11,7 +11,6 @@ _InspectionPreparation _$InspectionPreparationFromJson(
 ) => _InspectionPreparation(
   id: json['id'] as String,
   inspectionId: json['inspectionId'] as String,
-  inspectorUserId: json['inspectorUserId'] as String,
   preparationVersion: (json['preparationVersion'] as num).toInt(),
   shotList: json['shotList'] as String,
   evidenceTypes: json['evidenceTypes'] as String?,
@@ -20,6 +19,11 @@ _InspectionPreparation _$InspectionPreparationFromJson(
   permitDocumentReferences: json['permitDocumentReferences'] as String?,
   status: json['status'] as String?,
   submittedAt: json['submittedAt'] as String?,
+  reviewedByUserId: json['reviewedByUserId'] as String?,
+  reviewedAt: json['reviewedAt'] == null
+      ? null
+      : DateTime.parse(json['reviewedAt'] as String),
+  reviewReason: json['reviewReason'] as String?,
   plannedStartAt: json['plannedStartAt'] == null
       ? null
       : DateTime.parse(json['plannedStartAt'] as String),
@@ -33,7 +37,6 @@ Map<String, dynamic> _$InspectionPreparationToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'inspectionId': instance.inspectionId,
-  'inspectorUserId': instance.inspectorUserId,
   'preparationVersion': instance.preparationVersion,
   'shotList': instance.shotList,
   'evidenceTypes': instance.evidenceTypes,
@@ -42,6 +45,9 @@ Map<String, dynamic> _$InspectionPreparationToJson(
   'permitDocumentReferences': instance.permitDocumentReferences,
   'status': instance.status,
   'submittedAt': instance.submittedAt,
+  'reviewedByUserId': instance.reviewedByUserId,
+  'reviewedAt': instance.reviewedAt?.toIso8601String(),
+  'reviewReason': instance.reviewReason,
   'plannedStartAt': instance.plannedStartAt?.toIso8601String(),
   'plannedEndAt': instance.plannedEndAt?.toIso8601String(),
 };

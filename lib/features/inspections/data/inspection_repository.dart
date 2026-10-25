@@ -189,16 +189,12 @@ class InspectionRepository {
   /// it from when it was made, so a refusal here is the server catching a stale approval.
   Future<ApiResult<FieldSession>> startFieldSession({
     required String inspectionId,
-    required String? checklistTemplateId,
     required String preFlightChecklistNote,
   }) async {
     try {
       final response = await _dio.post(
         '/inspections/$inspectionId/field-sessions',
-        data: {
-          'checklistTemplateId': checklistTemplateId,
-          'preFlightChecklistNote': preFlightChecklistNote,
-        },
+        data: {'preFlightChecklistNote': preFlightChecklistNote},
       );
       return ApiResult.success(
         FieldSession.fromJson(Map<String, dynamic>.from(response.data as Map)),

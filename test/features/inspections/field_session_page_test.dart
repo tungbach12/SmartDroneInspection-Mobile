@@ -25,7 +25,6 @@ class _FakeFieldSessionRepository implements InspectionRepository {
   @override
   Future<ApiResult<FieldSession>> startFieldSession({
     required String inspectionId,
-    required String? checklistTemplateId,
     required String preFlightChecklistNote,
   }) async {
     lastNote = preFlightChecklistNote;
@@ -74,12 +73,7 @@ class _FakeFieldSessionRepository implements InspectionRepository {
 FieldSession _session({required String status}) => FieldSession(
   id: 'session-1',
   inspectionId: 'inspection-1',
-  organizationId: 'org-1',
-  inspectorUserId: 'inspector-1',
-  droneId: 'drone-1',
-  readinessDecisionId: 'decision-1',
-  checklistTemplateId: null,
-  readinessVersion: 1,
+  preparationId: 'preparation-1',
   status: status,
   startedAt: '2026-11-01T09:05:00Z',
   endedAt: status == 'IN_PROGRESS' ? null : '2026-11-01T09:30:00Z',

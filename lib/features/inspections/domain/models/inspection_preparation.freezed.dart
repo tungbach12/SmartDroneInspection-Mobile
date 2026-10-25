@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InspectionPreparation {
 
- String get id; String get inspectionId; String get inspectorUserId; int get preparationVersion; String get shotList; String? get evidenceTypes; String? get accessConstraints; String? get safetyObservations; String? get permitDocumentReferences; String? get status; String? get submittedAt; DateTime? get plannedStartAt; DateTime? get plannedEndAt;
+ String get id; String get inspectionId; int get preparationVersion; String get shotList; String? get evidenceTypes; String? get accessConstraints; String? get safetyObservations; String? get permitDocumentReferences; String? get status; String? get submittedAt; String? get reviewedByUserId; DateTime? get reviewedAt; String? get reviewReason; DateTime? get plannedStartAt; DateTime? get plannedEndAt;
 /// Create a copy of InspectionPreparation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $InspectionPreparationCopyWith<InspectionPreparation> get copyWith => _$Inspecti
 @override
 bool operator ==(Object other) {
   final _this = this as InspectionPreparation;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionPreparation&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.inspectionId, _this.inspectionId) || other.inspectionId == _this.inspectionId)&&(identical(other.inspectorUserId, _this.inspectorUserId) || other.inspectorUserId == _this.inspectorUserId)&&(identical(other.preparationVersion, _this.preparationVersion) || other.preparationVersion == _this.preparationVersion)&&(identical(other.shotList, _this.shotList) || other.shotList == _this.shotList)&&(identical(other.evidenceTypes, _this.evidenceTypes) || other.evidenceTypes == _this.evidenceTypes)&&(identical(other.accessConstraints, _this.accessConstraints) || other.accessConstraints == _this.accessConstraints)&&(identical(other.safetyObservations, _this.safetyObservations) || other.safetyObservations == _this.safetyObservations)&&(identical(other.permitDocumentReferences, _this.permitDocumentReferences) || other.permitDocumentReferences == _this.permitDocumentReferences)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.submittedAt, _this.submittedAt) || other.submittedAt == _this.submittedAt)&&(identical(other.plannedStartAt, _this.plannedStartAt) || other.plannedStartAt == _this.plannedStartAt)&&(identical(other.plannedEndAt, _this.plannedEndAt) || other.plannedEndAt == _this.plannedEndAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionPreparation&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.inspectionId, _this.inspectionId) || other.inspectionId == _this.inspectionId)&&(identical(other.preparationVersion, _this.preparationVersion) || other.preparationVersion == _this.preparationVersion)&&(identical(other.shotList, _this.shotList) || other.shotList == _this.shotList)&&(identical(other.evidenceTypes, _this.evidenceTypes) || other.evidenceTypes == _this.evidenceTypes)&&(identical(other.accessConstraints, _this.accessConstraints) || other.accessConstraints == _this.accessConstraints)&&(identical(other.safetyObservations, _this.safetyObservations) || other.safetyObservations == _this.safetyObservations)&&(identical(other.permitDocumentReferences, _this.permitDocumentReferences) || other.permitDocumentReferences == _this.permitDocumentReferences)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.submittedAt, _this.submittedAt) || other.submittedAt == _this.submittedAt)&&(identical(other.reviewedByUserId, _this.reviewedByUserId) || other.reviewedByUserId == _this.reviewedByUserId)&&(identical(other.reviewedAt, _this.reviewedAt) || other.reviewedAt == _this.reviewedAt)&&(identical(other.reviewReason, _this.reviewReason) || other.reviewReason == _this.reviewReason)&&(identical(other.plannedStartAt, _this.plannedStartAt) || other.plannedStartAt == _this.plannedStartAt)&&(identical(other.plannedEndAt, _this.plannedEndAt) || other.plannedEndAt == _this.plannedEndAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as InspectionPreparation;
-  return Object.hash(runtimeType,_this.id,_this.inspectionId,_this.inspectorUserId,_this.preparationVersion,_this.shotList,_this.evidenceTypes,_this.accessConstraints,_this.safetyObservations,_this.permitDocumentReferences,_this.status,_this.submittedAt,_this.plannedStartAt,_this.plannedEndAt);
+  return Object.hash(runtimeType,_this.id,_this.inspectionId,_this.preparationVersion,_this.shotList,_this.evidenceTypes,_this.accessConstraints,_this.safetyObservations,_this.permitDocumentReferences,_this.status,_this.submittedAt,_this.reviewedByUserId,_this.reviewedAt,_this.reviewReason,_this.plannedStartAt,_this.plannedEndAt);
 }
 
 @override
 String toString() {
   final _this = this as InspectionPreparation;
-  return 'InspectionPreparation(id: ${_this.id}, inspectionId: ${_this.inspectionId}, inspectorUserId: ${_this.inspectorUserId}, preparationVersion: ${_this.preparationVersion}, shotList: ${_this.shotList}, evidenceTypes: ${_this.evidenceTypes}, accessConstraints: ${_this.accessConstraints}, safetyObservations: ${_this.safetyObservations}, permitDocumentReferences: ${_this.permitDocumentReferences}, status: ${_this.status}, submittedAt: ${_this.submittedAt}, plannedStartAt: ${_this.plannedStartAt}, plannedEndAt: ${_this.plannedEndAt})';
+  return 'InspectionPreparation(id: ${_this.id}, inspectionId: ${_this.inspectionId}, preparationVersion: ${_this.preparationVersion}, shotList: ${_this.shotList}, evidenceTypes: ${_this.evidenceTypes}, accessConstraints: ${_this.accessConstraints}, safetyObservations: ${_this.safetyObservations}, permitDocumentReferences: ${_this.permitDocumentReferences}, status: ${_this.status}, submittedAt: ${_this.submittedAt}, reviewedByUserId: ${_this.reviewedByUserId}, reviewedAt: ${_this.reviewedAt}, reviewReason: ${_this.reviewReason}, plannedStartAt: ${_this.plannedStartAt}, plannedEndAt: ${_this.plannedEndAt})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $InspectionPreparationCopyWith<$Res>  {
   factory $InspectionPreparationCopyWith(InspectionPreparation value, $Res Function(InspectionPreparation) _then) = _$InspectionPreparationCopyWithImpl;
 @useResult
 $Res call({
- String id, String inspectionId, String inspectorUserId, int preparationVersion, String shotList, String? evidenceTypes, String? accessConstraints, String? safetyObservations, String? permitDocumentReferences, String? status, String? submittedAt, DateTime? plannedStartAt, DateTime? plannedEndAt
+ String id, String inspectionId, int preparationVersion, String shotList, String? evidenceTypes, String? accessConstraints, String? safetyObservations, String? permitDocumentReferences, String? status, String? submittedAt, String? reviewedByUserId, DateTime? reviewedAt, String? reviewReason, DateTime? plannedStartAt, DateTime? plannedEndAt
 });
 
 
@@ -71,11 +71,10 @@ class _$InspectionPreparationCopyWithImpl<$Res>
 
 /// Create a copy of InspectionPreparation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? inspectionId = null,Object? inspectorUserId = null,Object? preparationVersion = null,Object? shotList = null,Object? evidenceTypes = freezed,Object? accessConstraints = freezed,Object? safetyObservations = freezed,Object? permitDocumentReferences = freezed,Object? status = freezed,Object? submittedAt = freezed,Object? plannedStartAt = freezed,Object? plannedEndAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? inspectionId = null,Object? preparationVersion = null,Object? shotList = null,Object? evidenceTypes = freezed,Object? accessConstraints = freezed,Object? safetyObservations = freezed,Object? permitDocumentReferences = freezed,Object? status = freezed,Object? submittedAt = freezed,Object? reviewedByUserId = freezed,Object? reviewedAt = freezed,Object? reviewReason = freezed,Object? plannedStartAt = freezed,Object? plannedEndAt = freezed,}) {
   return _then(InspectionPreparation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,inspectionId: null == inspectionId ? _self.inspectionId : inspectionId // ignore: cast_nullable_to_non_nullable
-as String,inspectorUserId: null == inspectorUserId ? _self.inspectorUserId : inspectorUserId // ignore: cast_nullable_to_non_nullable
 as String,preparationVersion: null == preparationVersion ? _self.preparationVersion : preparationVersion // ignore: cast_nullable_to_non_nullable
 as int,shotList: null == shotList ? _self.shotList : shotList // ignore: cast_nullable_to_non_nullable
 as String,evidenceTypes: freezed == evidenceTypes ? _self.evidenceTypes : evidenceTypes // ignore: cast_nullable_to_non_nullable
@@ -84,6 +83,9 @@ as String?,safetyObservations: freezed == safetyObservations ? _self.safetyObser
 as String?,permitDocumentReferences: freezed == permitDocumentReferences ? _self.permitDocumentReferences : permitDocumentReferences // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String?,submittedAt: freezed == submittedAt ? _self.submittedAt : submittedAt // ignore: cast_nullable_to_non_nullable
+as String?,reviewedByUserId: freezed == reviewedByUserId ? _self.reviewedByUserId : reviewedByUserId // ignore: cast_nullable_to_non_nullable
+as String?,reviewedAt: freezed == reviewedAt ? _self.reviewedAt : reviewedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,reviewReason: freezed == reviewReason ? _self.reviewReason : reviewReason // ignore: cast_nullable_to_non_nullable
 as String?,plannedStartAt: freezed == plannedStartAt ? _self.plannedStartAt : plannedStartAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,plannedEndAt: freezed == plannedEndAt ? _self.plannedEndAt : plannedEndAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
@@ -171,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String inspectionId,  String inspectorUserId,  int preparationVersion,  String shotList,  String? evidenceTypes,  String? accessConstraints,  String? safetyObservations,  String? permitDocumentReferences,  String? status,  String? submittedAt,  DateTime? plannedStartAt,  DateTime? plannedEndAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String inspectionId,  int preparationVersion,  String shotList,  String? evidenceTypes,  String? accessConstraints,  String? safetyObservations,  String? permitDocumentReferences,  String? status,  String? submittedAt,  String? reviewedByUserId,  DateTime? reviewedAt,  String? reviewReason,  DateTime? plannedStartAt,  DateTime? plannedEndAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InspectionPreparation() when $default != null:
-return $default(_that.id,_that.inspectionId,_that.inspectorUserId,_that.preparationVersion,_that.shotList,_that.evidenceTypes,_that.accessConstraints,_that.safetyObservations,_that.permitDocumentReferences,_that.status,_that.submittedAt,_that.plannedStartAt,_that.plannedEndAt);case _:
+return $default(_that.id,_that.inspectionId,_that.preparationVersion,_that.shotList,_that.evidenceTypes,_that.accessConstraints,_that.safetyObservations,_that.permitDocumentReferences,_that.status,_that.submittedAt,_that.reviewedByUserId,_that.reviewedAt,_that.reviewReason,_that.plannedStartAt,_that.plannedEndAt);case _:
   return orElse();
 
 }
@@ -192,10 +194,10 @@ return $default(_that.id,_that.inspectionId,_that.inspectorUserId,_that.preparat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String inspectionId,  String inspectorUserId,  int preparationVersion,  String shotList,  String? evidenceTypes,  String? accessConstraints,  String? safetyObservations,  String? permitDocumentReferences,  String? status,  String? submittedAt,  DateTime? plannedStartAt,  DateTime? plannedEndAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String inspectionId,  int preparationVersion,  String shotList,  String? evidenceTypes,  String? accessConstraints,  String? safetyObservations,  String? permitDocumentReferences,  String? status,  String? submittedAt,  String? reviewedByUserId,  DateTime? reviewedAt,  String? reviewReason,  DateTime? plannedStartAt,  DateTime? plannedEndAt)  $default,) {final _that = this;
 switch (_that) {
 case _InspectionPreparation():
-return $default(_that.id,_that.inspectionId,_that.inspectorUserId,_that.preparationVersion,_that.shotList,_that.evidenceTypes,_that.accessConstraints,_that.safetyObservations,_that.permitDocumentReferences,_that.status,_that.submittedAt,_that.plannedStartAt,_that.plannedEndAt);case _:
+return $default(_that.id,_that.inspectionId,_that.preparationVersion,_that.shotList,_that.evidenceTypes,_that.accessConstraints,_that.safetyObservations,_that.permitDocumentReferences,_that.status,_that.submittedAt,_that.reviewedByUserId,_that.reviewedAt,_that.reviewReason,_that.plannedStartAt,_that.plannedEndAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +214,10 @@ return $default(_that.id,_that.inspectionId,_that.inspectorUserId,_that.preparat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String inspectionId,  String inspectorUserId,  int preparationVersion,  String shotList,  String? evidenceTypes,  String? accessConstraints,  String? safetyObservations,  String? permitDocumentReferences,  String? status,  String? submittedAt,  DateTime? plannedStartAt,  DateTime? plannedEndAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String inspectionId,  int preparationVersion,  String shotList,  String? evidenceTypes,  String? accessConstraints,  String? safetyObservations,  String? permitDocumentReferences,  String? status,  String? submittedAt,  String? reviewedByUserId,  DateTime? reviewedAt,  String? reviewReason,  DateTime? plannedStartAt,  DateTime? plannedEndAt)?  $default,) {final _that = this;
 switch (_that) {
 case _InspectionPreparation() when $default != null:
-return $default(_that.id,_that.inspectionId,_that.inspectorUserId,_that.preparationVersion,_that.shotList,_that.evidenceTypes,_that.accessConstraints,_that.safetyObservations,_that.permitDocumentReferences,_that.status,_that.submittedAt,_that.plannedStartAt,_that.plannedEndAt);case _:
+return $default(_that.id,_that.inspectionId,_that.preparationVersion,_that.shotList,_that.evidenceTypes,_that.accessConstraints,_that.safetyObservations,_that.permitDocumentReferences,_that.status,_that.submittedAt,_that.reviewedByUserId,_that.reviewedAt,_that.reviewReason,_that.plannedStartAt,_that.plannedEndAt);case _:
   return null;
 
 }
@@ -227,12 +229,11 @@ return $default(_that.id,_that.inspectionId,_that.inspectorUserId,_that.preparat
 @JsonSerializable()
 
 class _InspectionPreparation implements InspectionPreparation {
-  const _InspectionPreparation({required this.id, required this.inspectionId, required this.inspectorUserId, required this.preparationVersion, required this.shotList, this.evidenceTypes, this.accessConstraints, this.safetyObservations, this.permitDocumentReferences, this.status, this.submittedAt, this.plannedStartAt, this.plannedEndAt});
+  const _InspectionPreparation({required this.id, required this.inspectionId, required this.preparationVersion, required this.shotList, this.evidenceTypes, this.accessConstraints, this.safetyObservations, this.permitDocumentReferences, this.status, this.submittedAt, this.reviewedByUserId, this.reviewedAt, this.reviewReason, this.plannedStartAt, this.plannedEndAt});
   factory _InspectionPreparation.fromJson(Map<String, dynamic> json) => _$InspectionPreparationFromJson(json);
 
 @override final  String id;
 @override final  String inspectionId;
-@override final  String inspectorUserId;
 @override final  int preparationVersion;
 @override final  String shotList;
 @override final  String? evidenceTypes;
@@ -241,6 +242,9 @@ class _InspectionPreparation implements InspectionPreparation {
 @override final  String? permitDocumentReferences;
 @override final  String? status;
 @override final  String? submittedAt;
+@override final  String? reviewedByUserId;
+@override final  DateTime? reviewedAt;
+@override final  String? reviewReason;
 @override final  DateTime? plannedStartAt;
 @override final  DateTime? plannedEndAt;
 
@@ -257,18 +261,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionPreparation&&(identical(other.id, id) || other.id == id)&&(identical(other.inspectionId, inspectionId) || other.inspectionId == inspectionId)&&(identical(other.inspectorUserId, inspectorUserId) || other.inspectorUserId == inspectorUserId)&&(identical(other.preparationVersion, preparationVersion) || other.preparationVersion == preparationVersion)&&(identical(other.shotList, shotList) || other.shotList == shotList)&&(identical(other.evidenceTypes, evidenceTypes) || other.evidenceTypes == evidenceTypes)&&(identical(other.accessConstraints, accessConstraints) || other.accessConstraints == accessConstraints)&&(identical(other.safetyObservations, safetyObservations) || other.safetyObservations == safetyObservations)&&(identical(other.permitDocumentReferences, permitDocumentReferences) || other.permitDocumentReferences == permitDocumentReferences)&&(identical(other.status, status) || other.status == status)&&(identical(other.submittedAt, submittedAt) || other.submittedAt == submittedAt)&&(identical(other.plannedStartAt, plannedStartAt) || other.plannedStartAt == plannedStartAt)&&(identical(other.plannedEndAt, plannedEndAt) || other.plannedEndAt == plannedEndAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionPreparation&&(identical(other.id, id) || other.id == id)&&(identical(other.inspectionId, inspectionId) || other.inspectionId == inspectionId)&&(identical(other.preparationVersion, preparationVersion) || other.preparationVersion == preparationVersion)&&(identical(other.shotList, shotList) || other.shotList == shotList)&&(identical(other.evidenceTypes, evidenceTypes) || other.evidenceTypes == evidenceTypes)&&(identical(other.accessConstraints, accessConstraints) || other.accessConstraints == accessConstraints)&&(identical(other.safetyObservations, safetyObservations) || other.safetyObservations == safetyObservations)&&(identical(other.permitDocumentReferences, permitDocumentReferences) || other.permitDocumentReferences == permitDocumentReferences)&&(identical(other.status, status) || other.status == status)&&(identical(other.submittedAt, submittedAt) || other.submittedAt == submittedAt)&&(identical(other.reviewedByUserId, reviewedByUserId) || other.reviewedByUserId == reviewedByUserId)&&(identical(other.reviewedAt, reviewedAt) || other.reviewedAt == reviewedAt)&&(identical(other.reviewReason, reviewReason) || other.reviewReason == reviewReason)&&(identical(other.plannedStartAt, plannedStartAt) || other.plannedStartAt == plannedStartAt)&&(identical(other.plannedEndAt, plannedEndAt) || other.plannedEndAt == plannedEndAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,inspectionId,inspectorUserId,preparationVersion,shotList,evidenceTypes,accessConstraints,safetyObservations,permitDocumentReferences,status,submittedAt,plannedStartAt,plannedEndAt);
+    return Object.hash(runtimeType,id,inspectionId,preparationVersion,shotList,evidenceTypes,accessConstraints,safetyObservations,permitDocumentReferences,status,submittedAt,reviewedByUserId,reviewedAt,reviewReason,plannedStartAt,plannedEndAt);
 }
 
 @override
 String toString() {
-    return 'InspectionPreparation(id: $id, inspectionId: $inspectionId, inspectorUserId: $inspectorUserId, preparationVersion: $preparationVersion, shotList: $shotList, evidenceTypes: $evidenceTypes, accessConstraints: $accessConstraints, safetyObservations: $safetyObservations, permitDocumentReferences: $permitDocumentReferences, status: $status, submittedAt: $submittedAt, plannedStartAt: $plannedStartAt, plannedEndAt: $plannedEndAt)';
+    return 'InspectionPreparation(id: $id, inspectionId: $inspectionId, preparationVersion: $preparationVersion, shotList: $shotList, evidenceTypes: $evidenceTypes, accessConstraints: $accessConstraints, safetyObservations: $safetyObservations, permitDocumentReferences: $permitDocumentReferences, status: $status, submittedAt: $submittedAt, reviewedByUserId: $reviewedByUserId, reviewedAt: $reviewedAt, reviewReason: $reviewReason, plannedStartAt: $plannedStartAt, plannedEndAt: $plannedEndAt)';
 }
 
 
@@ -279,7 +283,7 @@ abstract mixin class _$InspectionPreparationCopyWith<$Res> implements $Inspectio
   factory _$InspectionPreparationCopyWith(_InspectionPreparation value, $Res Function(_InspectionPreparation) _then) = __$InspectionPreparationCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String inspectionId, String inspectorUserId, int preparationVersion, String shotList, String? evidenceTypes, String? accessConstraints, String? safetyObservations, String? permitDocumentReferences, String? status, String? submittedAt, DateTime? plannedStartAt, DateTime? plannedEndAt
+ String id, String inspectionId, int preparationVersion, String shotList, String? evidenceTypes, String? accessConstraints, String? safetyObservations, String? permitDocumentReferences, String? status, String? submittedAt, String? reviewedByUserId, DateTime? reviewedAt, String? reviewReason, DateTime? plannedStartAt, DateTime? plannedEndAt
 });
 
 
@@ -296,11 +300,10 @@ class __$InspectionPreparationCopyWithImpl<$Res>
 
 /// Create a copy of InspectionPreparation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? inspectionId = null,Object? inspectorUserId = null,Object? preparationVersion = null,Object? shotList = null,Object? evidenceTypes = freezed,Object? accessConstraints = freezed,Object? safetyObservations = freezed,Object? permitDocumentReferences = freezed,Object? status = freezed,Object? submittedAt = freezed,Object? plannedStartAt = freezed,Object? plannedEndAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? inspectionId = null,Object? preparationVersion = null,Object? shotList = null,Object? evidenceTypes = freezed,Object? accessConstraints = freezed,Object? safetyObservations = freezed,Object? permitDocumentReferences = freezed,Object? status = freezed,Object? submittedAt = freezed,Object? reviewedByUserId = freezed,Object? reviewedAt = freezed,Object? reviewReason = freezed,Object? plannedStartAt = freezed,Object? plannedEndAt = freezed,}) {
   return _then(_InspectionPreparation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,inspectionId: null == inspectionId ? _self.inspectionId : inspectionId // ignore: cast_nullable_to_non_nullable
-as String,inspectorUserId: null == inspectorUserId ? _self.inspectorUserId : inspectorUserId // ignore: cast_nullable_to_non_nullable
 as String,preparationVersion: null == preparationVersion ? _self.preparationVersion : preparationVersion // ignore: cast_nullable_to_non_nullable
 as int,shotList: null == shotList ? _self.shotList : shotList // ignore: cast_nullable_to_non_nullable
 as String,evidenceTypes: freezed == evidenceTypes ? _self.evidenceTypes : evidenceTypes // ignore: cast_nullable_to_non_nullable
@@ -309,6 +312,9 @@ as String?,safetyObservations: freezed == safetyObservations ? _self.safetyObser
 as String?,permitDocumentReferences: freezed == permitDocumentReferences ? _self.permitDocumentReferences : permitDocumentReferences // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String?,submittedAt: freezed == submittedAt ? _self.submittedAt : submittedAt // ignore: cast_nullable_to_non_nullable
+as String?,reviewedByUserId: freezed == reviewedByUserId ? _self.reviewedByUserId : reviewedByUserId // ignore: cast_nullable_to_non_nullable
+as String?,reviewedAt: freezed == reviewedAt ? _self.reviewedAt : reviewedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,reviewReason: freezed == reviewReason ? _self.reviewReason : reviewReason // ignore: cast_nullable_to_non_nullable
 as String?,plannedStartAt: freezed == plannedStartAt ? _self.plannedStartAt : plannedStartAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,plannedEndAt: freezed == plannedEndAt ? _self.plannedEndAt : plannedEndAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,

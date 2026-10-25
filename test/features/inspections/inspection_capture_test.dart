@@ -203,12 +203,7 @@ class _FakeInspectionRepository extends InspectionRepository {
   FieldSession _completedSession() => FieldSession(
     id: 'session-1',
     inspectionId: 'inspection-1',
-    organizationId: 'org-1',
-    inspectorUserId: 'inspector-1',
-    droneId: null,
-    readinessDecisionId: 'decision-1',
-    checklistTemplateId: null,
-    readinessVersion: 1,
+    preparationId: 'preparation-1',
     status: 'FIELD_COMPLETED',
     startedAt: '2026-09-24T08:00:00Z',
     endedAt: '2026-09-24T09:00:00Z',

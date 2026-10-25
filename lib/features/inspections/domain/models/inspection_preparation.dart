@@ -8,7 +8,6 @@ abstract class InspectionPreparation with _$InspectionPreparation {
   const factory InspectionPreparation({
     required String id,
     required String inspectionId,
-    required String inspectorUserId,
     required int preparationVersion,
     required String shotList,
     String? evidenceTypes,
@@ -17,6 +16,9 @@ abstract class InspectionPreparation with _$InspectionPreparation {
     String? permitDocumentReferences,
     String? status,
     String? submittedAt,
+    String? reviewedByUserId,
+    DateTime? reviewedAt,
+    String? reviewReason,
     DateTime? plannedStartAt,
     DateTime? plannedEndAt,
   }) = _InspectionPreparation;

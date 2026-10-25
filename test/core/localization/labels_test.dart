@@ -36,5 +36,9 @@ void main() {
       localizedChecklistChoice(vietnamese, 'SERVER_VALUE'),
       'SERVER_VALUE',
     );
+    expect(localizedRole(english, 'PLATFORM_MANAGER'), 'Platform Manager');
+    expect(localizedRole(vietnamese, 'PLATFORM_MANAGER'), 'Quản lý nền tảng');
+    expect(localizedRole(english, 'ORG_MANAGER'), 'Organization Manager');
+    expect(localizedRole(vietnamese, 'ORG_MANAGER'), 'Quản lý tổ chức');
   });
 }

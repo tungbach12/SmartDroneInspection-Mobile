@@ -54,23 +54,20 @@ void main() {
     () async {
       final result = await repository.startFieldSession(
         inspectionId: 'inspection-1',
-        checklistTemplateId: null,
         preFlightChecklistNote: 'Drone identified; bridge accessible',
       );
 
       expect(result, isA<ApiSuccess<FieldSession>>());
       final session = (result as ApiSuccess<FieldSession>).data;
       expect(session.status, 'IN_PROGRESS');
-      expect(session.readinessDecisionId, 'decision-1');
+      expect(session.preparationId, 'preparation-1');
       expect(session.isOpen, isTrue);
 
       expect(requests.single.method, 'POST');
       expect(requests.single.path, '/inspections/inspection-1/field-sessions');
-      expect(
-        (requests.single.data
-            as Map<String, dynamic>)['preFlightChecklistNote'],
-        'Drone identified; bridge accessible',
-      );
+      expect(requests.single.data, {
+        'preFlightChecklistNote': 'Drone identified; bridge accessible',
+      });
     },
   );
 
@@ -181,7 +178,6 @@ void main() {
 
     final result = await repository.startFieldSession(
       inspectionId: 'inspection-1',
-      checklistTemplateId: null,
       preFlightChecklistNote: 'Ready',
     );
 
@@ -199,12 +195,7 @@ void main() {
 Map<String, dynamic> _sessionToJson(String status) => {
   'id': 'session-1',
   'inspectionId': 'inspection-1',
-  'organizationId': 'org-1',
-  'inspectorUserId': 'inspector-1',
-  'droneId': 'drone-1',
-  'readinessDecisionId': 'decision-1',
-  'checklistTemplateId': null,
-  'readinessVersion': 1,
+  'preparationId': 'preparation-1',
   'status': status,
   'startedAt': '2026-11-01T09:05:00Z',
   'endedAt': status == 'IN_PROGRESS' ? null : '2026-11-01T09:30:00Z',

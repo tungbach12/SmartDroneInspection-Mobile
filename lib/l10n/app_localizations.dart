@@ -275,7 +275,7 @@ abstract class AppLocalizations {
   /// No description provided for @nothingToAnswer.
   ///
   /// In en, this message translates to:
-  /// **'Nothing to answer. An organization administrator pairs you with a Drone before preparation can start.'**
+  /// **'Nothing to answer. An Organization Manager pairs you with a Drone before preparation can start.'**
   String get nothingToAnswer;
 
   /// No description provided for @droneValidity.
@@ -971,7 +971,7 @@ abstract class AppLocalizations {
   /// No description provided for @additionalSessionRequested.
   ///
   /// In en, this message translates to:
-  /// **'Additional field session requested. Update the plan/window and submit it. An independent ORG_ADMIN must approve current readiness before Start becomes available.'**
+  /// **'Additional field session requested. Update the plan/window and submit it. An independent ORG_MANAGER must approve current readiness before Start becomes available.'**
   String get additionalSessionRequested;
 
   /// No description provided for @preparationVersionStatus.
@@ -1064,11 +1064,17 @@ abstract class AppLocalizations {
   /// **'Administrator'**
   String get userRoleAdmin;
 
-  /// No description provided for @userRoleOrgAdmin.
+  /// No description provided for @userRolePlatformManager.
   ///
   /// In en, this message translates to:
-  /// **'Organization administrator'**
-  String get userRoleOrgAdmin;
+  /// **'Platform Manager'**
+  String get userRolePlatformManager;
+
+  /// No description provided for @userRoleOrgManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization Manager'**
+  String get userRoleOrgManager;
 
   /// No description provided for @userRoleInspector.
   ///
