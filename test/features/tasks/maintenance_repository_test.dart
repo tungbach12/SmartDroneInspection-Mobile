@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/tasks/data/maintenance_repository.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_task_item.dart';
+import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_work_log.dart';
 import 'package:smart_drone_inspection/features/tasks/domain/models/mobile_work_order.dart';
 
 void main() {
@@ -26,7 +27,19 @@ void main() {
         'taskNumber': 1,
         'name': 'Surface prep and weld',
         'method': 'MIG welding',
-        'status': 'PENDING',
+        'status': 'PLANNED',
+      };
+
+  Map<String, dynamic> sampleWorkLog() => {
+        'id': 'log-1',
+        'taskId': 'task-1',
+        'engineerUserId': 'eng-1',
+        'startedAt': '2026-10-15T08:00:00Z',
+        'endedAt': '2026-10-15T10:30:00Z',
+        'hours': 2.5,
+        'asLeftCondition': 'Clean and welded',
+        'testReadings': 'UPV >= 90%',
+        'status': 'SUBMITTED',
       };
 
   setUp(() {
@@ -42,6 +55,16 @@ void main() {
                 requestOptions: options,
                 statusCode: 200,
                 data: [sampleTask()],
+              ),
+            );
+            return;
+          }
+          if (options.path.endsWith('/work-logs') && options.method == 'GET') {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: [sampleWorkLog()],
               ),
             );
             return;
@@ -111,6 +134,18 @@ void main() {
     expect(tasks.length, 1);
     expect(tasks.first.name, 'Surface prep and weld');
     expect(tasks.first.taskNumber, 1);
+    expect(tasks.first.status, 'PLANNED');
+  });
+
+  test('getWorkLogs parses streamlined WorkLogResponse payload', () async {
+    final result = await repository.getWorkLogs('wo-1');
+
+    expect(result, isA<ApiSuccess<List<MobileWorkLog>>>());
+    final logs = (result as ApiSuccess<List<MobileWorkLog>>).data;
+    expect(logs.length, 1);
+    expect(logs.first.id, 'log-1');
+    expect(logs.first.workHours, 2.5);
+    expect(logs.first.status, 'SUBMITTED');
   });
 
   test('startWork sends POST request to start endpoint', () async {
@@ -156,8 +191,7 @@ void main() {
   test(
       'releaseWork, verifyWorkLog and resumeAfterRework call their named endpoints',
       () async {
-    expect(
-        await repository.releaseWork('wo-123'), isA<ApiSuccess<void>>());
+    expect(await repository.releaseWork('wo-123'), isA<ApiSuccess<void>>());
     expect(requests.last.path, '/maintenance/work-orders/wo-123/release');
 
     expect(await repository.verifyWorkLog('wo-123', 'log-1'),
@@ -165,8 +199,8 @@ void main() {
     expect(requests.last.path,
         '/maintenance/work-orders/wo-123/work-logs/log-1/verify');
 
-    expect(await repository.resumeAfterRework('wo-123'),
-        isA<ApiSuccess<void>>());
+    expect(
+        await repository.resumeAfterRework('wo-123'), isA<ApiSuccess<void>>());
     expect(requests.last.path,
         '/maintenance/work-orders/wo-123/resume-after-rework');
   });

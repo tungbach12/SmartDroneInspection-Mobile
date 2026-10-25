@@ -7,7 +7,7 @@ class MobileWorkLog {
     required this.workHours,
     this.asLeftCondition,
     this.testReadings,
-    this.status = 'DRAFT',
+    this.status = 'IN_PROGRESS',
     this.startedAt,
     this.endedAt,
   });
@@ -17,12 +17,10 @@ class MobileWorkLog {
       id: json['id'] as String,
       taskId: json['taskId'] as String,
       engineerUserId: json['engineerUserId'] as String,
-      workHours: (json['hours'] as num?)?.toDouble() ??
-          (json['workHours'] as num?)?.toDouble() ??
-          1.0,
+      workHours: (json['hours'] as num?)?.toDouble() ?? 1.0,
       asLeftCondition: json['asLeftCondition'] as String?,
       testReadings: json['testReadings'] as String?,
-      status: json['status'] as String? ?? 'DRAFT',
+      status: json['status'] as String? ?? 'IN_PROGRESS',
       startedAt: json['startedAt'] as String?,
       endedAt: json['endedAt'] as String?,
     );
