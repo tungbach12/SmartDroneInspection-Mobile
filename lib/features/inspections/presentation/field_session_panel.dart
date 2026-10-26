@@ -59,7 +59,7 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
       _error = switch (failure) {
         ValidationFailure(:final errors) => errors.values.join('\n'),
         UnauthorizedFailure() => context.l10n.cannotManageSession,
-        NotFoundFailure() => context.l10n.preparationNotFound,
+        NotFoundFailure() => context.l10n.inspectionUnavailable,
         ServerFailure(:final detail) =>
           detail ?? context.l10n.preparationServerRefused,
         NetworkFailure() => context.l10n.networkUnavailable,
@@ -130,11 +130,12 @@ class _FieldSessionPanelState extends ConsumerState<FieldSessionPanel> {
                   final open = data.where((s) => s.isOpen).firstOrNull;
                   final latest = data.isEmpty ? null : data.last;
                   final sessionToClose = open;
-                  // A postponed visit may be attempted again under the same approval. A normally
-                  // completed visit does not: the next session needs new preparation and an
-                  // independent readiness decision first.
-                  final canOfferStart =
-                      data.isEmpty || latest?.isPostponed == true;
+                  // A session can start if there is no open session and either this is the first session,
+                  // or the previous session was postponed or completed (allowing additional visits).
+                  final canOfferStart = sessionToClose == null &&
+                      (data.isEmpty ||
+                          latest?.isPostponed == true ||
+                          latest?.isCompleted == true);
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -325,10 +326,9 @@ class _OpenSession extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  context.l10n.startedAt(
-                    session.startedAt ?? context.l10n.justNow,
-                    session.preparationId ?? context.l10n.unknown,
-                  ),
+                  session.startedAt != null
+                      ? 'Started: ${session.startedAt}'
+                      : context.l10n.justNow,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),

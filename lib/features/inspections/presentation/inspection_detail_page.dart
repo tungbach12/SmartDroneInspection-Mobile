@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,9 +6,9 @@ import 'package:smart_drone_inspection/core/localization/app_localizations_conte
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 
@@ -27,15 +25,17 @@ class InspectionDetailPage extends ConsumerStatefulWidget {
 class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
   XFile? _selectedPhoto;
   DateTime? _captureTime;
-  bool _uploading = false;
-  String? _uploadError;
+  bool _uploadingPhoto = false;
+  String? _photoUploadError;
+
+  XFile? _selectedPermit;
+  bool _uploadingPermit = false;
+  String? _permitUploadError;
   String? _operationError;
-  String? _savingItemId;
-  final Set<String> _savedItemIds = {};
 
   Future<void> _capturePhoto() async {
     setState(() {
-      _uploadError = null;
+      _photoUploadError = null;
       _operationError = null;
     });
     try {
@@ -57,6 +57,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     final photo = _selectedPhoto;
     final captureTime = _captureTime;
     if (photo == null || captureTime == null) return;
+
     final sessionsResult = await ref
         .read(inspectionRepositoryProvider)
         .listFieldSessions(widget.inspectionId);
@@ -68,13 +69,13 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     };
     if (completedSessionId == null) {
       setState(() {
-        _uploadError = context.l10n.completeSessionBeforeEvidence;
+        _photoUploadError = context.l10n.completeSessionBeforeEvidence;
       });
       return;
     }
     setState(() {
-      _uploading = true;
-      _uploadError = null;
+      _uploadingPhoto = true;
+      _photoUploadError = null;
       _operationError = null;
     });
     final result = await ref
@@ -92,58 +93,75 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
         setState(() {
           _selectedPhoto = null;
           _captureTime = null;
-          _uploading = false;
+          _uploadingPhoto = false;
         });
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(context.l10n.evidenceUploaded)));
       case ApiError<InspectionEvidence>(:final failure):
         setState(() {
-          _uploading = false;
-          _uploadError = _failureMessage(context, failure);
+          _uploadingPhoto = false;
+          _photoUploadError = _failureMessage(context, failure);
         });
     }
   }
 
-  Future<void> _saveChecklist(
-    InspectionChecklistItem item,
-    Map<String, dynamic> responseValue,
-    String? notes,
-  ) async {
+  Future<void> _pickPermitFile() async {
     setState(() {
-      _savingItemId = item.itemId;
-      _operationError = null;
+      _permitUploadError = null;
+    });
+    try {
+      final file = await ref.read(flightPermitPickerProvider)();
+      if (!mounted || file == null) return;
+      setState(() {
+        _selectedPermit = file;
+      });
+    } on Exception {
+      if (!mounted) return;
+      setState(() {
+        _permitUploadError = 'Could not access file chooser.';
+      });
+    }
+  }
+
+  Future<void> _uploadPermit() async {
+    final file = _selectedPermit;
+    if (file == null) return;
+    setState(() {
+      _uploadingPermit = true;
+      _permitUploadError = null;
     });
     final result = await ref
         .read(inspectionRepositoryProvider)
-        .saveChecklistResponse(
+        .uploadFlightPermit(
           inspectionId: widget.inspectionId,
-          itemId: item.itemId,
-          responseValue: responseValue,
-          notes: notes,
+          file: file,
         );
     if (!mounted) return;
     switch (result) {
-      case ApiSuccess<void>():
-        ref.invalidate(inspectionChecklistProvider(widget.inspectionId));
+      case ApiSuccess<Inspection>():
+        ref.invalidate(inspectionDetailProvider(widget.inspectionId));
         setState(() {
-          _savingItemId = null;
-          _savedItemIds.add(item.itemId);
+          _selectedPermit = null;
+          _uploadingPermit = false;
         });
-      case ApiError<void>(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Flight permit uploaded. Inspection ready for flight!'),
+          ),
+        );
+      case ApiError<Inspection>(:final failure):
         setState(() {
-          _savingItemId = null;
-          _operationError = context.l10n.checklistSaveFailed(
-            _failureMessage(context, failure),
-          );
+          _uploadingPermit = false;
+          _permitUploadError = _failureMessage(context, failure);
         });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final checklist = ref.watch(
-      inspectionChecklistProvider(widget.inspectionId),
+    final inspectionAsync = ref.watch(
+      inspectionDetailProvider(widget.inspectionId),
     );
     final evidence = ref.watch(inspectionEvidenceProvider(widget.inspectionId));
 
@@ -158,10 +176,10 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(inspectionChecklistProvider(widget.inspectionId));
+          ref.invalidate(inspectionDetailProvider(widget.inspectionId));
           ref.invalidate(inspectionEvidenceProvider(widget.inspectionId));
           await Future.wait([
-            ref.read(inspectionChecklistProvider(widget.inspectionId).future),
+            ref.read(inspectionDetailProvider(widget.inspectionId).future),
             ref.read(inspectionEvidenceProvider(widget.inspectionId).future),
           ]);
         },
@@ -170,56 +188,50 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
           children: [
             Text(
               context.l10n.inspectionNumber(
-                widget.inspectionId.substring(0, 8),
+                widget.inspectionId.length >= 8
+                    ? widget.inspectionId.substring(0, 8)
+                    : widget.inspectionId,
               ),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
-            // MF2-09 to MF2-11 opens on its own screen. The session is started on site, which is a
-            // different act from reading the checklist and evidence recorded here.
             OutlinedButton.icon(
               onPressed: () =>
                   context.push('/inspection/${widget.inspectionId}/session'),
               icon: const Icon(Icons.flight_takeoff_outlined),
               label: Text(context.l10n.openFieldSession),
             ),
-            OutlinedButton(
-              onPressed: () => context.push(
-                '/inspection/${widget.inspectionId}/preparation',
-              ),
-              child: Text(context.l10n.openPreparation),
-            ),
             if (_operationError != null) ...[
               const SizedBox(height: 12),
               _InlineError(message: _operationError!),
             ],
             const SizedBox(height: 16),
-            Text(
-              context.l10n.checklist,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            AsyncValueWidget<List<InspectionChecklistItem>>(
-              value: checklist,
+            AsyncValueWidget<Inspection>(
+              value: inspectionAsync,
               onRetry: () => ref.invalidate(
-                inspectionChecklistProvider(widget.inspectionId),
+                inspectionDetailProvider(widget.inspectionId),
               ),
-              emptyCheck: (items) => items.isEmpty,
-              builder: (items) => Column(
-                children: items
-                    .map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _ChecklistItemCard(
-                          item: item,
-                          isSaving: _savingItemId == item.itemId,
-                          isSaved: _savedItemIds.contains(item.itemId),
-                          onSave: (value, notes) =>
-                              _saveChecklist(item, value, notes),
-                        ),
-                      ),
-                    )
-                    .toList(),
+              builder: (inspection) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _InspectionOverviewCard(inspection: inspection),
+                  const SizedBox(height: 16),
+                  _FlightPermitCard(
+                    inspection: inspection,
+                    selectedFile: _selectedPermit,
+                    uploading: _uploadingPermit,
+                    uploadError: _permitUploadError,
+                    onPickFile: _pickPermitFile,
+                    onUpload: _uploadPermit,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Inspection Items',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  _InspectionItemsCard(items: inspection.inspectionItems),
+                ],
               ),
             ),
             const SizedBox(height: 20),
@@ -235,7 +247,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     OutlinedButton.icon(
-                      onPressed: _uploading ? null : _capturePhoto,
+                      onPressed: _uploadingPhoto ? null : _capturePhoto,
                       icon: const Icon(Icons.photo_camera_outlined),
                       label: Text(context.l10n.captureInspectionPhoto),
                     ),
@@ -244,21 +256,21 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                       Text(context.l10n.selectedFile(_selectedPhoto!.name)),
                       const SizedBox(height: 8),
                       FilledButton.icon(
-                        onPressed: _uploading ? null : _uploadPhoto,
+                        onPressed: _uploadingPhoto ? null : _uploadPhoto,
                         icon: const Icon(Icons.cloud_upload_outlined),
                         label: Text(
-                          _uploading
+                          _uploadingPhoto
                               ? context.l10n.uploading
-                              : _uploadError == null
+                              : _photoUploadError == null
                               ? context.l10n.uploadPhoto
                               : context.l10n.retryUpload,
                         ),
                       ),
                     ],
-                    if (_uploadError != null) ...[
+                    if (_photoUploadError != null) ...[
                       const SizedBox(height: 8),
                       _InlineError(
-                        message: context.l10n.uploadFailed(_uploadError!),
+                        message: context.l10n.uploadFailed(_photoUploadError!),
                       ),
                     ],
                   ],
@@ -297,164 +309,186 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
   }
 }
 
-class _ChecklistItemCard extends StatefulWidget {
-  const _ChecklistItemCard({
-    required this.item,
-    required this.isSaving,
-    required this.isSaved,
-    required this.onSave,
-  });
+class _InspectionOverviewCard extends StatelessWidget {
+  const _InspectionOverviewCard({required this.inspection});
 
-  final InspectionChecklistItem item;
-  final bool isSaving;
-  final bool isSaved;
-  final Future<void> Function(Map<String, dynamic> value, String? notes) onSave;
-
-  @override
-  State<_ChecklistItemCard> createState() => _ChecklistItemCardState();
-}
-
-class _ChecklistItemCardState extends State<_ChecklistItemCard> {
-  late final TextEditingController _answer;
-  late final TextEditingController _notes;
-
-  @override
-  void initState() {
-    super.initState();
-    final initial = widget.item.responseValue?['value'];
-    _answer = TextEditingController(text: initial?.toString() ?? '');
-    _notes = TextEditingController(text: widget.item.notes ?? '');
-  }
-
-  @override
-  void dispose() {
-    _answer.dispose();
-    _notes.dispose();
-    super.dispose();
-  }
-
-  List<String> _choiceOptions() {
-    if (widget.item.responseType == 'PASS_FAIL') {
-      return ['PASS', 'FAIL'];
-    }
-    if (widget.item.responseType == 'BOOLEAN') return ['true', 'false'];
-    if (widget.item.responseType != 'CHOICE' ||
-        widget.item.validationConfig == null) {
-      return const [];
-    }
-    try {
-      final decoded = jsonDecode(widget.item.validationConfig!);
-      final choices = decoded is Map ? decoded['choices'] : null;
-      return choices is List ? choices.whereType<String>().toList() : const [];
-    } on FormatException {
-      return const [];
-    }
-  }
-
-  Map<String, dynamic>? _value() {
-    final text = _answer.text.trim();
-    if (text.isEmpty) return null;
-    return switch (widget.item.responseType) {
-      'NUMBER' =>
-        num.tryParse(text) == null ? null : {'value': num.parse(text)},
-      'BOOLEAN' => {'value': text == 'true'},
-      _ => {'value': text},
-    };
-  }
+  final Inspection inspection;
 
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
-    final choices = _choiceOptions();
+    final (statusLabel, statusColor) = switch (inspection.status) {
+      'ASSIGNED' => ('Assigned', Colors.orange),
+      'READY_FOR_FLIGHT' => ('Ready for Flight', Colors.blue),
+      'IN_PROGRESS' => ('In Progress', Colors.teal),
+      'FIELD_COMPLETED' => ('Field Completed', Colors.green),
+      _ => (inspection.status, Colors.grey),
+    };
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${item.itemCode}${item.required ? ' *' : ''}',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(item.prompt),
-            if (item.guidance != null && item.guidance!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                item.guidance!,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-            const SizedBox(height: 12),
-            if (choices.isNotEmpty)
-              DropdownButtonFormField<String>(
-                initialValue: _answer.text.isEmpty ? null : _answer.text,
-                decoration: InputDecoration(labelText: context.l10n.response),
-                items: choices
-                    .map(
-                      (choice) => DropdownMenuItem(
-                        value: choice,
-                        child: Text(
-                          localizedChecklistChoice(context.l10n, choice),
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: widget.isSaving
-                    ? null
-                    : (value) => setState(() => _answer.text = value ?? ''),
-              )
-            else
-              TextField(
-                controller: _answer,
-                keyboardType: item.responseType == 'NUMBER'
-                    ? const TextInputType.numberWithOptions(decimal: true)
-                    : TextInputType.text,
-                decoration: InputDecoration(
-                  labelText: item.responseType == 'NUMBER'
-                      ? context.l10n.numericResponse
-                      : context.l10n.response,
-                ),
-              ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _notes,
-              maxLength: 4000,
-              decoration: InputDecoration(
-                labelText: context.l10n.notesOptional,
-                border: OutlineInputBorder(),
-              ),
-              minLines: 1,
-              maxLines: 3,
-            ),
             Row(
               children: [
-                FilledButton.tonal(
-                  onPressed: widget.isSaving
-                      ? null
-                      : () {
-                          final value = _value();
-                          if (item.required && value == null) return;
-                          if (value != null) {
-                            widget.onSave(value, _notes.text.trim());
-                          }
-                        },
+                Expanded(
                   child: Text(
-                    widget.isSaving
-                        ? context.l10n.saving
-                        : context.l10n.saveResponse,
+                    inspection.assetName ?? 'Asset #${inspection.assetId}',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
-                if (widget.isSaved) ...[
-                  const SizedBox(width: 8),
-                  const Icon(Icons.check_circle_outline, color: Colors.green),
-                  const SizedBox(width: 4),
-                  Text(context.l10n.saved),
-                ],
+                Chip(
+                  visualDensity: VisualDensity.compact,
+                  label: Text(
+                    statusLabel,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: statusColor.shade900,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  backgroundColor: statusColor.shade50,
+                  side: BorderSide(color: statusColor.shade300),
+                ),
               ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Drone: ${inspection.droneModel ?? "Model N/A"} (${inspection.droneSerialNumber ?? "Serial N/A"})',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FlightPermitCard extends StatelessWidget {
+  const _FlightPermitCard({
+    required this.inspection,
+    required this.selectedFile,
+    required this.uploading,
+    required this.uploadError,
+    required this.onPickFile,
+    required this.onUpload,
+  });
+
+  final Inspection inspection;
+  final XFile? selectedFile;
+  final bool uploading;
+  final String? uploadError;
+  final VoidCallback onPickFile;
+  final VoidCallback onUpload;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPermit = inspection.hasFlightPermit;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  hasPermit ? Icons.verified : Icons.assignment_outlined,
+                  color: hasPermit ? Colors.green : Colors.orange,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Flight Permit',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (hasPermit) ...[
+              Text(
+                'Permit file: ${inspection.flightPermitFileName ?? "Attached"}',
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              if (inspection.flightPermitUploadedAt != null)
+                Text(
+                  'Uploaded at: ${inspection.flightPermitUploadedAt!.split("T").first}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              const SizedBox(height: 8),
+            ] else ...[
+              const Text(
+                'A flight permit is required before starting field flight sessions.',
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                key: const Key('choose-permit-file-btn'),
+                onPressed: uploading ? null : onPickFile,
+                icon: const Icon(Icons.attach_file),
+                label: Text(
+                  selectedFile == null ? 'Select Permit File' : 'Change File',
+                ),
+              ),
+              if (selectedFile != null) ...[
+                const SizedBox(height: 8),
+                Text('Selected: ${selectedFile!.name}'),
+                const SizedBox(height: 8),
+                FilledButton.icon(
+                  key: const Key('upload-permit-btn'),
+                  onPressed: uploading ? null : onUpload,
+                  icon: const Icon(Icons.cloud_upload_outlined),
+                  label: Text(uploading ? 'Uploading...' : 'Upload Flight Permit'),
+                ),
+              ],
+              if (uploadError != null) ...[
+                const SizedBox(height: 8),
+                _InlineError(message: uploadError!),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InspectionItemsCard extends StatelessWidget {
+  const _InspectionItemsCard({required this.items});
+
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('No inspection items specified for this asset.'),
+        ),
+      );
+    }
+
+    return Card(
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: items.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return ListTile(
+            dense: true,
+            leading: CircleAvatar(
+              radius: 12,
+              child: Text(
+                '${index + 1}',
+                style: const TextStyle(fontSize: 11),
+              ),
+            ),
+            title: Text(item),
+          );
+        },
       ),
     );
   }
@@ -466,21 +500,31 @@ class _InlineError extends StatelessWidget {
   final String message;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    liveRegion: true,
-    child: Text(
-      message,
-      style: TextStyle(color: Theme.of(context).colorScheme.error),
-    ),
-  );
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        message,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onErrorContainer,
+        ),
+      ),
+    );
+  }
 }
 
 String _failureMessage(BuildContext context, ApiFailure failure) =>
     switch (failure) {
       NetworkFailure() => context.l10n.checkConnection,
-      ValidationFailure(:final errors) => errors.values.join(' '),
+      ValidationFailure(:final errors) => errors.values.join('\n'),
       UnauthorizedFailure() => context.l10n.unauthorizedInspection,
       NotFoundFailure() => context.l10n.inspectionUnavailable,
-      ServerFailure(:final detail) => detail ?? context.l10n.requestFailed,
+      ServerFailure(:final detail) =>
+        detail ?? context.l10n.requestFailed,
       UnknownFailure(:final message) => message,
     };

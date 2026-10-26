@@ -10,6 +10,10 @@ class AuthUser {
     required this.roles,
     this.actorZone,
     this.organizationId,
+    this.pilotLicenseNumber,
+    this.pilotLicenseClass,
+    this.pilotLicenseExpiresAt,
+    this.pilotLicenseFileKey,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
@@ -29,6 +33,10 @@ class AuthUser {
       // Tolerant parse — unknown zones become null (fail closed), never crash.
       actorZone: ActorZone.parse(json['actorZone']),
       organizationId: json['organizationId'] as String?,
+      pilotLicenseNumber: json['pilotLicenseNumber'] as String?,
+      pilotLicenseClass: json['pilotLicenseClass'] as String?,
+      pilotLicenseExpiresAt: json['pilotLicenseExpiresAt'] as String?,
+      pilotLicenseFileKey: json['pilotLicenseFileKey'] as String?,
     );
   }
 
@@ -38,6 +46,37 @@ class AuthUser {
   final List<UserRole> roles;
   final ActorZone? actorZone;
   final String? organizationId;
+  final String? pilotLicenseNumber;
+  final String? pilotLicenseClass;
+  final String? pilotLicenseExpiresAt;
+  final String? pilotLicenseFileKey;
 
   bool hasRole(UserRole role) => roles.contains(role);
+
+  AuthUser copyWith({
+    String? id,
+    String? email,
+    String? fullName,
+    List<UserRole>? roles,
+    ActorZone? actorZone,
+    String? organizationId,
+    String? pilotLicenseNumber,
+    String? pilotLicenseClass,
+    String? pilotLicenseExpiresAt,
+    String? pilotLicenseFileKey,
+  }) {
+    return AuthUser(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      fullName: fullName ?? this.fullName,
+      roles: roles ?? this.roles,
+      actorZone: actorZone ?? this.actorZone,
+      organizationId: organizationId ?? this.organizationId,
+      pilotLicenseNumber: pilotLicenseNumber ?? this.pilotLicenseNumber,
+      pilotLicenseClass: pilotLicenseClass ?? this.pilotLicenseClass,
+      pilotLicenseExpiresAt:
+          pilotLicenseExpiresAt ?? this.pilotLicenseExpiresAt,
+      pilotLicenseFileKey: pilotLicenseFileKey ?? this.pilotLicenseFileKey,
+    );
+  }
 }

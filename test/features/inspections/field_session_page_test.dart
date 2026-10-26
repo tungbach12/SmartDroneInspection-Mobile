@@ -73,7 +73,6 @@ class _FakeFieldSessionRepository implements InspectionRepository {
 FieldSession _session({required String status}) => FieldSession(
   id: 'session-1',
   inspectionId: 'inspection-1',
-  preparationId: 'preparation-1',
   status: status,
   startedAt: '2026-11-01T09:05:00Z',
   endedAt: status == 'IN_PROGRESS' ? null : '2026-11-01T09:30:00Z',
@@ -234,7 +233,7 @@ void main() {
     },
   );
 
-  testWidgets('shows a completed session without offering another start', (
+  testWidgets('shows a completed session and allows starting another session', (
     tester,
   ) async {
     final repository = _FakeFieldSessionRepository(
@@ -244,10 +243,9 @@ void main() {
     await tester.pumpWidget(_host(repository));
     await tester.pumpAndSettle();
 
-    expect(find.text('Start field session'), findsNothing);
+    expect(find.text('Start field session'), findsOneWidget);
     expect(find.text('Field completed'), findsOneWidget);
     expect(find.text('Coverage recorded'), findsOneWidget);
-    expect(find.textContaining('Complete MF2 Preparation'), findsOneWidget);
   });
 
   testWidgets('shows an open session instead of offering another start', (
@@ -309,7 +307,7 @@ void main() {
     expect(find.text('Aborted'), findsOneWidget);
   });
 
-  testWidgets('does not offer another start after normal completion', (
+  testWidgets('allows another start after normal completion', (
     tester,
   ) async {
     final repository = _FakeFieldSessionRepository(
@@ -319,8 +317,7 @@ void main() {
     await tester.pumpWidget(_host(repository));
     await tester.pumpAndSettle();
 
-    expect(find.text('Start field session'), findsNothing);
-    expect(find.textContaining('Complete MF2 Preparation'), findsOneWidget);
+    expect(find.text('Start field session'), findsOneWidget);
   });
 
   testWidgets('offers a new attempt after a postponement', (tester) async {

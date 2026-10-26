@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 
 void main() {
   late Dio dio;
@@ -18,48 +19,45 @@ void main() {
       InterceptorsWrapper(
         onRequest: (options, handler) {
           requests.add(options);
-          if (options.path.endsWith('/checklist')) {
+          if (options.method == 'GET' && options.path.endsWith('/inspections')) {
             handler.resolve(
               Response(
                 requestOptions: options,
                 statusCode: 200,
-                data: [
-                  {
-                    'itemId': 'item-1',
-                    'itemCode': 'SURFACE',
-                    'sectionName': 'Deck',
-                    'prompt': 'Check deck condition',
-                    'responseType': 'PASS_FAIL',
-                    'required': true,
-                    'displayOrder': 0,
-                    'guidance': null,
-                    'validationConfig': null,
-                    'responseValue': null,
-                    'notes': null,
-                    'completedAt': null,
-                  },
-                ],
+                data: [_inspectionResponse()],
               ),
             );
             return;
           }
-          if (options.method == 'PUT') {
+          if (options.method == 'GET' &&
+              options.path.contains('/inspections/inspection-1') &&
+              !options.path.endsWith('/evidence') &&
+              !options.path.endsWith('/field-sessions')) {
             handler.resolve(
-              Response(requestOptions: options, statusCode: 200, data: {}),
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: _inspectionResponse(),
+              ),
             );
             return;
           }
-          if (options.method == 'POST') {
-            if (options.path.endsWith('/additional-session')) {
-              handler.resolve(
-                Response(
-                  requestOptions: options,
-                  statusCode: 200,
-                  data: _preparationResponse(),
+          if (options.method == 'POST' &&
+              options.path.endsWith('/flight-permit')) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: _inspectionResponse(
+                  status: 'READY_FOR_FLIGHT',
+                  permitFileKey: 'permits/flight-permit.pdf',
+                  permitFileName: 'flight-permit.pdf',
                 ),
-              );
-              return;
-            }
+              ),
+            );
+            return;
+          }
+          if (options.method == 'POST' && options.path.endsWith('/evidence')) {
             handler.resolve(
               Response(
                 requestOptions: options,
@@ -86,55 +84,50 @@ void main() {
 
   tearDown(() => dio.close(force: true));
 
-  test(
-    'loads and saves checklist responses through the scoped API contract',
-    () async {
-      final checklist = await repository.checklist('inspection-1');
-      expect(checklist, isA<ApiSuccess>());
-      expect(
-        (checklist as ApiSuccess).data.single.prompt,
-        'Check deck condition',
-      );
+  test('lists assigned inspections and parses inspection items', () async {
+    final result = await repository.listInspections();
+    expect(result, isA<ApiSuccess<List<Inspection>>>());
+    final inspections = (result as ApiSuccess<List<Inspection>>).data;
+    expect(inspections.single.id, 'inspection-1');
+    expect(inspections.single.assetName, 'Bridge Alpha');
+    expect(inspections.single.inspectionItems, ['Deck', 'Piers']);
+    expect(inspections.single.status, 'ASSIGNED');
+    expect(requests.single.method, 'GET');
+    expect(requests.single.path, '/inspections');
+  });
 
-      final result = await repository.saveChecklistResponse(
-        inspectionId: 'inspection-1',
-        itemId: 'item-1',
-        responseValue: {'value': 'PASS'},
-        notes: 'No visible crack',
-      );
-      expect(result, isA<ApiSuccess<void>>());
-      expect(requests.map((request) => request.method), ['GET', 'PUT']);
-      expect(
-        requests.last.path,
-        '/inspections/inspection-1/checklist-responses/item-1',
-      );
-      expect(requests.last.data, {
-        'responseValue': {'value': 'PASS'},
-        'notes': 'No visible crack',
-      });
-    },
-  );
+  test('gets inspection detail by ID', () async {
+    final result = await repository.getInspection('inspection-1');
+    expect(result, isA<ApiSuccess<Inspection>>());
+    final inspection = (result as ApiSuccess<Inspection>).data;
+    expect(inspection.id, 'inspection-1');
+    expect(inspection.droneModel, 'Matrice 300');
+    expect(requests.single.path, '/inspections/inspection-1');
+  });
 
-  test(
-    'requests an additional field session through MF2 preparation',
-    () async {
-      final result = await repository.requestAdditionalSession(
-        inspectionId: 'inspection-1',
-        reason: 'The east face was not covered during the completed session.',
-      );
+  test('uploads flight permit transitioning status to READY_FOR_FLIGHT', () async {
+    final directory = await Directory.systemTemp.createTemp('permit-');
+    addTearDown(() => directory.delete(recursive: true));
+    final permitPath = '${directory.path}${Platform.pathSeparator}flight-permit.pdf';
+    await File(permitPath).writeAsBytes([0x25, 0x50, 0x44, 0x46]);
 
-      expect(result, isA<ApiSuccess>());
-      expect((result as ApiSuccess).data.preparationVersion, 2);
-      expect(requests.single.method, 'POST');
-      expect(
-        requests.single.path,
-        '/inspections/inspection-1/field-sessions/additional-session',
-      );
-      expect(requests.single.data, {
-        'reason': 'The east face was not covered during the completed session.',
-      });
-    },
-  );
+    final result = await repository.uploadFlightPermit(
+      inspectionId: 'inspection-1',
+      file: XFile(permitPath, name: 'flight-permit.pdf'),
+    );
+
+    expect(result, isA<ApiSuccess<Inspection>>());
+    final inspection = (result as ApiSuccess<Inspection>).data;
+    expect(inspection.status, 'READY_FOR_FLIGHT');
+    expect(inspection.flightPermitFileName, 'flight-permit.pdf');
+
+    final request = requests.single;
+    expect(request.method, 'POST');
+    expect(request.path, '/inspections/inspection-1/flight-permit');
+    final form = request.data as FormData;
+    expect(form.files.single.key, 'file');
+    expect(form.files.single.value.filename, 'flight-permit.pdf');
+  });
 
   test('parses evidence responses without retired API fields and retains isDeleted', () async {
     final result = await repository.listEvidence('inspection-1');
@@ -188,6 +181,23 @@ void main() {
   });
 }
 
+Map<String, dynamic> _inspectionResponse({
+  String status = 'ASSIGNED',
+  String? permitFileKey,
+  String? permitFileName,
+}) => {
+  'id': 'inspection-1',
+  'assetId': 'asset-1',
+  'assetName': 'Bridge Alpha',
+  'droneSerialNumber': 'DR-001',
+  'droneModel': 'Matrice 300',
+  'status': status,
+  'flightPermitFileKey': permitFileKey,
+  'flightPermitFileName': permitFileName,
+  'flightPermitUploadedAt': permitFileKey != null ? '2026-10-01T10:00:00Z' : null,
+  'inspectionItems': ['Deck', 'Piers'],
+};
+
 Map<String, dynamic> _evidenceResponse({bool isDeleted = false}) => {
   'id': 'evidence-1',
   'inspectionId': 'inspection-1',
@@ -200,21 +210,4 @@ Map<String, dynamic> _evidenceResponse({bool isDeleted = false}) => {
   'longitude': null,
   'createdAt': '2026-09-24T08:30:01Z',
   'isDeleted': isDeleted,
-};
-
-Map<String, dynamic> _preparationResponse() => {
-  'id': 'preparation-2',
-  'inspectionId': 'inspection-1',
-  'preparationVersion': 2,
-  'plannedStartAt': '2026-11-01T09:00:00Z',
-  'plannedEndAt': '2026-11-01T10:00:00Z',
-  'shotList': '{"areas": ["east face"]}',
-  'evidenceTypes': null,
-  'accessConstraints': null,
-  'safetyObservations': null,
-  'permitDocumentReferences': null,
-  'status': 'DRAFT',
-  'submittedAt': null,
-  'createdAt': '2026-10-12T00:00:00Z',
-  'updatedAt': '2026-10-12T00:00:00Z',
 };

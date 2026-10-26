@@ -13,7 +13,6 @@ abstract class FieldSession with _$FieldSession {
   const factory FieldSession({
     required String id,
     required String inspectionId,
-    String? preparationId,
     required String status,
     String? startedAt,
     String? endedAt,

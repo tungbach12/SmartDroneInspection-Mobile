@@ -7,15 +7,22 @@ import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_checklist_item.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 
 void main() {
   testWidgets(
-    'saves checklist, captures photo, and preserves upload for retry',
+    'displays inspection items, uploads flight permit, captures photo, and preserves upload for retry',
     (tester) async {
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
       final repository = _FakeInspectionRepository();
       var cameraInvoked = false;
       await tester.pumpWidget(
@@ -28,6 +35,9 @@ void main() {
                 return XFile('span.jpg');
               },
             ),
+            flightPermitPickerProvider.overrideWith(
+              (ref) => () async => XFile('permit.pdf'),
+            ),
           ],
           child: const MaterialApp(
             home: InspectionDetailPage(inspectionId: 'inspection-1'),
@@ -35,27 +45,26 @@ void main() {
         ),
       );
       await _pumpAsync(tester);
+
+      // Verify read-only inspection items from asset
       expect(find.text('Check deck condition'), findsOneWidget);
+      expect(find.text('Check pier base'), findsOneWidget);
 
-      await tester.tap(find.byType(DropdownButtonFormField<String>));
+      // Verify flight permit upload card
+      expect(find.text('Select Permit File'), findsOneWidget);
+      await tester.tap(find.text('Select Permit File'));
       await _pumpAsync(tester);
-      await tester.tap(find.text('Pass').last);
-      await _pumpAsync(tester);
-      await tester.ensureVisible(find.text('Save response'));
-      await tester.tap(find.text('Save response'));
-      await _pumpAsync(tester);
-      expect(repository.savedResponse, {'value': 'PASS'});
-      expect(find.text('Saved'), findsOneWidget);
+      expect(find.text('Selected: permit.pdf'), findsOneWidget);
 
+      await tester.tap(find.text('Upload Flight Permit'));
+      await _pumpAsync(tester);
+      expect(repository.permitUploadAttempts, 1);
+
+      // Capture photo and upload
       await tester.ensureVisible(find.text('Capture inspection photo'));
       await tester.tap(find.text('Capture inspection photo'));
       await _pumpAsync(tester);
       expect(cameraInvoked, isTrue, reason: _visibleText(tester));
-      expect(
-        find.textContaining('Camera could not be opened'),
-        findsNothing,
-        reason: _visibleText(tester),
-      );
       expect(
         find.text('Selected: span.jpg'),
         findsOneWidget,
@@ -76,16 +85,15 @@ void main() {
   );
 
   testWidgets(
-    'shows assignment-scope failures without losing the checklist input',
+    'shows error message when permit upload fails',
     (tester) async {
-      final repository = _FakeInspectionRepository(failChecklistSave: true);
+      final repository = _FakeInspectionRepository(failPermitUpload: true);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             inspectionRepositoryProvider.overrideWithValue(repository),
-            inspectionPhotoPickerProvider.overrideWith(
-              (ref) =>
-                  () async => null,
+            flightPermitPickerProvider.overrideWith(
+              (ref) => () async => XFile('permit.pdf'),
             ),
           ],
           child: const MaterialApp(
@@ -94,24 +102,16 @@ void main() {
         ),
       );
       await _pumpAsync(tester);
-      await tester.tap(find.byType(DropdownButtonFormField<String>));
+      await tester.tap(find.text('Select Permit File'));
       await _pumpAsync(tester);
-      await tester.tap(find.text('Pass').last);
+      await tester.tap(find.text('Upload Flight Permit'));
       await _pumpAsync(tester);
-      await tester.ensureVisible(find.text('Save response'));
-      await tester.tap(find.text('Save response'));
-      await _pumpAsync(tester);
-      expect(repository.saveAttempts, 1, reason: _visibleText(tester));
+
+      expect(repository.permitUploadAttempts, 1);
       expect(
-        find.textContaining('Checklist was not saved', skipOffstage: false),
-        findsOneWidget,
-        reason: _visibleText(tester),
-      );
-      expect(
-        find.textContaining('not authorized to access', skipOffstage: false),
+        find.textContaining('Permit upload rejected', skipOffstage: false),
         findsOneWidget,
       );
-      expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
     },
   );
 }
@@ -127,60 +127,59 @@ Future<void> _pumpAsync(WidgetTester tester) async {
 }
 
 class _FakeInspectionRepository extends InspectionRepository {
-  _FakeInspectionRepository({this.failChecklistSave = false}) : super(Dio());
+  _FakeInspectionRepository({this.failPermitUpload = false})
+      : super(Dio());
 
-  final bool failChecklistSave;
+  final bool failPermitUpload;
   bool failNextUpload = false;
   bool hasEvidence = false;
   int uploadAttempts = 0;
-  int saveAttempts = 0;
-  Map<String, dynamic>? savedResponse;
+  int permitUploadAttempts = 0;
+
+  Inspection _inspection = const Inspection(
+    id: 'inspection-1',
+    assetId: 'asset-1',
+    assetName: 'Bridge Alpha',
+    droneSerialNumber: 'DR-001',
+    droneModel: 'Matrice 300',
+    status: 'ASSIGNED',
+    inspectionItems: ['Check deck condition', 'Check pier base'],
+  );
 
   @override
-  Future<ApiResult<List<InspectionChecklistItem>>> checklist(
-    String inspectionId,
-  ) async => ApiResult.success([
-    InspectionChecklistItem.fromJson({
-      'itemId': 'item-1',
-      'itemCode': 'SURFACE',
-      'sectionName': 'Deck',
-      'prompt': 'Check deck condition',
-      'responseType': 'PASS_FAIL',
-      'required': true,
-      'displayOrder': 0,
-      'guidance': null,
-      'validationConfig': null,
-      'responseValue': null,
-      'notes': null,
-      'completedAt': null,
-    }),
-  ]);
+  Future<ApiResult<Inspection>> getInspection(String id) async {
+    return ApiResult.success(_inspection);
+  }
+
+  @override
+  Future<ApiResult<Inspection>> uploadFlightPermit({
+    required String inspectionId,
+    required XFile file,
+  }) async {
+    permitUploadAttempts++;
+    if (failPermitUpload) {
+      return const ApiResult.failure(
+        ApiFailure.server(400, 'Permit upload rejected'),
+      );
+    }
+    _inspection = _inspection.copyWith(
+      status: 'READY_FOR_FLIGHT',
+      flightPermitFileName: file.name,
+      flightPermitFileKey: 'permits/${file.name}',
+      flightPermitUploadedAt: '2026-10-01T10:00:00Z',
+    );
+    return ApiResult.success(_inspection);
+  }
 
   @override
   Future<ApiResult<List<InspectionEvidence>>> listEvidence(
     String inspectionId,
   ) async => ApiResult.success(hasEvidence ? [_evidence()] : []);
 
-  /// A completed field session, so evidence can be attached to the visit it came from.
   @override
   Future<ApiResult<List<FieldSession>>> listFieldSessions(
     String inspectionId,
   ) async => ApiResult.success([_completedSession()]);
-
-  @override
-  Future<ApiResult<void>> saveChecklistResponse({
-    required String inspectionId,
-    required String itemId,
-    required Map<String, dynamic> responseValue,
-    String? notes,
-  }) async {
-    saveAttempts++;
-    if (failChecklistSave) {
-      return const ApiResult.failure(ApiFailure.unauthorized());
-    }
-    savedResponse = responseValue;
-    return const ApiResult.success(null);
-  }
 
   @override
   Future<ApiResult<InspectionEvidence>> uploadEvidence({
@@ -200,10 +199,9 @@ class _FakeInspectionRepository extends InspectionRepository {
     return ApiResult.success(_evidence());
   }
 
-  FieldSession _completedSession() => FieldSession(
+  FieldSession _completedSession() => const FieldSession(
     id: 'session-1',
     inspectionId: 'inspection-1',
-    preparationId: 'preparation-1',
     status: 'FIELD_COMPLETED',
     startedAt: '2026-09-24T08:00:00Z',
     endedAt: '2026-09-24T09:00:00Z',

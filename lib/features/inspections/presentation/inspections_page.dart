@@ -1,69 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
-import 'package:smart_drone_inspection/core/network/api_failure.dart';
-import 'package:smart_drone_inspection/core/network/api_result.dart';
-import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/inspector_assignment.dart';
-import 'package:smart_drone_inspection/features/inspections/presentation/providers/assignment_inbox_provider.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 
-/// The Inspector's entry point to MF2: the pairings an administrator opened and the Inspector has
-/// not yet answered.
-///
-/// Accepting records that the Inspector took the job. It is not flight clearance — MF2-07 decides
-/// separately, from the paperwork, whether a mission may fly. The screen says so, because an
-/// "Accepted" label that reads as permission is contradicted by the server two steps later.
+/// The Inspector's inspection list: displays all inspections assigned to the inspector.
+/// Tapping an inspection navigates to `/inspection/:inspectionId`.
 class InspectionsPage extends ConsumerWidget {
   const InspectionsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final assignments = ref.watch(assignmentInboxProvider);
+    final inspections = ref.watch(inspectionsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.assignments)),
-      body: AsyncValueWidget<List<InspectorAssignment>>(
-        value: assignments,
-        onRetry: () => ref.invalidate(assignmentInboxProvider),
+      appBar: AppBar(title: Text(context.l10n.navInspections)),
+      body: AsyncValueWidget<List<Inspection>>(
+        value: inspections,
+        onRetry: () => ref.invalidate(inspectionsProvider),
         builder: (items) {
-          final open = items.where((item) => item.isOpen).toList();
           return RefreshIndicator(
-            onRefresh: () => ref.refresh(assignmentInboxProvider.future),
+            onRefresh: () => ref.refresh(inspectionsProvider.future),
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  context.l10n.acceptingDoesNotClear,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 16),
-                if (open.isEmpty)
-                  _EmptyInbox(message: context.l10n.nothingToAnswer)
+                if (items.isEmpty)
+                  const _EmptyInbox(message: 'No inspections assigned.')
                 else
-                  for (final assignment in open)
+                  for (final inspection in items)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _AssignmentCard(assignment: assignment),
+                      child: _InspectionCard(inspection: inspection),
                     ),
-                for (final assignment in items.where((item) => !item.isOpen))
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.history, size: 20),
-                    title: Text(assignment.assetName),
-                    subtitle: Text(
-                      assignment.reason ??
-                          (assignment.assignmentResponse != null
-                              ? localizedAssignmentResponse(
-                                  context.l10n,
-                                  assignment.assignmentResponse!,
-                                )
-                              : localizedAssignmentStatus(
-                                  context.l10n,
-                                  assignment.status,
-                                )),
-                    ),
-                  ),
               ],
             ),
           );
@@ -80,136 +50,17 @@ class _EmptyInbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Icon(Icons.inbox_outlined, size: 40),
-        const SizedBox(height: 8),
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
-    );
-  }
-}
-
-class _AssignmentCard extends ConsumerStatefulWidget {
-  const _AssignmentCard({required this.assignment});
-
-  final InspectorAssignment assignment;
-
-  @override
-  ConsumerState<_AssignmentCard> createState() => _AssignmentCardState();
-}
-
-class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
-  final _reasonController = TextEditingController();
-  bool _busy = false;
-  String? _error;
-
-  @override
-  void dispose() {
-    _reasonController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _respond(String response) async {
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    final result = await ref
-        .read(inspectionRepositoryProvider)
-        .respondToAssignment(
-          assignmentId: widget.assignment.id,
-          response: response,
-          rejectionReason: response == 'REJECTED'
-              ? _reasonController.text.trim()
-              : null,
-        );
-    if (!mounted) return;
-    switch (result) {
-      case ApiSuccess():
-        setState(() {
-          _busy = false;
-          _reasonController.clear();
-        });
-        // The server decides which rows leave the inbox: a decline suspends the pairing and both
-        // outcomes change what the server would return next.
-        ref.invalidate(assignmentInboxProvider);
-      case ApiError(:final failure):
-        setState(() {
-          _busy = false;
-          _error = switch (failure) {
-            ServerFailure(:final detail) =>
-              detail ?? context.l10n.serverRefusedResponse,
-            UnauthorizedFailure() => context.l10n.cannotAnswerAssignment,
-            NotFoundFailure() => context.l10n.assignmentNotFound,
-            _ => context.l10n.somethingWentWrong,
-          };
-        });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final assignment = widget.assignment;
-    return Card(
+    return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 48),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              assignment.assetName,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.droneValidity(
-                assignment.droneSerialNumber,
-                _day(context, assignment.validFrom),
-                _day(context, assignment.validUntil),
-              ),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  _error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
+            const Icon(Icons.inbox_outlined, size: 48),
             const SizedBox(height: 12),
-            TextField(
-              key: const Key('decline-reason'),
-              controller: _reasonController,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                labelText: context.l10n.declineReason,
-                helperText: context.l10n.declineReasonHint,
-              ),
-              maxLines: 2,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                FilledButton(
-                  onPressed: _busy ? null : () => _respond('ACCEPTED'),
-                  child: Text(
-                    _busy ? context.l10n.recording : context.l10n.accept,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                OutlinedButton(
-                  onPressed: _busy || _reasonController.text.trim().isEmpty
-                      ? null
-                      : () => _respond('REJECTED'),
-                  child: Text(context.l10n.decline),
-                ),
-              ],
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
@@ -218,5 +69,96 @@ class _AssignmentCardState extends ConsumerState<_AssignmentCard> {
   }
 }
 
-String _day(BuildContext context, String? iso) =>
-    iso == null ? context.l10n.unspecified : iso.substring(0, 10);
+class _InspectionCard extends StatelessWidget {
+  const _InspectionCard({required this.inspection});
+
+  final Inspection inspection;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final droneInfo = inspection.droneModel != null ||
+            inspection.droneSerialNumber != null
+        ? '${inspection.droneModel ?? ""} (${inspection.droneSerialNumber ?? ""})'.trim()
+        : 'Drone not assigned';
+
+    return Card(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => context.push('/inspection/${inspection.id}'),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      inspection.assetName ?? 'Asset #${inspection.assetId}',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ),
+                  _StatusChip(status: inspection.status),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.flight, size: 16),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      droneInfo,
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+              if (inspection.hasFlightPermit) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.verified_outlined, size: 16, color: Colors.green),
+                    const SizedBox(width: 6),
+                    Text(
+                      inspection.flightPermitFileName ?? 'Permit attached',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.green.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, color) = switch (status) {
+      'ASSIGNED' => ('Assigned', Colors.orange),
+      'READY_FOR_FLIGHT' => ('Ready for Flight', Colors.blue),
+      'IN_PROGRESS' => ('In Progress', Colors.teal),
+      'FIELD_COMPLETED' => ('Completed', Colors.green),
+      _ => (status, Colors.grey),
+    };
+
+    return Chip(
+      visualDensity: VisualDensity.compact,
+      label: Text(label, style: TextStyle(fontSize: 12, color: color.shade900)),
+      backgroundColor: color.shade50,
+      side: BorderSide(color: color.shade300),
+    );
+  }
+}
