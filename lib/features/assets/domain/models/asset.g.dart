@@ -13,6 +13,11 @@ _Asset _$AssetFromJson(Map<String, dynamic> json) => _Asset(
   description: json['description'] as String?,
   location: json['location'] as String?,
   status: json['status'] as String? ?? 'Active',
+  inspectionItems:
+      (json['inspectionItems'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const <String>[],
   createdAt: json['createdAt'] as String,
 );
 
@@ -23,5 +28,6 @@ Map<String, dynamic> _$AssetToJson(_Asset instance) => <String, dynamic>{
   'description': instance.description,
   'location': instance.location,
   'status': instance.status,
+  'inspectionItems': instance.inspectionItems,
   'createdAt': instance.createdAt,
 };

@@ -10,7 +10,6 @@ _FieldSession _$FieldSessionFromJson(Map<String, dynamic> json) =>
     _FieldSession(
       id: json['id'] as String,
       inspectionId: json['inspectionId'] as String,
-      preparationId: json['preparationId'] as String?,
       status: json['status'] as String,
       startedAt: json['startedAt'] as String?,
       endedAt: json['endedAt'] as String?,
@@ -23,7 +22,6 @@ Map<String, dynamic> _$FieldSessionToJson(_FieldSession instance) =>
     <String, dynamic>{
       'id': instance.id,
       'inspectionId': instance.inspectionId,
-      'preparationId': instance.preparationId,
       'status': instance.status,
       'startedAt': instance.startedAt,
       'endedAt': instance.endedAt,

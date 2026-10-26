@@ -4,6 +4,7 @@ import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/auth/data/auth_repository.dart';
 import 'package:smart_drone_inspection/features/auth/domain/models/auth_session.dart';
+import 'package:smart_drone_inspection/features/auth/domain/models/auth_user.dart';
 
 /// Session source of truth. Hydrates on first build: loads persisted tokens,
 /// then best-effort refresh — valid session → authenticated; anything else
@@ -115,6 +116,27 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
         const session = AuthSession.anonymous();
         state = const AsyncData<AuthSession>(session);
         return ApiResult<AuthSession>.failure(failure);
+    }
+  }
+
+  Future<ApiResult<AuthUser>> updatePilotLicense({
+    required String licenseNumber,
+    required String licenseClass,
+    required DateTime expiresAt,
+    String? fileKey,
+  }) async {
+    final result = await ref.read(authRepositoryProvider).updatePilotLicense(
+          licenseNumber: licenseNumber,
+          licenseClass: licenseClass,
+          expiresAt: expiresAt,
+          fileKey: fileKey,
+        );
+    switch (result) {
+      case ApiSuccess(:final data):
+        state = AsyncData<AuthSession>(AuthSession.authenticated(data));
+        return ApiResult.success(data);
+      case ApiError(:final failure):
+        return ApiResult.failure(failure);
     }
   }
 

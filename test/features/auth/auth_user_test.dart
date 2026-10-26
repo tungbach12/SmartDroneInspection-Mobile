@@ -72,5 +72,31 @@ void main() {
       expect(UserRole.parse(42), isNull);
       expect(ActorZone.parse('NOPE'), isNull);
     });
+
+    test('parses and copies pilot license information for inspector', () {
+      final user = AuthUser.fromJson({
+        'id': 'u1',
+        'email': 'inspector@test.com',
+        'fullName': 'Test Inspector',
+        'roles': ['INSPECTOR'],
+        'pilotLicenseNumber': 'VN-PL-9988',
+        'pilotLicenseClass': 'CLASS_A',
+        'pilotLicenseExpiresAt': '2028-12-31T23:59:59Z',
+        'pilotLicenseFileKey': 'licenses/u1.pdf',
+      });
+
+      expect(user.pilotLicenseNumber, 'VN-PL-9988');
+      expect(user.pilotLicenseClass, 'CLASS_A');
+      expect(user.pilotLicenseExpiresAt, '2028-12-31T23:59:59Z');
+      expect(user.pilotLicenseFileKey, 'licenses/u1.pdf');
+
+      final updated = user.copyWith(
+        pilotLicenseNumber: 'VN-PL-1122',
+        pilotLicenseClass: 'CLASS_B',
+      );
+      expect(updated.pilotLicenseNumber, 'VN-PL-1122');
+      expect(updated.pilotLicenseClass, 'CLASS_B');
+      expect(updated.pilotLicenseExpiresAt, '2028-12-31T23:59:59Z');
+    });
   });
 }

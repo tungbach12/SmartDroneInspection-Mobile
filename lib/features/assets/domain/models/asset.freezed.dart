@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Asset {
 
- String get id; String get name; String get assetCode; String? get description; String? get location; String get status; String get createdAt;
+ String get id; String get name; String get assetCode; String? get description; String? get location; String get status; List<String> get inspectionItems; String get createdAt;
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $AssetCopyWith<Asset> get copyWith => _$AssetCopyWithImpl<Asset>(this as Asset, 
 @override
 bool operator ==(Object other) {
   final _this = this as Asset;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Asset&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.assetCode, _this.assetCode) || other.assetCode == _this.assetCode)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Asset&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.assetCode, _this.assetCode) || other.assetCode == _this.assetCode)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.inspectionItems, _this.inspectionItems)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Asset;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.assetCode,_this.description,_this.location,_this.status,_this.createdAt);
+  return Object.hash(runtimeType,_this.id,_this.name,_this.assetCode,_this.description,_this.location,_this.status,const DeepCollectionEquality().hash(_this.inspectionItems),_this.createdAt);
 }
 
 @override
 String toString() {
   final _this = this as Asset;
-  return 'Asset(id: ${_this.id}, name: ${_this.name}, assetCode: ${_this.assetCode}, description: ${_this.description}, location: ${_this.location}, status: ${_this.status}, createdAt: ${_this.createdAt})';
+  return 'Asset(id: ${_this.id}, name: ${_this.name}, assetCode: ${_this.assetCode}, description: ${_this.description}, location: ${_this.location}, status: ${_this.status}, inspectionItems: ${_this.inspectionItems}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $AssetCopyWith<$Res>  {
   factory $AssetCopyWith(Asset value, $Res Function(Asset) _then) = _$AssetCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String assetCode, String? description, String? location, String status, String createdAt
+ String id, String name, String assetCode, String? description, String? location, String status, List<String> inspectionItems, String createdAt
 });
 
 
@@ -71,7 +71,7 @@ class _$AssetCopyWithImpl<$Res>
 
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? assetCode = null,Object? description = freezed,Object? location = freezed,Object? status = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? assetCode = null,Object? description = freezed,Object? location = freezed,Object? status = null,Object? inspectionItems = null,Object? createdAt = null,}) {
   return _then(Asset(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -79,7 +79,8 @@ as String,assetCode: null == assetCode ? _self.assetCode : assetCode // ignore: 
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,inspectionItems: null == inspectionItems ? _self.inspectionItems : inspectionItems // ignore: cast_nullable_to_non_nullable
+as List<String>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String assetCode,  String? description,  String? location,  String status,  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String assetCode,  String? description,  String? location,  String status,  List<String> inspectionItems,  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Asset() when $default != null:
-return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.location,_that.status,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.location,_that.status,_that.inspectionItems,_that.createdAt);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.loca
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String assetCode,  String? description,  String? location,  String status,  String createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String assetCode,  String? description,  String? location,  String status,  List<String> inspectionItems,  String createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Asset():
-return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.location,_that.status,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.location,_that.status,_that.inspectionItems,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.loca
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String assetCode,  String? description,  String? location,  String status,  String createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String assetCode,  String? description,  String? location,  String status,  List<String> inspectionItems,  String createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Asset() when $default != null:
-return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.location,_that.status,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.location,_that.status,_that.inspectionItems,_that.createdAt);case _:
   return null;
 
 }
@@ -221,7 +222,7 @@ return $default(_that.id,_that.name,_that.assetCode,_that.description,_that.loca
 @JsonSerializable()
 
 class _Asset implements Asset {
-  const _Asset({required this.id, required this.name, required this.assetCode, this.description, this.location, this.status = 'Active', required this.createdAt});
+  const _Asset({required this.id, required this.name, required this.assetCode, this.description, this.location, this.status = 'Active',  List<String> inspectionItems = const <String>[], required this.createdAt}): _inspectionItems = inspectionItems;
   factory _Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
 
 @override final  String id;
@@ -230,6 +231,13 @@ class _Asset implements Asset {
 @override final  String? description;
 @override final  String? location;
 @override@JsonKey() final  String status;
+ final  List<String> _inspectionItems;
+@override@JsonKey() List<String> get inspectionItems {
+  if (_inspectionItems is EqualUnmodifiableListView) return _inspectionItems;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_inspectionItems);
+}
+
 @override final  String createdAt;
 
 /// Create a copy of Asset
@@ -245,18 +253,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.assetCode, assetCode) || other.assetCode == assetCode)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.assetCode, assetCode) || other.assetCode == assetCode)&&(identical(other.description, description) || other.description == description)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.inspectionItems, _inspectionItems)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,assetCode,description,location,status,createdAt);
+    return Object.hash(runtimeType,id,name,assetCode,description,location,status,const DeepCollectionEquality().hash(_inspectionItems),createdAt);
 }
 
 @override
 String toString() {
-    return 'Asset(id: $id, name: $name, assetCode: $assetCode, description: $description, location: $location, status: $status, createdAt: $createdAt)';
+    return 'Asset(id: $id, name: $name, assetCode: $assetCode, description: $description, location: $location, status: $status, inspectionItems: $inspectionItems, createdAt: $createdAt)';
 }
 
 
@@ -267,7 +275,7 @@ abstract mixin class _$AssetCopyWith<$Res> implements $AssetCopyWith<$Res> {
   factory _$AssetCopyWith(_Asset value, $Res Function(_Asset) _then) = __$AssetCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String assetCode, String? description, String? location, String status, String createdAt
+ String id, String name, String assetCode, String? description, String? location, String status, List<String> inspectionItems, String createdAt
 });
 
 
@@ -284,7 +292,7 @@ class __$AssetCopyWithImpl<$Res>
 
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? assetCode = null,Object? description = freezed,Object? location = freezed,Object? status = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? assetCode = null,Object? description = freezed,Object? location = freezed,Object? status = null,Object? inspectionItems = null,Object? createdAt = null,}) {
   return _then(_Asset(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -292,7 +300,8 @@ as String,assetCode: null == assetCode ? _self.assetCode : assetCode // ignore: 
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,inspectionItems: null == inspectionItems ? _self._inspectionItems : inspectionItems // ignore: cast_nullable_to_non_nullable
+as List<String>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

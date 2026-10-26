@@ -6,7 +6,6 @@ import 'package:smart_drone_inspection/features/auth/presentation/login_page.dar
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/field_session_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
-import 'package:smart_drone_inspection/features/inspections/presentation/inspection_preparation_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspections_page.dart';
 import 'package:smart_drone_inspection/features/profile/presentation/profile_page.dart';
 import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.dart';
@@ -48,12 +47,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/inspection/:inspectionId',
         builder: (context, state) => InspectionDetailPage(
-          inspectionId: state.pathParameters['inspectionId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/inspection/:inspectionId/preparation',
-        builder: (context, state) => InspectionPreparationPage(
           inspectionId: state.pathParameters['inspectionId']!,
         ),
       ),

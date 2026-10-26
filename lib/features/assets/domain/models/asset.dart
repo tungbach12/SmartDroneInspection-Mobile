@@ -12,6 +12,7 @@ abstract class Asset with _$Asset {
     String? description,
     String? location,
     @Default('Active') String status,
+    @Default(<String>[]) List<String> inspectionItems,
     required String createdAt,
   }) = _Asset;
 
