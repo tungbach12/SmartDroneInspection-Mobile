@@ -10,6 +10,7 @@ import 'package:smart_drone_inspection/features/inspections/domain/models/field_
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/widgets/airspace_advisory_card.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 
 class InspectionDetailPage extends ConsumerStatefulWidget {
@@ -133,10 +134,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     });
     final result = await ref
         .read(inspectionRepositoryProvider)
-        .uploadFlightPermit(
-          inspectionId: widget.inspectionId,
-          file: file,
-        );
+        .uploadFlightPermit(inspectionId: widget.inspectionId, file: file);
     if (!mounted) return;
     switch (result) {
       case ApiSuccess<Inspection>():
@@ -147,7 +145,9 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Flight permit uploaded. Inspection ready for flight!'),
+            content: Text(
+              'Flight permit uploaded. Inspection ready for flight!',
+            ),
           ),
         );
       case ApiError<Inspection>(:final failure):
@@ -208,9 +208,8 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
             const SizedBox(height: 16),
             AsyncValueWidget<Inspection>(
               value: inspectionAsync,
-              onRetry: () => ref.invalidate(
-                inspectionDetailProvider(widget.inspectionId),
-              ),
+              onRetry: () =>
+                  ref.invalidate(inspectionDetailProvider(widget.inspectionId)),
               builder: (inspection) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -224,6 +223,8 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                     onPickFile: _pickPermitFile,
                     onUpload: _uploadPermit,
                   ),
+                  const SizedBox(height: 16),
+                  AirspaceAdvisoryCard(assetName: inspection.assetName),
                   const SizedBox(height: 16),
                   Text(
                     'Inspection Items',
@@ -438,7 +439,9 @@ class _FlightPermitCard extends StatelessWidget {
                   key: const Key('upload-permit-btn'),
                   onPressed: uploading ? null : onUpload,
                   icon: const Icon(Icons.cloud_upload_outlined),
-                  label: Text(uploading ? 'Uploading...' : 'Upload Flight Permit'),
+                  label: Text(
+                    uploading ? 'Uploading...' : 'Upload Flight Permit',
+                  ),
                 ),
               ],
               if (uploadError != null) ...[
@@ -481,10 +484,7 @@ class _InspectionItemsCard extends StatelessWidget {
             dense: true,
             leading: CircleAvatar(
               radius: 12,
-              child: Text(
-                '${index + 1}',
-                style: const TextStyle(fontSize: 11),
-              ),
+              child: Text('${index + 1}', style: const TextStyle(fontSize: 11)),
             ),
             title: Text(item),
           );
@@ -510,9 +510,7 @@ class _InlineError extends StatelessWidget {
       ),
       child: Text(
         message,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onErrorContainer,
-        ),
+        style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
       ),
     );
   }
@@ -524,7 +522,6 @@ String _failureMessage(BuildContext context, ApiFailure failure) =>
       ValidationFailure(:final errors) => errors.values.join('\n'),
       UnauthorizedFailure() => context.l10n.unauthorizedInspection,
       NotFoundFailure() => context.l10n.inspectionUnavailable,
-      ServerFailure(:final detail) =>
-        detail ?? context.l10n.requestFailed,
+      ServerFailure(:final detail) => detail ?? context.l10n.requestFailed,
       UnknownFailure(:final message) => message,
     };
