@@ -168,9 +168,43 @@ class MaintenanceRepository {
   }
 
   /// Declares physical work complete (MF4-14).
-  Future<ApiResult<void>> declareComplete(String workOrderId) async {
+  /// Requests reinspection for an executed maintenance work order.
+  Future<ApiResult<void>> requestReinspection({
+    required String workOrderId,
+    required int maintenanceReportVersionNo,
+    required List<String> findingIds,
+    String? note,
+  }) async {
     try {
-      await _dio.post('/maintenance/work-orders/$workOrderId/declare-complete');
+      await _dio.post(
+        '/maintenance/work-orders/$workOrderId/reinspection-requests',
+        data: {
+          'maintenanceReportVersionNo': maintenanceReportVersionNo,
+          'findingIds': findingIds,
+          if (note != null && note.isNotEmpty) 'note': note,
+        },
+      );
+      return const ApiResult.success(null);
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// Records the Customer's decision on a published reinspection result.
+  Future<ApiResult<void>> decideReinspection({
+    required String workOrderId,
+    required String requestId,
+    required String decision,
+    String? note,
+  }) async {
+    try {
+      await _dio.post(
+        '/maintenance/work-orders/$workOrderId/reinspection-requests/$requestId/decision',
+        data: {
+          'decision': decision,
+          if (note != null && note.isNotEmpty) 'note': note,
+        },
+      );
       return const ApiResult.success(null);
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
