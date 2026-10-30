@@ -19,9 +19,8 @@ class InspectionRepository {
       final response = await _dio.get('/inspections');
       final inspections = (response.data as List<dynamic>)
           .map(
-            (item) => Inspection.fromJson(
-              Map<String, dynamic>.from(item as Map),
-            ),
+            (item) =>
+                Inspection.fromJson(Map<String, dynamic>.from(item as Map)),
           )
           .toList();
       return ApiResult.success(inspections);
@@ -35,9 +34,7 @@ class InspectionRepository {
     try {
       final response = await _dio.get('/inspections/$id');
       return ApiResult.success(
-        Inspection.fromJson(
-          Map<String, dynamic>.from(response.data as Map),
-        ),
+        Inspection.fromJson(Map<String, dynamic>.from(response.data as Map)),
       );
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
@@ -54,17 +51,13 @@ class InspectionRepository {
         file.path,
         filename: file.name,
       );
-      final form = FormData.fromMap({
-        'file': multipartFile,
-      });
+      final form = FormData.fromMap({'file': multipartFile});
       final response = await _dio.post(
         '/inspections/$inspectionId/flight-permit',
         data: form,
       );
       return ApiResult.success(
-        Inspection.fromJson(
-          Map<String, dynamic>.from(response.data as Map),
-        ),
+        Inspection.fromJson(Map<String, dynamic>.from(response.data as Map)),
       );
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
@@ -184,18 +177,21 @@ class InspectionRepository {
 
   Future<ApiResult<InspectionEvidence>> uploadEvidence({
     required String inspectionId,
-    required XFile photo,
-    required DateTime captureTime,
+    required XFile file,
+    DateTime? captureTime,
     String? fieldSessionId,
   }) async {
     try {
-      final file = await MultipartFile.fromFile(
-        photo.path,
-        filename: photo.name,
+      final fileLength = await file.length();
+      final multipartFile = MultipartFile.fromStream(
+        () => file.openRead(),
+        fileLength,
+        filename: file.name,
       );
       final form = FormData.fromMap({
-        'file': file,
-        'captureTime': captureTime.toUtc().toIso8601String(),
+        'file': multipartFile,
+        if (captureTime != null)
+          'captureTime': captureTime.toUtc().toIso8601String(),
         'fieldSessionId': ?fieldSessionId,
       });
       final response = await _dio.post(

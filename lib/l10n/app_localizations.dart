@@ -398,6 +398,42 @@ abstract class AppLocalizations {
   /// **'Evidence uploaded securely.'**
   String get evidenceUploaded;
 
+  /// No description provided for @selectVideoFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select video file'**
+  String get selectVideoFile;
+
+  /// No description provided for @selectedVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected video: {name}'**
+  String selectedVideo(Object name);
+
+  /// No description provided for @uploadVideoEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload video evidence'**
+  String get uploadVideoEvidence;
+
+  /// No description provided for @retryVideoUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry video upload'**
+  String get retryVideoUpload;
+
+  /// No description provided for @filePickerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the file picker. Please try again.'**
+  String get filePickerError;
+
+  /// No description provided for @evidenceFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file exceeds the {limit} evidence upload limit.'**
+  String evidenceFileTooLarge(Object limit);
+
   /// No description provided for @evidenceDetails.
   ///
   /// In en, this message translates to:
@@ -1148,31 +1184,160 @@ abstract class AppLocalizations {
   /// **'Retired'**
   String get assetStatusRetired;
 
+  /// No description provided for @maintenanceWorkOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance Work Orders'**
   String get maintenanceWorkOrders;
+
+  /// No description provided for @noAssignedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No assigned maintenance tasks'**
   String get noAssignedTasks;
+
+  /// No description provided for @assignedWorkOrdersDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Work orders assigned to your team will appear here.'**
   String get assignedWorkOrdersDescription;
+
+  /// No description provided for @workOrderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #{id}'**
   String workOrderTitle(Object id);
+
+  /// No description provided for @orderPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority: {priority}'**
   String orderPriority(Object priority);
+
+  /// No description provided for @correctiveScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Corrective Scope:'**
   String get correctiveScope;
+
+  /// No description provided for @acceptanceCriteria.
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptance Criteria:'**
   String get acceptanceCriteria;
+
+  /// No description provided for @startExecutionOnSite.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Execution on Site'**
   String get startExecutionOnSite;
+
+  /// No description provided for @recordLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Log'**
   String get recordLog;
+
+  /// No description provided for @declareComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Declare Complete'**
   String get declareComplete;
+
+  /// No description provided for @plannedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned Tasks'**
   String get plannedTasks;
+
+  /// No description provided for @noTasksPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks planned yet for this order.'**
   String get noTasksPlanned;
+
+  /// No description provided for @workLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Logs'**
   String get workLogs;
+
+  /// No description provided for @noWorkLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'No work logs recorded yet.'**
   String get noWorkLogs;
+
+  /// No description provided for @hoursWorkedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours worked'**
   String hoursWorkedLabel(Object hours);
+
+  /// No description provided for @asLeftLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'As-left: {condition}'**
   String asLeftLabel(Object condition);
+
+  /// No description provided for @testReadingsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Test: {readings}'**
   String testReadingsLabel(Object readings);
+
+  /// No description provided for @recordWorkLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Work Log'**
   String get recordWorkLog;
+
+  /// No description provided for @task.
+  ///
+  /// In en, this message translates to:
+  /// **'Task'**
   String get task;
+
+  /// No description provided for @hoursWorked.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours Worked'**
   String get hoursWorked;
+
+  /// No description provided for @asLeftCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'As-Left Condition'**
   String get asLeftCondition;
+
+  /// No description provided for @testReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Readings / Measurements'**
   String get testReadings;
+
+  /// No description provided for @submitWorkLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Work Log'**
   String get submitWorkLog;
+
+  /// No description provided for @executionStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Execution started'**
   String get executionStarted;
+
+  /// No description provided for @workDeclaredCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Work declared completed'**
   String get workDeclaredCompleted;
+
+  /// No description provided for @workLogSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Work log submitted for verification'**
   String get workLogSubmitted;
 }
 

@@ -172,6 +172,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get evidenceUploaded => 'Evidence uploaded securely.';
 
   @override
+  String get selectVideoFile => 'Select video file';
+
+  @override
+  String selectedVideo(Object name) {
+    return 'Selected video: $name';
+  }
+
+  @override
+  String get uploadVideoEvidence => 'Upload video evidence';
+
+  @override
+  String get retryVideoUpload => 'Retry video upload';
+
+  @override
+  String get filePickerError =>
+      'Could not open the file picker. Please try again.';
+
+  @override
+  String evidenceFileTooLarge(Object limit) {
+    return 'This file exceeds the $limit evidence upload limit.';
+  }
+
+  @override
   String evidenceDetails(Object contentType, Object size, Object source) {
     return '$contentType · $size bytes · $source';
   }
@@ -600,10 +623,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Work orders assigned to your team will appear here.';
 
   @override
-  String workOrderTitle(Object id) => 'Order #$id';
+  String workOrderTitle(Object id) {
+    return 'Order #$id';
+  }
 
   @override
-  String orderPriority(Object priority) => 'Priority: $priority';
+  String orderPriority(Object priority) {
+    return 'Priority: $priority';
+  }
 
   @override
   String get correctiveScope => 'Corrective Scope:';
@@ -633,13 +660,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noWorkLogs => 'No work logs recorded yet.';
 
   @override
-  String hoursWorkedLabel(Object hours) => '$hours hours worked';
+  String hoursWorkedLabel(Object hours) {
+    return '$hours hours worked';
+  }
 
   @override
-  String asLeftLabel(Object condition) => 'As-left: $condition';
+  String asLeftLabel(Object condition) {
+    return 'As-left: $condition';
+  }
 
   @override
-  String testReadingsLabel(Object readings) => 'Test: $readings';
+  String testReadingsLabel(Object readings) {
+    return 'Test: $readings';
+  }
 
   @override
   String get recordWorkLog => 'Record Work Log';

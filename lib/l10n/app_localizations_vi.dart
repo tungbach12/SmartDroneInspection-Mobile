@@ -172,6 +172,29 @@ class AppLocalizationsVi extends AppLocalizations {
   String get evidenceUploaded => 'Bằng chứng đã được tải lên an toàn.';
 
   @override
+  String get selectVideoFile => 'Chọn tệp video';
+
+  @override
+  String selectedVideo(Object name) {
+    return 'Video đã chọn: $name';
+  }
+
+  @override
+  String get uploadVideoEvidence => 'Tải video làm bằng chứng';
+
+  @override
+  String get retryVideoUpload => 'Thử tải video lại';
+
+  @override
+  String get filePickerError =>
+      'Không mở được trình chọn tệp. Vui lòng thử lại.';
+
+  @override
+  String evidenceFileTooLarge(Object limit) {
+    return 'Tệp vượt quá giới hạn tải bằng chứng $limit.';
+  }
+
+  @override
   String evidenceDetails(Object contentType, Object size, Object source) {
     return '$contentType · $size byte · $source';
   }
@@ -604,10 +627,14 @@ class AppLocalizationsVi extends AppLocalizations {
       'Các lệnh bảo trì được giao cho đội của bạn sẽ hiển thị tại đây.';
 
   @override
-  String workOrderTitle(Object id) => 'Lệnh #$id';
+  String workOrderTitle(Object id) {
+    return 'Lệnh #$id';
+  }
 
   @override
-  String orderPriority(Object priority) => 'Mức ưu tiên: $priority';
+  String orderPriority(Object priority) {
+    return 'Mức ưu tiên: $priority';
+  }
 
   @override
   String get correctiveScope => 'Phạm vi khắc phục:';
@@ -637,13 +664,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noWorkLogs => 'Chưa có nhật ký công việc nào được ghi nhận.';
 
   @override
-  String hoursWorkedLabel(Object hours) => '$hours giờ làm việc';
+  String hoursWorkedLabel(Object hours) {
+    return '$hours giờ làm việc';
+  }
 
   @override
-  String asLeftLabel(Object condition) => 'Tình trạng sau sửa: $condition';
+  String asLeftLabel(Object condition) {
+    return 'Tình trạng sau sửa: $condition';
+  }
 
   @override
-  String testReadingsLabel(Object readings) => 'Thí nghiệm: $readings';
+  String testReadingsLabel(Object readings) {
+    return 'Thí nghiệm: $readings';
+  }
 
   @override
   String get recordWorkLog => 'Ghi nhận nhật ký công việc';

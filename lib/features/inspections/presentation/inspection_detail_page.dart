@@ -29,6 +29,10 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
   bool _uploadingPhoto = false;
   String? _photoUploadError;
 
+  XFile? _selectedVideo;
+  bool _uploadingVideo = false;
+  String? _videoUploadError;
+
   XFile? _selectedPermit;
   bool _uploadingPermit = false;
   String? _permitUploadError;
@@ -83,7 +87,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
         .read(inspectionRepositoryProvider)
         .uploadEvidence(
           inspectionId: widget.inspectionId,
-          photo: photo,
+          file: photo,
           captureTime: captureTime,
           fieldSessionId: completedSessionId,
         );
@@ -103,6 +107,92 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
         setState(() {
           _uploadingPhoto = false;
           _photoUploadError = _failureMessage(context, failure);
+        });
+    }
+  }
+
+  Future<void> _pickVideoFile() async {
+    setState(() {
+      _videoUploadError = null;
+    });
+    try {
+      final video = await ref.read(inspectionVideoPickerProvider)();
+      if (!mounted || video == null) return;
+      setState(() {
+        _selectedVideo = video;
+      });
+    } on Exception {
+      if (!mounted) return;
+      setState(() {
+        _videoUploadError = context.l10n.filePickerError;
+      });
+    }
+  }
+
+  Future<void> _uploadVideo() async {
+    final video = _selectedVideo;
+    if (video == null) return;
+
+    int fileSize;
+    try {
+      fileSize = await video.length();
+    } on Exception {
+      if (!mounted) return;
+      setState(() {
+        _videoUploadError = context.l10n.filePickerError;
+      });
+      return;
+    }
+    if (!mounted) return;
+    if (fileSize > EvidenceUploadLimit.maxBytes) {
+      setState(() {
+        _videoUploadError = context.l10n.evidenceFileTooLarge('10 MiB');
+      });
+      return;
+    }
+
+    final sessionsResult = await ref
+        .read(inspectionRepositoryProvider)
+        .listFieldSessions(widget.inspectionId);
+    if (!mounted) return;
+    final completedSessionId = switch (sessionsResult) {
+      ApiSuccess<List<FieldSession>>(:final data) =>
+        data.where((session) => session.isCompleted).lastOrNull?.id,
+      ApiError<List<FieldSession>>() => null,
+    };
+    if (completedSessionId == null) {
+      setState(() {
+        _videoUploadError = context.l10n.completeSessionBeforeEvidence;
+      });
+      return;
+    }
+
+    setState(() {
+      _uploadingVideo = true;
+      _videoUploadError = null;
+    });
+    final result = await ref
+        .read(inspectionRepositoryProvider)
+        .uploadEvidence(
+          inspectionId: widget.inspectionId,
+          file: video,
+          fieldSessionId: completedSessionId,
+        );
+    if (!mounted) return;
+    switch (result) {
+      case ApiSuccess<InspectionEvidence>():
+        ref.invalidate(inspectionEvidenceProvider(widget.inspectionId));
+        setState(() {
+          _selectedVideo = null;
+          _uploadingVideo = false;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.evidenceUploaded)));
+      case ApiError<InspectionEvidence>(:final failure):
+        setState(() {
+          _uploadingVideo = false;
+          _videoUploadError = _failureMessage(context, failure);
         });
     }
   }
@@ -274,6 +364,34 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                         message: context.l10n.uploadFailed(_photoUploadError!),
                       ),
                     ],
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      key: const Key('choose-video-file-btn'),
+                      onPressed: _uploadingVideo ? null : _pickVideoFile,
+                      icon: const Icon(Icons.video_library_outlined),
+                      label: Text(context.l10n.selectVideoFile),
+                    ),
+                    if (_selectedVideo != null) ...[
+                      const SizedBox(height: 8),
+                      Text(context.l10n.selectedVideo(_selectedVideo!.name)),
+                      const SizedBox(height: 8),
+                      FilledButton.icon(
+                        key: const Key('upload-video-evidence-btn'),
+                        onPressed: _uploadingVideo ? null : _uploadVideo,
+                        icon: const Icon(Icons.cloud_upload_outlined),
+                        label: Text(
+                          _uploadingVideo
+                              ? context.l10n.uploading
+                              : _videoUploadError == null
+                              ? context.l10n.uploadVideoEvidence
+                              : context.l10n.retryVideoUpload,
+                        ),
+                      ),
+                    ],
+                    if (_videoUploadError != null) ...[
+                      const SizedBox(height: 8),
+                      _InlineError(message: _videoUploadError!),
+                    ],
                   ],
                 ),
               ),
@@ -289,7 +407,13 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   children: items
                       .map(
                         (item) => ListTile(
-                          leading: const Icon(Icons.image_outlined),
+                          leading: Icon(
+                            item.contentType.startsWith('video/')
+                                ? Icons.video_file_outlined
+                                : item.contentType.startsWith('image/')
+                                ? Icons.image_outlined
+                                : Icons.insert_drive_file_outlined,
+                          ),
                           title: Text(item.fileName),
                           subtitle: Text(
                             '${item.contentType} · ${item.sizeBytes} bytes',

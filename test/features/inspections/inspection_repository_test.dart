@@ -11,15 +11,18 @@ void main() {
   late Dio dio;
   late InspectionRepository repository;
   late List<RequestOptions> requests;
+  late List<FormData> uploadedForms;
 
   setUp(() {
+    uploadedForms = [];
     requests = [];
     dio = Dio(BaseOptions(baseUrl: 'https://api.example.test/api/v1'));
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
           requests.add(options);
-          if (options.method == 'GET' && options.path.endsWith('/inspections')) {
+          if (options.method == 'GET' &&
+              options.path.endsWith('/inspections')) {
             handler.resolve(
               Response(
                 requestOptions: options,
@@ -58,6 +61,7 @@ void main() {
             return;
           }
           if (options.method == 'POST' && options.path.endsWith('/evidence')) {
+            uploadedForms.add(options.data as FormData);
             handler.resolve(
               Response(
                 requestOptions: options,
@@ -105,29 +109,33 @@ void main() {
     expect(requests.single.path, '/inspections/inspection-1');
   });
 
-  test('uploads flight permit transitioning status to READY_FOR_FLIGHT', () async {
-    final directory = await Directory.systemTemp.createTemp('permit-');
-    addTearDown(() => directory.delete(recursive: true));
-    final permitPath = '${directory.path}${Platform.pathSeparator}flight-permit.pdf';
-    await File(permitPath).writeAsBytes([0x25, 0x50, 0x44, 0x46]);
+  test(
+    'uploads flight permit transitioning status to READY_FOR_FLIGHT',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('permit-');
+      addTearDown(() => directory.delete(recursive: true));
+      final permitPath =
+          '${directory.path}${Platform.pathSeparator}flight-permit.pdf';
+      await File(permitPath).writeAsBytes([0x25, 0x50, 0x44, 0x46]);
 
-    final result = await repository.uploadFlightPermit(
-      inspectionId: 'inspection-1',
-      file: XFile(permitPath, name: 'flight-permit.pdf'),
-    );
+      final result = await repository.uploadFlightPermit(
+        inspectionId: 'inspection-1',
+        file: XFile(permitPath, name: 'flight-permit.pdf'),
+      );
 
-    expect(result, isA<ApiSuccess<Inspection>>());
-    final inspection = (result as ApiSuccess<Inspection>).data;
-    expect(inspection.status, 'READY_FOR_FLIGHT');
-    expect(inspection.flightPermitFileName, 'flight-permit.pdf');
+      expect(result, isA<ApiSuccess<Inspection>>());
+      final inspection = (result as ApiSuccess<Inspection>).data;
+      expect(inspection.status, 'READY_FOR_FLIGHT');
+      expect(inspection.flightPermitFileName, 'flight-permit.pdf');
 
-    final request = requests.single;
-    expect(request.method, 'POST');
-    expect(request.path, '/inspections/inspection-1/flight-permit');
-    final form = request.data as FormData;
-    expect(form.files.single.key, 'file');
-    expect(form.files.single.value.filename, 'flight-permit.pdf');
-  });
+      final request = requests.single;
+      expect(request.method, 'POST');
+      expect(request.path, '/inspections/inspection-1/flight-permit');
+      final form = request.data as FormData;
+      expect(form.files.single.key, 'file');
+      expect(form.files.single.value.filename, 'flight-permit.pdf');
+    },
+  );
 
   test('parses evidence responses without retired API fields and retains isDeleted', () async {
     final result = await repository.listEvidence('inspection-1');
@@ -158,7 +166,7 @@ void main() {
 
     final result = await repository.uploadEvidence(
       inspectionId: 'inspection-1',
-      photo: XFile(photoPath, name: 'north-span.jpg'),
+      file: XFile(photoPath, name: 'north-span.jpg'),
       captureTime: capturedAt,
     );
 
@@ -166,7 +174,7 @@ void main() {
     final request = requests.single;
     expect(request.method, 'POST');
     expect(request.path, '/inspections/inspection-1/evidence');
-    final form = request.data as FormData;
+    final form = uploadedForms.single;
     expect(form.fields.map((entry) => entry.key), isNot(contains('source')));
     expect(
       form.fields.any(
@@ -179,6 +187,45 @@ void main() {
     expect(form.files.single.key, 'file');
     expect(form.files.single.value.filename, 'north-span.jpg');
   });
+
+  test(
+    'uploads a video with session linkage and no invented capture time',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'inspection-video-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final videoPath =
+          '${directory.path}${Platform.pathSeparator}north-span.mp4';
+      await File(videoPath).writeAsBytes([0, 0, 0, 24, 102, 116, 121, 112]);
+
+      final result = await repository.uploadEvidence(
+        inspectionId: 'inspection-1',
+        file: XFile(videoPath, name: 'north-span.mp4'),
+        fieldSessionId: 'session-1',
+      );
+
+      expect(result, isA<ApiSuccess>());
+      final request = requests.single;
+      expect(request.method, 'POST');
+      expect(request.path, '/inspections/inspection-1/evidence');
+      final form = uploadedForms.single;
+      expect(form.fields.map((entry) => entry.key), contains('fieldSessionId'));
+      expect(
+        form.fields.any(
+          (entry) =>
+              entry.key == 'fieldSessionId' && entry.value == 'session-1',
+        ),
+        isTrue,
+      );
+      expect(
+        form.fields.map((entry) => entry.key),
+        isNot(contains('captureTime')),
+      );
+      expect(form.files.single.key, 'file');
+      expect(form.files.single.value.filename, 'north-span.mp4');
+    },
+  );
 }
 
 Map<String, dynamic> _inspectionResponse({
@@ -194,7 +241,9 @@ Map<String, dynamic> _inspectionResponse({
   'status': status,
   'flightPermitFileKey': permitFileKey,
   'flightPermitFileName': permitFileName,
-  'flightPermitUploadedAt': permitFileKey != null ? '2026-10-01T10:00:00Z' : null,
+  'flightPermitUploadedAt': permitFileKey != null
+      ? '2026-10-01T10:00:00Z'
+      : null,
   'inspectionItems': ['Deck', 'Piers'],
 };
 

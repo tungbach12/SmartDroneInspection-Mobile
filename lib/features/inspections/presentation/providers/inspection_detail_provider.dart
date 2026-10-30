@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
@@ -14,14 +15,41 @@ final inspectionPhotoPickerProvider = Provider<PickInspectionPhoto>((ref) {
 
 typedef PickFlightPermitFile = Future<XFile?> Function();
 final flightPermitPickerProvider = Provider<PickFlightPermitFile>((ref) {
-  final picker = ImagePicker();
-  return () => picker.pickImage(source: ImageSource.gallery, imageQuality: 90);
+  return () async {
+    final picked = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+    );
+    if (picked == null) return null;
+    return picked.xFile;
+  };
 });
 
-final inspectionDetailProvider =
-    FutureProvider.family<Inspection, String>((ref, id) async {
-  final result =
-      await ref.watch(inspectionRepositoryProvider).getInspection(id);
+typedef PickInspectionVideo = Future<XFile?> Function();
+final inspectionVideoPickerProvider = Provider<PickInspectionVideo>((ref) {
+  return () async {
+    final picked = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: ['mp4'],
+    );
+    if (picked == null) return null;
+    return picked.xFile;
+  };
+});
+
+class EvidenceUploadLimit {
+  static const int maxBytes = 10 * 1024 * 1024;
+
+  const EvidenceUploadLimit._();
+}
+
+final inspectionDetailProvider = FutureProvider.family<Inspection, String>((
+  ref,
+  id,
+) async {
+  final result = await ref
+      .watch(inspectionRepositoryProvider)
+      .getInspection(id);
   return switch (result) {
     ApiSuccess(:final data) => data,
     ApiError(:final failure) => throw ApiFailureException(failure),
@@ -30,10 +58,11 @@ final inspectionDetailProvider =
 
 final inspectionEvidenceProvider =
     FutureProvider.family<List<InspectionEvidence>, String>((ref, id) async {
-  final result =
-      await ref.watch(inspectionRepositoryProvider).listEvidence(id);
-  return switch (result) {
-    ApiSuccess(:final data) => data,
-    ApiError(:final failure) => throw ApiFailureException(failure),
-  };
-});
+      final result = await ref
+          .watch(inspectionRepositoryProvider)
+          .listEvidence(id);
+      return switch (result) {
+        ApiSuccess(:final data) => data,
+        ApiError(:final failure) => throw ApiFailureException(failure),
+      };
+    });
