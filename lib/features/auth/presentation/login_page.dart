@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_drone_inspection/core/env/app_environment.dart';
 import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -47,6 +49,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           _current.text = _password.text;
         }
         break; // router redirect handles navigation
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    final authUrl =
+        '${AppEnvironment.apiBaseUrl}/auth/oauth2/authorize/google?client_type=mobile';
+    final uri = Uri.parse(authUrl);
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        setState(() => _error = context.l10n.somethingWentWrong);
+      }
+    } catch (_) {
+      setState(() => _error = context.l10n.cannotReachServer);
     }
   }
 
@@ -158,6 +175,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 FilledButton(
                   onPressed: _signIn,
                   child: Text(context.l10n.signIn),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        context.l10n.or.toUpperCase(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.outline,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: _signInWithGoogle,
+                  icon: const Icon(Icons.g_mobiledata, size: 28),
+                  label: Text(context.l10n.signInWithGoogle),
                 ),
               ],
               if (_error != null) ...[

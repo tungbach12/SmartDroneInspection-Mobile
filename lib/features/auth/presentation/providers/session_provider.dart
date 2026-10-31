@@ -83,6 +83,25 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     }
   }
 
+  Future<void> handleOAuthCallback({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    state = const AsyncLoading<AuthSession>();
+    final tokens = ref.read(tokenStoreProvider);
+    await tokens.save(access: accessToken, refresh: refreshToken);
+    final result = await ref
+        .read(authRepositoryProvider)
+        .refresh(refreshToken: refreshToken);
+    switch (result) {
+      case ApiSuccess(:final data):
+        state = AsyncData<AuthSession>(AuthSession.authenticated(data.user));
+      case ApiError():
+        await tokens.clear();
+        state = const AsyncData<AuthSession>(AuthSession.anonymous());
+    }
+  }
+
   Future<ApiResult<AuthSession>> completeInitialPasswordSetup({
     required String email,
     required String currentPassword,

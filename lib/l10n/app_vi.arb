@@ -11,6 +11,8 @@
   "somethingWentWrong": "Đã xảy ra lỗi",
   "retry": "Thử lại",
   "signIn": "Đăng nhập",
+  "signInWithGoogle": "Đăng nhập bằng Google",
+  "or": "hoặc",
   "setNewPassword": "Đặt mật khẩu mới",
   "email": "Email",
   "password": "Mật khẩu",

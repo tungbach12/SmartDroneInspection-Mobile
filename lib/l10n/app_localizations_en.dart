@@ -43,6 +43,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in';
 
   @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get or => 'or';
+
+  @override
   String get setNewPassword => 'Set new password';
 
   @override
