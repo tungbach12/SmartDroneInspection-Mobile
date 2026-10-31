@@ -43,6 +43,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get signIn => 'Đăng nhập';
 
   @override
+  String get signInWithGoogle => 'Đăng nhập bằng Google';
+
+  @override
+  String get or => 'hoặc';
+
+  @override
   String get setNewPassword => 'Đặt mật khẩu mới';
 
   @override

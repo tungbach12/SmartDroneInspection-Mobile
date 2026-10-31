@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/login_page.dart';
+import 'package:smart_drone_inspection/features/auth/presentation/oauth_callback_screen.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/field_session_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
@@ -32,18 +33,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (session == null) return null;
 
       final isAuthenticated = session.isAuthenticated;
-      final loggingIn = location == '/login';
+      final loggingIn = location == '/login' || location.startsWith('/auth/callback');
 
       if (!isAuthenticated && !loggingIn) {
         return '/login';
       }
-      if (isAuthenticated && loggingIn) {
+      if (isAuthenticated && location == '/login') {
         return '/home';
       }
       return null;
     },
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/auth/callback',
+        builder: (context, state) => OAuthCallbackScreen(
+          accessToken: state.uri.queryParameters['accessToken'],
+          refreshToken: state.uri.queryParameters['refreshToken'],
+          error: state.uri.queryParameters['error'],
+        ),
+      ),
       GoRoute(
         path: '/inspection/:inspectionId',
         builder: (context, state) => InspectionDetailPage(
