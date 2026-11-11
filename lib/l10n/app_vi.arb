@@ -3,7 +3,6 @@
   "appName": "SmartDroneInspection",
   "appTitle": "SmartDroneInspection",
   "navInspections": "Kiểm tra",
-  "navTasks": "Công việc",
   "navProfile": "Hồ sơ",
   "notFound": "Không tìm thấy",
   "pageNotFound": "Không tìm thấy trang",
@@ -33,7 +32,13 @@
   "acceptingDoesNotClear": "Chấp nhận nghĩa là bạn nhận công việc, không có nghĩa là được phép bay. Người đánh giá được chỉ định của tổ chức sẽ quyết định dựa trên hồ sơ.",
   "nothingToAnswer": "Không có phân công nào cần phản hồi. Quản lý tổ chức sẽ ghép bạn với máy bay không người lái trước khi bắt đầu chuẩn bị.",
   "droneValidity": "Máy bay không người lái {serial} · hiệu lực từ {from} đến {until}",
-  "@droneValidity": {"placeholders": {"serial": {}, "from": {}, "until": {}}},
+  "@droneValidity": {
+    "placeholders": {
+      "serial": {},
+      "from": {},
+      "until": {}
+    }
+  },
   "unspecified": "chưa xác định",
   "declineReason": "Lý do từ chối",
   "declineReasonHint": "Chỉ bắt buộc khi từ chối để quản trị viên biết cần khắc phục điều gì.",
@@ -46,7 +51,11 @@
   "inspectionRecord": "Hồ sơ kiểm tra",
   "backToAssignments": "Quay lại danh sách phân công",
   "inspectionNumber": "Kiểm tra {id}",
-  "@inspectionNumber": {"placeholders": {"id": {}}},
+  "@inspectionNumber": {
+    "placeholders": {
+      "id": {}
+    }
+  },
   "openFieldSession": "Mở phiên hiện trường",
   "openPreparation": "Mở bước chuẩn bị MF2",
   "checklist": "Danh sách kiểm tra",
@@ -56,32 +65,58 @@
   "evidenceUploaded": "Bằng chứng đã được tải lên an toàn.",
   "selectVideoFile": "Chọn tệp video",
   "selectedVideo": "Video đã chọn: {name}",
-  "@selectedVideo": {"placeholders": {"name": {}}},
+  "@selectedVideo": {
+    "placeholders": {
+      "name": {}
+    }
+  },
   "uploadVideoEvidence": "Tải video làm bằng chứng",
   "retryVideoUpload": "Thử tải video lại",
   "filePickerError": "Không mở được trình chọn tệp. Vui lòng thử lại.",
   "evidenceFileTooLarge": "Tệp vượt quá giới hạn tải bằng chứng {limit}.",
-  "@evidenceFileTooLarge": {"placeholders": {"limit": {}}},
+  "@evidenceFileTooLarge": {
+    "placeholders": {
+      "limit": {}
+    }
+  },
   "evidenceDetails": "{contentType} · {size} byte · {source}",
-  "@evidenceDetails": {"placeholders": {"contentType": {}, "size": {}, "source": {}}},
+  "@evidenceDetails": {
+    "placeholders": {
+      "contentType": {},
+      "size": {},
+      "source": {}
+    }
+  },
   "evidenceSourceMobileUpload": "Tải lên từ ứng dụng di động",
   "pass": "Đạt",
   "fail": "Không đạt",
-
   "captureInspectionPhoto": "Chụp ảnh kiểm tra",
   "selectedFile": "Đã chọn: {name}",
-  "@selectedFile": {"placeholders": {"name": {}}},
+  "@selectedFile": {
+    "placeholders": {
+      "name": {}
+    }
+  },
   "uploading": "Đang tải lên…",
   "uploadPhoto": "Tải ảnh lên",
   "retryUpload": "Thử tải lên lại",
   "uploadFailed": "Tải lên thất bại: {error}. Ảnh đã chọn vẫn được giữ lại để bạn thử lại.",
-  "@uploadFailed": {"placeholders": {"error": {}}},
+  "@uploadFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "checkConnection": "Kiểm tra kết nối rồi thử lại.",
   "unauthorizedInspection": "Bạn không được phép truy cập cuộc kiểm tra này.",
   "inspectionUnavailable": "Cuộc kiểm tra này không còn khả dụng.",
   "requestFailed": "Máy chủ không thể hoàn tất yêu cầu này.",
   "checklistSaveFailed": "Không lưu được danh sách kiểm tra: {error}",
-  "@checklistSaveFailed": {"placeholders": {"error": {}}},  "writeShotListComparison": "Trước tiên, hãy ghi nội dung đối chiếu danh sách ảnh chụp.",
+  "@checklistSaveFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "writeShotListComparison": "Trước tiên, hãy ghi nội dung đối chiếu danh sách ảnh chụp.",
   "stateWhySessionNeeded": "Hãy nêu lý do cần thêm một phiên hiện trường.",
   "additionalWorkRequested": "Đã yêu cầu thêm công việc hiện trường. Hãy tiếp tục ở bước chuẩn bị MF2 và chờ đánh giá mức độ sẵn sàng.",
   "evidenceSetAccepted": "Bộ bằng chứng đã được chấp nhận để phân tích hỗ trợ.",
@@ -89,7 +124,11 @@
   "evidenceQualityExplanation": "MF3-03: đối chiếu bộ ảnh đã hoàn tất với danh sách ảnh cần chụp. Chọn chấp nhận hoặc yêu cầu thêm phiên MF2; vấn đề thời tiết hoặc an toàn tại hiện trường cần được xử lý bằng hoãn hoặc hủy phiên.",
   "noDecisionRecorded": "Chưa có quyết định nào được ghi nhận.",
   "latestDecision": "Mới nhất: {decision}",
-  "@latestDecision": {"placeholders": {"decision": {}}},
+  "@latestDecision": {
+    "placeholders": {
+      "decision": {}
+    }
+  },
   "loadingDecisionHistory": "Đang tải lịch sử quyết định…",
   "decisionHistoryFailed": "Không tải được lịch sử quyết định.",
   "shotListComparison": "Đối chiếu danh sách ảnh chụp",
@@ -119,7 +158,12 @@
   "keepGoing": "Tiếp tục",
   "abort": "Hủy",
   "startedAt": "Bắt đầu lúc {time} theo quyết định sẵn sàng {decision}",
-  "@startedAt": {"placeholders": {"time": {}, "decision": {}}},
+  "@startedAt": {
+    "placeholders": {
+      "time": {},
+      "decision": {}
+    }
+  },
   "justNow": "vừa xong",
   "unknown": "không xác định",
   "reasonPostponing": "Lý do hoãn",
@@ -152,7 +196,11 @@
   "preparation": "Bước chuẩn bị MF2",
   "bothPlannedTimes": "Hãy đặt cả thời gian bắt đầu và kết thúc dự kiến cho phiên hiện trường bổ sung.",
   "preparationVersionSaved": "Đã lưu phiên bản chuẩn bị {version}.",
-  "@preparationVersionSaved": {"placeholders": {"version": {}}},
+  "@preparationVersionSaved": {
+    "placeholders": {
+      "version": {}
+    }
+  },
   "preparationSubmitted": "Đã gửi bước chuẩn bị để đánh giá mức độ sẵn sàng độc lập.",
   "componentShotListJson": "Danh sách ảnh chụp bộ phận (JSON)",
   "evidenceTypesJson": "Loại bằng chứng (JSON)",
@@ -166,27 +214,37 @@
   "submitPreparation": "Gửi bước chuẩn bị",
   "additionalSessionRequested": "Đã yêu cầu thêm phiên hiện trường. Hãy cập nhật kế hoạch/khung giờ và gửi lại. ORG_MANAGER độc lập phải phê duyệt mức độ sẵn sàng hiện tại trước khi có thể bắt đầu.",
   "preparationVersionStatus": "Phiên bản {version} · {status}",
-  "@preparationVersionStatus": {"placeholders": {"version": {}, "status": {}}},
+  "@preparationVersionStatus": {
+    "placeholders": {
+      "version": {},
+      "status": {}
+    }
+  },
   "preparationApproved": "Bước chuẩn bị đã được phê duyệt. Mức độ sẵn sàng áp dụng cho phiên bản này; mọi thay đổi cần được đánh giá lại.",
   "cannotEditPreparation": "Bạn không được phép chỉnh sửa bước chuẩn bị này.",
   "inspectionNotInOrganization": "Không tìm thấy cuộc kiểm tra này trong tổ chức của bạn.",
   "profile": "Hồ sơ",
   "zone": "Khu vực: {zone}",
-  "@zone": {"placeholders": {"zone": {}}},
+  "@zone": {
+    "placeholders": {
+      "zone": {}
+    }
+  },
   "organization": "Tổ chức: {organization}",
-  "@organization": {"placeholders": {"organization": {}}},
+  "@organization": {
+    "placeholders": {
+      "organization": {}
+    }
+  },
   "notSignedIn": "Chưa đăng nhập.",
   "signOut": "Đăng xuất",
   "language": "Ngôn ngữ",
   "languageEnglish": "English",
   "languageVietnamese": "Tiếng Việt",
-  "tasks": "Công việc bảo trì",
-  "assignedMaintenanceTickets": "Phiếu bảo trì được giao",
   "userRoleAdmin": "Quản trị viên",
   "userRolePlatformManager": "Quản lý nền tảng",
   "userRoleOrgManager": "Quản lý tổ chức",
   "userRoleInspector": "Thanh tra viên",
-  "userRoleMaintenanceEngineer": "Kỹ sư bảo trì",
   "userRoleClient": "Khách hàng",
   "actorZonePlatform": "Nền tảng",
   "actorZoneCustomerOrganization": "Tổ chức khách hàng",
@@ -196,36 +254,5 @@
   "assignmentResponseRejected": "Đã từ chối",
   "assetStatusActive": "Đang hoạt động",
   "assetStatusInactive": "Ngừng hoạt động",
-  "assetStatusRetired": "Đã ngừng sử dụng",
-  "maintenanceWorkOrders": "Lệnh bảo trì sửa chữa",
-  "noAssignedTasks": "Chưa có nhiệm vụ bảo trì nào được giao",
-  "assignedWorkOrdersDescription": "Các lệnh bảo trì được giao cho đội của bạn sẽ hiển thị tại đây.",
-  "workOrderTitle": "Lệnh #{id}",
-  "@workOrderTitle": {"placeholders": {"id": {}}},
-  "orderPriority": "Mức ưu tiên: {priority}",
-  "@orderPriority": {"placeholders": {"priority": {}}},
-  "correctiveScope": "Phạm vi khắc phục:",
-  "acceptanceCriteria": "Tiêu chuẩn nghiệm thu:",
-  "startExecutionOnSite": "Bắt đầu thi công tại hiện trường",
-  "recordLog": "Ghi nhật ký",
-  "declareComplete": "Tuyên bố hoàn thành",
-  "plannedTasks": "Nhiệm vụ đã lập kế hoạch",
-  "noTasksPlanned": "Chưa có nhiệm vụ nào được lập cho lệnh này.",
-  "workLogs": "Nhật ký công việc",
-  "noWorkLogs": "Chưa có nhật ký công việc nào được ghi nhận.",
-  "hoursWorkedLabel": "{hours} giờ làm việc",
-  "@hoursWorkedLabel": {"placeholders": {"hours": {}}},
-  "asLeftLabel": "Tình trạng sau sửa: {condition}",
-  "@asLeftLabel": {"placeholders": {"condition": {}}},
-  "testReadingsLabel": "Thí nghiệm: {readings}",
-  "@testReadingsLabel": {"placeholders": {"readings": {}}},
-  "recordWorkLog": "Ghi nhận nhật ký công việc",
-  "task": "Nhiệm vụ",
-  "hoursWorked": "Số giờ làm việc",
-  "asLeftCondition": "Tình trạng sau khi hoàn tất",
-  "testReadings": "Số liệu đo đạc / Thí nghiệm kiểm tra",
-  "submitWorkLog": "Nộp nhật ký công việc",
-  "executionStarted": "Đã bắt đầu thi công",
-  "workDeclaredCompleted": "Đã tuyên bố hoàn thành thi công",
-  "workLogSubmitted": "Đã nộp nhật ký công việc để xác nhận"
+  "assetStatusRetired": "Đã ngừng sử dụng"
 }

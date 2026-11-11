@@ -50,7 +50,6 @@ String localizedRole(AppLocalizations l10n, String role) => switch (role) {
   'PLATFORM_MANAGER' => l10n.userRolePlatformManager,
   'ORG_MANAGER' => l10n.userRoleOrgManager,
   'INSPECTOR' => l10n.userRoleInspector,
-  'MAINTENANCE_ENGINEER' => l10n.userRoleMaintenanceEngineer,
   'CLIENT' => l10n.userRoleClient,
   _ => role,
 };

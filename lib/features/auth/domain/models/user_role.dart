@@ -2,8 +2,7 @@ enum UserRole {
   admin('ADMIN'),
   platformManager('PLATFORM_MANAGER'),
   orgManager('ORG_MANAGER'),
-  inspector('INSPECTOR'),
-  maintenanceEngineer('MAINTENANCE_ENGINEER');
+  inspector('INSPECTOR');
 
   const UserRole(this.code);
 

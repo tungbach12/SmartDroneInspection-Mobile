@@ -5,13 +5,12 @@ import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dar
 
 void main() {
   group('AuthUser.fromJson', () {
-    test('parses and retains all five canonical enterprise roles', () {
+    test('parses and retains supported mobile roles', () {
       const canonicalRoles = [
         'ADMIN',
         'PLATFORM_MANAGER',
         'ORG_MANAGER',
         'INSPECTOR',
-        'MAINTENANCE_ENGINEER',
       ];
       final user = AuthUser.fromJson({
         'id': 'u1',
@@ -27,7 +26,6 @@ void main() {
         UserRole.platformManager,
         UserRole.orgManager,
         UserRole.inspector,
-        UserRole.maintenanceEngineer,
       ]);
       expect(user.roles.map((role) => role.code), canonicalRoles);
       expect(UserRole.values.map((role) => role.code), canonicalRoles);
@@ -38,6 +36,7 @@ void main() {
     test('does not accept legacy client or provider roles', () {
       expect(UserRole.parse('CLIENT'), isNull);
       expect(UserRole.parse('PROVIDER_MANAGER'), isNull);
+      expect(UserRole.parse('MAINTENANCE_ENGINEER'), isNull);
 
       final user = AuthUser.fromJson({
         'id': 'u1',

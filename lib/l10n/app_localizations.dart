@@ -116,12 +116,6 @@ abstract class AppLocalizations {
   /// **'Inspections'**
   String get navInspections;
 
-  /// No description provided for @navTasks.
-  ///
-  /// In en, this message translates to:
-  /// **'Tasks'**
-  String get navTasks;
-
   /// No description provided for @navProfile.
   ///
   /// In en, this message translates to:
@@ -1094,18 +1088,6 @@ abstract class AppLocalizations {
   /// **'Tiếng Việt'**
   String get languageVietnamese;
 
-  /// No description provided for @tasks.
-  ///
-  /// In en, this message translates to:
-  /// **'Maintenance Tasks'**
-  String get tasks;
-
-  /// No description provided for @assignedMaintenanceTickets.
-  ///
-  /// In en, this message translates to:
-  /// **'Assigned maintenance tickets'**
-  String get assignedMaintenanceTickets;
-
   /// No description provided for @userRoleAdmin.
   ///
   /// In en, this message translates to:
@@ -1129,12 +1111,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inspector'**
   String get userRoleInspector;
-
-  /// No description provided for @userRoleMaintenanceEngineer.
-  ///
-  /// In en, this message translates to:
-  /// **'Maintenance engineer'**
-  String get userRoleMaintenanceEngineer;
 
   /// No description provided for @userRoleClient.
   ///
@@ -1195,162 +1171,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retired'**
   String get assetStatusRetired;
-
-  /// No description provided for @maintenanceWorkOrders.
-  ///
-  /// In en, this message translates to:
-  /// **'Maintenance Work Orders'**
-  String get maintenanceWorkOrders;
-
-  /// No description provided for @noAssignedTasks.
-  ///
-  /// In en, this message translates to:
-  /// **'No assigned maintenance tasks'**
-  String get noAssignedTasks;
-
-  /// No description provided for @assignedWorkOrdersDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Work orders assigned to your team will appear here.'**
-  String get assignedWorkOrdersDescription;
-
-  /// No description provided for @workOrderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Order #{id}'**
-  String workOrderTitle(Object id);
-
-  /// No description provided for @orderPriority.
-  ///
-  /// In en, this message translates to:
-  /// **'Priority: {priority}'**
-  String orderPriority(Object priority);
-
-  /// No description provided for @correctiveScope.
-  ///
-  /// In en, this message translates to:
-  /// **'Corrective Scope:'**
-  String get correctiveScope;
-
-  /// No description provided for @acceptanceCriteria.
-  ///
-  /// In en, this message translates to:
-  /// **'Acceptance Criteria:'**
-  String get acceptanceCriteria;
-
-  /// No description provided for @startExecutionOnSite.
-  ///
-  /// In en, this message translates to:
-  /// **'Start Execution on Site'**
-  String get startExecutionOnSite;
-
-  /// No description provided for @recordLog.
-  ///
-  /// In en, this message translates to:
-  /// **'Record Log'**
-  String get recordLog;
-
-  /// No description provided for @declareComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Declare Complete'**
-  String get declareComplete;
-
-  /// No description provided for @plannedTasks.
-  ///
-  /// In en, this message translates to:
-  /// **'Planned Tasks'**
-  String get plannedTasks;
-
-  /// No description provided for @noTasksPlanned.
-  ///
-  /// In en, this message translates to:
-  /// **'No tasks planned yet for this order.'**
-  String get noTasksPlanned;
-
-  /// No description provided for @workLogs.
-  ///
-  /// In en, this message translates to:
-  /// **'Work Logs'**
-  String get workLogs;
-
-  /// No description provided for @noWorkLogs.
-  ///
-  /// In en, this message translates to:
-  /// **'No work logs recorded yet.'**
-  String get noWorkLogs;
-
-  /// No description provided for @hoursWorkedLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'{hours} hours worked'**
-  String hoursWorkedLabel(Object hours);
-
-  /// No description provided for @asLeftLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'As-left: {condition}'**
-  String asLeftLabel(Object condition);
-
-  /// No description provided for @testReadingsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Test: {readings}'**
-  String testReadingsLabel(Object readings);
-
-  /// No description provided for @recordWorkLog.
-  ///
-  /// In en, this message translates to:
-  /// **'Record Work Log'**
-  String get recordWorkLog;
-
-  /// No description provided for @task.
-  ///
-  /// In en, this message translates to:
-  /// **'Task'**
-  String get task;
-
-  /// No description provided for @hoursWorked.
-  ///
-  /// In en, this message translates to:
-  /// **'Hours Worked'**
-  String get hoursWorked;
-
-  /// No description provided for @asLeftCondition.
-  ///
-  /// In en, this message translates to:
-  /// **'As-Left Condition'**
-  String get asLeftCondition;
-
-  /// No description provided for @testReadings.
-  ///
-  /// In en, this message translates to:
-  /// **'Test Readings / Measurements'**
-  String get testReadings;
-
-  /// No description provided for @submitWorkLog.
-  ///
-  /// In en, this message translates to:
-  /// **'Submit Work Log'**
-  String get submitWorkLog;
-
-  /// No description provided for @executionStarted.
-  ///
-  /// In en, this message translates to:
-  /// **'Execution started'**
-  String get executionStarted;
-
-  /// No description provided for @workDeclaredCompleted.
-  ///
-  /// In en, this message translates to:
-  /// **'Work declared completed'**
-  String get workDeclaredCompleted;
-
-  /// No description provided for @workLogSubmitted.
-  ///
-  /// In en, this message translates to:
-  /// **'Work log submitted for verification'**
-  String get workLogSubmitted;
 }
 
 class _AppLocalizationsDelegate
