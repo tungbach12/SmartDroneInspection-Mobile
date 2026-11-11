@@ -9,10 +9,8 @@ import 'package:smart_drone_inspection/features/inspections/presentation/field_s
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspections_page.dart';
 import 'package:smart_drone_inspection/features/profile/presentation/profile_page.dart';
-import 'package:smart_drone_inspection/features/tasks/presentation/tasks_page.dart';
-import 'package:smart_drone_inspection/features/tasks/presentation/work_order_detail_page.dart';
 
-/// App router: auth redirect + bottom-nav shell with 3 branches.
+/// App router: auth redirect + bottom-nav shell with 2 branches.
 final routerProvider = Provider<GoRouter>((ref) {
   // Re-run redirect whenever the session moves.
   final refreshListenable = ValueNotifier<Object?>(null);
@@ -66,12 +64,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           inspectionId: state.pathParameters['inspectionId']!,
         ),
       ),
-      GoRoute(
-        path: '/tasks/:workOrderId',
-        builder: (context, state) => WorkOrderDetailPage(
-          workOrderId: state.pathParameters['workOrderId']!,
-        ),
-      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppScaffold(shell),
         branches: [
@@ -80,14 +72,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/home',
                 builder: (context, state) => const InspectionsPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/tasks',
-                builder: (context, state) => const TasksPage(),
               ),
             ],
           ),
@@ -123,11 +107,6 @@ class AppScaffold extends StatelessWidget {
             icon: Icon(Icons.flight_takeoff_outlined),
             selectedIcon: Icon(Icons.flight_takeoff),
             label: context.l10n.navInspections,
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.build_outlined),
-            selectedIcon: Icon(Icons.build),
-            label: context.l10n.navTasks,
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),

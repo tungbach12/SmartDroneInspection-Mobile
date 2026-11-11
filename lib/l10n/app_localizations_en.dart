@@ -19,9 +19,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navInspections => 'Inspections';
 
   @override
-  String get navTasks => 'Tasks';
-
-  @override
   String get navProfile => 'Profile';
 
   @override
@@ -568,12 +565,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageVietnamese => 'Tiếng Việt';
 
   @override
-  String get tasks => 'Maintenance Tasks';
-
-  @override
-  String get assignedMaintenanceTickets => 'Assigned maintenance tickets';
-
-  @override
   String get userRoleAdmin => 'Administrator';
 
   @override
@@ -584,9 +575,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userRoleInspector => 'Inspector';
-
-  @override
-  String get userRoleMaintenanceEngineer => 'Maintenance engineer';
 
   @override
   String get userRoleClient => 'Client';
@@ -617,93 +605,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetStatusRetired => 'Retired';
-
-  @override
-  String get maintenanceWorkOrders => 'Maintenance Work Orders';
-
-  @override
-  String get noAssignedTasks => 'No assigned maintenance tasks';
-
-  @override
-  String get assignedWorkOrdersDescription =>
-      'Work orders assigned to your team will appear here.';
-
-  @override
-  String workOrderTitle(Object id) {
-    return 'Order #$id';
-  }
-
-  @override
-  String orderPriority(Object priority) {
-    return 'Priority: $priority';
-  }
-
-  @override
-  String get correctiveScope => 'Corrective Scope:';
-
-  @override
-  String get acceptanceCriteria => 'Acceptance Criteria:';
-
-  @override
-  String get startExecutionOnSite => 'Start Execution on Site';
-
-  @override
-  String get recordLog => 'Record Log';
-
-  @override
-  String get declareComplete => 'Declare Complete';
-
-  @override
-  String get plannedTasks => 'Planned Tasks';
-
-  @override
-  String get noTasksPlanned => 'No tasks planned yet for this order.';
-
-  @override
-  String get workLogs => 'Work Logs';
-
-  @override
-  String get noWorkLogs => 'No work logs recorded yet.';
-
-  @override
-  String hoursWorkedLabel(Object hours) {
-    return '$hours hours worked';
-  }
-
-  @override
-  String asLeftLabel(Object condition) {
-    return 'As-left: $condition';
-  }
-
-  @override
-  String testReadingsLabel(Object readings) {
-    return 'Test: $readings';
-  }
-
-  @override
-  String get recordWorkLog => 'Record Work Log';
-
-  @override
-  String get task => 'Task';
-
-  @override
-  String get hoursWorked => 'Hours Worked';
-
-  @override
-  String get asLeftCondition => 'As-Left Condition';
-
-  @override
-  String get testReadings => 'Test Readings / Measurements';
-
-  @override
-  String get submitWorkLog => 'Submit Work Log';
-
-  @override
-  String get executionStarted => 'Execution started';
-
-  @override
-  String get workDeclaredCompleted => 'Work declared completed';
-
-  @override
-  String get workLogSubmitted => 'Work log submitted for verification';
 }

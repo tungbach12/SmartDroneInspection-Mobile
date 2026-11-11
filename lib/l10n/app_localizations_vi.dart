@@ -19,9 +19,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get navInspections => 'Kiểm tra';
 
   @override
-  String get navTasks => 'Công việc';
-
-  @override
   String get navProfile => 'Hồ sơ';
 
   @override
@@ -572,12 +569,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get languageVietnamese => 'Tiếng Việt';
 
   @override
-  String get tasks => 'Công việc bảo trì';
-
-  @override
-  String get assignedMaintenanceTickets => 'Phiếu bảo trì được giao';
-
-  @override
   String get userRoleAdmin => 'Quản trị viên';
 
   @override
@@ -588,9 +579,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get userRoleInspector => 'Thanh tra viên';
-
-  @override
-  String get userRoleMaintenanceEngineer => 'Kỹ sư bảo trì';
 
   @override
   String get userRoleClient => 'Khách hàng';
@@ -621,93 +609,4 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get assetStatusRetired => 'Đã ngừng sử dụng';
-
-  @override
-  String get maintenanceWorkOrders => 'Lệnh bảo trì sửa chữa';
-
-  @override
-  String get noAssignedTasks => 'Chưa có nhiệm vụ bảo trì nào được giao';
-
-  @override
-  String get assignedWorkOrdersDescription =>
-      'Các lệnh bảo trì được giao cho đội của bạn sẽ hiển thị tại đây.';
-
-  @override
-  String workOrderTitle(Object id) {
-    return 'Lệnh #$id';
-  }
-
-  @override
-  String orderPriority(Object priority) {
-    return 'Mức ưu tiên: $priority';
-  }
-
-  @override
-  String get correctiveScope => 'Phạm vi khắc phục:';
-
-  @override
-  String get acceptanceCriteria => 'Tiêu chuẩn nghiệm thu:';
-
-  @override
-  String get startExecutionOnSite => 'Bắt đầu thi công tại hiện trường';
-
-  @override
-  String get recordLog => 'Ghi nhật ký';
-
-  @override
-  String get declareComplete => 'Tuyên bố hoàn thành';
-
-  @override
-  String get plannedTasks => 'Nhiệm vụ đã lập kế hoạch';
-
-  @override
-  String get noTasksPlanned => 'Chưa có nhiệm vụ nào được lập cho lệnh này.';
-
-  @override
-  String get workLogs => 'Nhật ký công việc';
-
-  @override
-  String get noWorkLogs => 'Chưa có nhật ký công việc nào được ghi nhận.';
-
-  @override
-  String hoursWorkedLabel(Object hours) {
-    return '$hours giờ làm việc';
-  }
-
-  @override
-  String asLeftLabel(Object condition) {
-    return 'Tình trạng sau sửa: $condition';
-  }
-
-  @override
-  String testReadingsLabel(Object readings) {
-    return 'Thí nghiệm: $readings';
-  }
-
-  @override
-  String get recordWorkLog => 'Ghi nhận nhật ký công việc';
-
-  @override
-  String get task => 'Nhiệm vụ';
-
-  @override
-  String get hoursWorked => 'Số giờ làm việc';
-
-  @override
-  String get asLeftCondition => 'Tình trạng sau khi hoàn tất';
-
-  @override
-  String get testReadings => 'Số liệu đo đạc / Thí nghiệm kiểm tra';
-
-  @override
-  String get submitWorkLog => 'Nộp nhật ký công việc';
-
-  @override
-  String get executionStarted => 'Đã bắt đầu thi công';
-
-  @override
-  String get workDeclaredCompleted => 'Đã tuyên bố hoàn thành thi công';
-
-  @override
-  String get workLogSubmitted => 'Đã nộp nhật ký công việc để xác nhận';
 }
