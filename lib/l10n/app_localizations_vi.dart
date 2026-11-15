@@ -544,11 +544,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profile => 'Hồ sơ';
 
   @override
-  String zone(Object zone) {
-    return 'Khu vực: $zone';
-  }
-
-  @override
   String organization(Object organization) {
     return 'Tổ chức: $organization';
   }
@@ -582,15 +577,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get userRoleClient => 'Khách hàng';
-
-  @override
-  String get actorZonePlatform => 'Nền tảng';
-
-  @override
-  String get actorZoneCustomerOrganization => 'Tổ chức khách hàng';
-
-  @override
-  String get actorZoneServiceWorkforce => 'Đội ngũ dịch vụ';
 
   @override
   String get assignmentStatusActive => 'Đang hoạt động';
