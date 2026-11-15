@@ -107,8 +107,32 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'SmartDroneInspection'**
+  /// **'SDI Customer'**
   String get appTitle;
+
+  /// No description provided for @customerPortalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Portal'**
+  String get customerPortalSubtitle;
+
+  /// No description provided for @navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navDashboard;
+
+  /// No description provided for @navAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get navAssets;
+
+  /// No description provided for @navRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get navRequests;
 
   /// No description provided for @navInspections.
   ///
@@ -116,11 +140,11 @@ abstract class AppLocalizations {
   /// **'Inspections'**
   String get navInspections;
 
-  /// No description provided for @navProfile.
+  /// No description provided for @navAccount.
   ///
   /// In en, this message translates to:
-  /// **'Profile'**
-  String get navProfile;
+  /// **'Account'**
+  String get navAccount;
 
   /// No description provided for @notFound.
   ///
@@ -152,16 +176,136 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retry;
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get loading;
+
+  /// No description provided for @submitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting…'**
+  String get submitting;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get saving;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get viewDetails;
+
   /// No description provided for @signIn.
   ///
   /// In en, this message translates to:
   /// **'Sign in'**
   String get signIn;
 
+  /// No description provided for @signInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to manage assets, service requests, official reports, and payments.'**
+  String get signInSubtitle;
+
+  /// No description provided for @authRegisterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your Customer Portal account and verify your email.'**
+  String get authRegisterSubtitle;
+
+  /// No description provided for @authResetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your registered email to receive a 6-digit reset code.'**
+  String get authResetSubtitle;
+
+  /// No description provided for @stepAccountDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Account details'**
+  String get stepAccountDetails;
+
+  /// No description provided for @stepEmailVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification'**
+  String get stepEmailVerification;
+
+  /// No description provided for @stepResetRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify email'**
+  String get stepResetRequest;
+
+  /// No description provided for @stepResetVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get stepResetVerify;
+
+  /// No description provided for @passwordCharsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/15+ characters'**
+  String passwordCharsProgress(Object count);
+
   /// No description provided for @signInWithGoogle.
   ///
   /// In en, this message translates to:
-  /// **'Sign in with Google'**
+  /// **'Continue with Google'**
   String get signInWithGoogle;
 
   /// No description provided for @or.
@@ -170,11 +314,83 @@ abstract class AppLocalizations {
   /// **'or'**
   String get or;
 
-  /// No description provided for @setNewPassword.
+  /// No description provided for @createAccount.
   ///
   /// In en, this message translates to:
-  /// **'Set new password'**
-  String get setNewPassword;
+  /// **'Create Customer account'**
+  String get createAccount;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Sign in'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPassword;
+
+  /// No description provided for @sendResetOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset code'**
+  String get sendResetOtp;
+
+  /// No description provided for @otpCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit verification code'**
+  String get otpCodeLabel;
+
+  /// No description provided for @sendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send verification code'**
+  String get sendOtp;
+
+  /// No description provided for @verifyOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify & continue'**
+  String get verifyOtp;
+
+  /// No description provided for @otpPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the verification code sent to {email}.'**
+  String otpPrompt(Object email);
+
+  /// No description provided for @otpResendCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String otpResendCountdown(Object seconds);
+
+  /// No description provided for @resendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendOtp;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get fullName;
+
+  /// No description provided for @phoneNumberOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (optional)'**
+  String get phoneNumberOptional;
 
   /// No description provided for @email.
   ///
@@ -194,6 +410,12 @@ abstract class AppLocalizations {
   /// **'Current password'**
   String get currentPassword;
 
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
   /// No description provided for @newPasswordRequirement.
   ///
   /// In en, this message translates to:
@@ -206,6 +428,12 @@ abstract class AppLocalizations {
   /// **'Confirm new password'**
   String get confirmNewPassword;
 
+  /// No description provided for @setNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Set new password'**
+  String get setNewPassword;
+
   /// No description provided for @passwordSetupNotice.
   ///
   /// In en, this message translates to:
@@ -215,7 +443,7 @@ abstract class AppLocalizations {
   /// No description provided for @passwordsDoNotMatch.
   ///
   /// In en, this message translates to:
-  /// **'New passwords do not match.'**
+  /// **'Passwords do not match.'**
   String get passwordsDoNotMatch;
 
   /// No description provided for @required.
@@ -223,6 +451,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get required;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get invalidEmail;
 
   /// No description provided for @minimum15Characters.
   ///
@@ -233,614 +467,1016 @@ abstract class AppLocalizations {
   /// No description provided for @invalidCredentials.
   ///
   /// In en, this message translates to:
-  /// **'Invalid credentials.'**
+  /// **'Invalid email or password.'**
   String get invalidCredentials;
+
+  /// No description provided for @customerOnlyAccessNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.'**
+  String get customerOnlyAccessNotice;
+
+  /// No description provided for @registrationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created! You can now sign in.'**
+  String get registrationSuccess;
+
+  /// No description provided for @pendingAirspaceReviewNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration submitted and pending airspace review. We will contact you after assessment.'**
+  String get pendingAirspaceReviewNotice;
+
+  /// No description provided for @passwordResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated. Sign in with your new password.'**
+  String get passwordResetSuccess;
+
+  /// No description provided for @passwordChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Please sign in again.'**
+  String get passwordChangedSuccess;
 
   /// No description provided for @serverError.
   ///
   /// In en, this message translates to:
-  /// **'Server error.'**
+  /// **'Server error. Please try again.'**
   String get serverError;
 
   /// No description provided for @cannotReachServer.
   ///
   /// In en, this message translates to:
-  /// **'Cannot reach the server.'**
+  /// **'Cannot reach the server. Check your connection.'**
   String get cannotReachServer;
 
   /// No description provided for @notFoundError.
   ///
   /// In en, this message translates to:
-  /// **'Not found.'**
+  /// **'Record not found.'**
   String get notFoundError;
 
-  /// No description provided for @assets.
+  /// No description provided for @accessDeniedError.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not allowed to perform this action.'**
+  String get accessDeniedError;
+
+  /// No description provided for @dashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Overview'**
+  String get dashboardTitle;
+
+  /// No description provided for @kpiRegisteredAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered assets'**
+  String get kpiRegisteredAssets;
+
+  /// No description provided for @kpiInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get kpiInProgress;
+
+  /// No description provided for @kpiOfficialReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Official reports'**
+  String get kpiOfficialReports;
+
+  /// No description provided for @kpiSettledFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled fees'**
+  String get kpiSettledFees;
+
+  /// No description provided for @quickActionNewRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'New request'**
+  String get quickActionNewRequest;
+
+  /// No description provided for @quickActionRegisterAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Add asset'**
+  String get quickActionRegisterAsset;
+
+  /// No description provided for @recentInspectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent inspections & fees'**
+  String get recentInspectionsTitle;
+
+  /// No description provided for @assetOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset overview'**
+  String get assetOverviewTitle;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get viewAll;
+
+  /// No description provided for @noInspectionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No inspections yet.'**
+  String get noInspectionsYet;
+
+  /// No description provided for @noAssetsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No registered assets yet.'**
+  String get noAssetsYet;
+
+  /// No description provided for @assetsTitle.
   ///
   /// In en, this message translates to:
   /// **'Assets'**
-  String get assets;
+  String get assetsTitle;
 
-  /// No description provided for @active.
+  /// No description provided for @searchAssetsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by asset name, code, or location…'**
+  String get searchAssetsHint;
+
+  /// No description provided for @registerAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Register asset'**
+  String get registerAsset;
+
+  /// No description provided for @editAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit asset'**
+  String get editAsset;
+
+  /// No description provided for @retireAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Retire asset'**
+  String get retireAsset;
+
+  /// No description provided for @retireAssetConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Retire \"{name}\"? Retired assets remain in history and cannot accept new requests.'**
+  String retireAssetConfirm(Object name);
+
+  /// No description provided for @assetRetiredSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset retired.'**
+  String get assetRetiredSuccess;
+
+  /// No description provided for @assetSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset saved.'**
+  String get assetSavedSuccess;
+
+  /// No description provided for @assetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset name'**
+  String get assetName;
+
+  /// No description provided for @assetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset code'**
+  String get assetCode;
+
+  /// No description provided for @assetCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get assetCategory;
+
+  /// No description provided for @assetLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location address / description'**
+  String get assetLocation;
+
+  /// No description provided for @assetDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical description (optional)'**
+  String get assetDescription;
+
+  /// No description provided for @latitudeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude (optional)'**
+  String get latitudeOptional;
+
+  /// No description provided for @longitudeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude (optional)'**
+  String get longitudeOptional;
+
+  /// No description provided for @structureHeightMeters.
+  ///
+  /// In en, this message translates to:
+  /// **'Structure height (m, optional)'**
+  String get structureHeightMeters;
+
+  /// No description provided for @footprintAreaSqm.
+  ///
+  /// In en, this message translates to:
+  /// **'Footprint area (m², optional)'**
+  String get footprintAreaSqm;
+
+  /// No description provided for @inspectionItemsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection checkpoints (comma-separated)'**
+  String get inspectionItemsLabel;
+
+  /// No description provided for @assetDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset documents'**
+  String get assetDocuments;
+
+  /// No description provided for @uploadDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload document'**
+  String get uploadDocument;
+
+  /// No description provided for @documentUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Document uploaded.'**
+  String get documentUploaded;
+
+  /// No description provided for @noDocumentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents attached yet.'**
+  String get noDocumentsYet;
+
+  /// No description provided for @documentSavedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved: {name}'**
+  String documentSavedTo(Object name);
+
+  /// No description provided for @assetStatusActive.
   ///
   /// In en, this message translates to:
   /// **'Active'**
-  String get active;
+  String get assetStatusActive;
 
-  /// No description provided for @assignments.
+  /// No description provided for @assetStatusPendingReview.
   ///
   /// In en, this message translates to:
-  /// **'Assignments'**
-  String get assignments;
+  /// **'Pending review'**
+  String get assetStatusPendingReview;
 
-  /// No description provided for @acceptingDoesNotClear.
+  /// No description provided for @assetStatusInactive.
   ///
   /// In en, this message translates to:
-  /// **'Accepting records that you took the work. It does not mean the mission may fly: a named organization reviewer decides that from the paperwork.'**
-  String get acceptingDoesNotClear;
+  /// **'Inactive'**
+  String get assetStatusInactive;
 
-  /// No description provided for @nothingToAnswer.
+  /// No description provided for @assetStatusRejected.
   ///
   /// In en, this message translates to:
-  /// **'Nothing to answer. An Organization Manager pairs you with a Drone before preparation can start.'**
-  String get nothingToAnswer;
+  /// **'Rejected'**
+  String get assetStatusRejected;
 
-  /// No description provided for @droneValidity.
+  /// No description provided for @assetStatusRetired.
   ///
   /// In en, this message translates to:
-  /// **'Drone {serial} · valid from {from} to {until}'**
-  String droneValidity(Object serial, Object from, Object until);
+  /// **'Retired'**
+  String get assetStatusRetired;
 
-  /// No description provided for @unspecified.
+  /// No description provided for @requestsTitle.
   ///
   /// In en, this message translates to:
-  /// **'unspecified'**
-  String get unspecified;
+  /// **'Service Requests'**
+  String get requestsTitle;
 
-  /// No description provided for @declineReason.
+  /// No description provided for @searchRequestsHint.
   ///
   /// In en, this message translates to:
-  /// **'Reason for declining'**
-  String get declineReason;
+  /// **'Search by description or asset…'**
+  String get searchRequestsHint;
 
-  /// No description provided for @declineReasonHint.
+  /// No description provided for @newServiceRequest.
   ///
   /// In en, this message translates to:
-  /// **'Required only when declining, so an administrator knows what to fix.'**
-  String get declineReasonHint;
+  /// **'New service request'**
+  String get newServiceRequest;
 
-  /// No description provided for @recording.
+  /// No description provided for @requestDetailsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Recording…'**
-  String get recording;
+  /// **'Service Request'**
+  String get requestDetailsTitle;
 
-  /// No description provided for @accept.
+  /// No description provided for @selectAsset.
   ///
   /// In en, this message translates to:
-  /// **'Accept'**
-  String get accept;
+  /// **'Select active asset'**
+  String get selectAsset;
 
-  /// No description provided for @decline.
+  /// No description provided for @noActiveAssetsForRequest.
   ///
   /// In en, this message translates to:
-  /// **'Decline'**
-  String get decline;
+  /// **'Register an Active asset before creating a service request.'**
+  String get noActiveAssetsForRequest;
 
-  /// No description provided for @serverRefusedResponse.
+  /// No description provided for @requestTypeLabel.
   ///
   /// In en, this message translates to:
-  /// **'The server refused this response.'**
-  String get serverRefusedResponse;
+  /// **'Service schedule'**
+  String get requestTypeLabel;
 
-  /// No description provided for @cannotAnswerAssignment.
+  /// No description provided for @requestTypeOneTime.
   ///
   /// In en, this message translates to:
-  /// **'You are not allowed to answer this assignment.'**
-  String get cannotAnswerAssignment;
+  /// **'One-time'**
+  String get requestTypeOneTime;
 
-  /// No description provided for @assignmentNotFound.
+  /// No description provided for @requestTypeRecurring.
   ///
   /// In en, this message translates to:
-  /// **'This assignment was not found, or it belongs to another organization.'**
-  String get assignmentNotFound;
+  /// **'Recurring'**
+  String get requestTypeRecurring;
 
-  /// No description provided for @inspectionRecord.
+  /// No description provided for @preferredStartDate.
   ///
   /// In en, this message translates to:
-  /// **'Inspection record'**
-  String get inspectionRecord;
+  /// **'Preferred inspection date'**
+  String get preferredStartDate;
 
-  /// No description provided for @backToAssignments.
+  /// No description provided for @leadTime20DaysNotice.
   ///
   /// In en, this message translates to:
-  /// **'Back to assignments'**
-  String get backToAssignments;
+  /// **'Schedule at least {days} days ahead (earliest: {date}).'**
+  String leadTime20DaysNotice(Object days, Object date);
 
-  /// No description provided for @inspectionNumber.
+  /// No description provided for @leadTime20DaysError.
   ///
   /// In en, this message translates to:
-  /// **'Inspection {id}'**
-  String inspectionNumber(Object id);
+  /// **'Date must be at least 20 days from today.'**
+  String get leadTime20DaysError;
 
-  /// No description provided for @openFieldSession.
+  /// No description provided for @timeWindowLabel.
   ///
   /// In en, this message translates to:
-  /// **'Open field session'**
-  String get openFieldSession;
+  /// **'Inspection hours'**
+  String get timeWindowLabel;
 
-  /// No description provided for @openPreparation.
+  /// No description provided for @recurrenceMonthsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Open MF2 Preparation'**
-  String get openPreparation;
+  /// **'Repeat every (months)'**
+  String get recurrenceMonthsLabel;
 
-  /// No description provided for @checklist.
+  /// No description provided for @occurrenceCountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Checklist'**
-  String get checklist;
+  /// **'Number of cycles'**
+  String get occurrenceCountLabel;
 
-  /// No description provided for @evidence.
+  /// No description provided for @scopeDescriptionLabel.
   ///
   /// In en, this message translates to:
-  /// **'Evidence'**
-  String get evidence;
+  /// **'Scope & inspection objectives'**
+  String get scopeDescriptionLabel;
 
-  /// No description provided for @cameraPermissionError.
+  /// No description provided for @requestCreatedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Camera could not be opened. Check device permission and try again.'**
-  String get cameraPermissionError;
+  /// **'Service request submitted.'**
+  String get requestCreatedSuccess;
 
-  /// No description provided for @completeSessionBeforeEvidence.
+  /// No description provided for @quoteSectionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Complete the field session before attaching evidence.'**
-  String get completeSessionBeforeEvidence;
+  /// **'Quotation'**
+  String get quoteSectionTitle;
 
-  /// No description provided for @evidenceUploaded.
+  /// No description provided for @noQuoteYet.
   ///
   /// In en, this message translates to:
-  /// **'Evidence uploaded securely.'**
-  String get evidenceUploaded;
+  /// **'Platform Manager is reviewing your request and will issue a quotation shortly.'**
+  String get noQuoteYet;
 
-  /// No description provided for @selectVideoFile.
+  /// No description provided for @quoteScopeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Select video file'**
-  String get selectVideoFile;
+  /// **'Scope summary'**
+  String get quoteScopeLabel;
 
-  /// No description provided for @selectedVideo.
+  /// No description provided for @firstWindowLabel.
   ///
   /// In en, this message translates to:
-  /// **'Selected video: {name}'**
-  String selectedVideo(Object name);
+  /// **'Proposed window'**
+  String get firstWindowLabel;
 
-  /// No description provided for @uploadVideoEvidence.
+  /// No description provided for @quoteAmountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Upload video evidence'**
-  String get uploadVideoEvidence;
+  /// **'Fee per inspection'**
+  String get quoteAmountLabel;
 
-  /// No description provided for @retryVideoUpload.
+  /// No description provided for @acceptQuote.
   ///
   /// In en, this message translates to:
-  /// **'Retry video upload'**
-  String get retryVideoUpload;
+  /// **'Accept quotation'**
+  String get acceptQuote;
 
-  /// No description provided for @filePickerError.
+  /// No description provided for @acceptQuoteConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Could not open the file picker. Please try again.'**
-  String get filePickerError;
+  /// **'Accept this quotation ({amount})? An inspection contract and occurrence schedule will be prepared.'**
+  String acceptQuoteConfirm(Object amount);
 
-  /// No description provided for @evidenceFileTooLarge.
+  /// No description provided for @quoteAcceptedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'This file exceeds the {limit} evidence upload limit.'**
-  String evidenceFileTooLarge(Object limit);
+  /// **'Quotation accepted.'**
+  String get quoteAcceptedSuccess;
 
-  /// No description provided for @evidenceDetails.
+  /// No description provided for @orderChatTitle.
   ///
   /// In en, this message translates to:
-  /// **'{contentType} · {size} bytes · {source}'**
-  String evidenceDetails(Object contentType, Object size, Object source);
+  /// **'Order Chat'**
+  String get orderChatTitle;
 
-  /// No description provided for @evidenceSourceMobileUpload.
+  /// No description provided for @unreadMessagesBadge.
   ///
   /// In en, this message translates to:
-  /// **'Mobile upload'**
-  String get evidenceSourceMobileUpload;
+  /// **'{count} unread'**
+  String unreadMessagesBadge(Object count);
 
-  /// No description provided for @pass.
+  /// No description provided for @typeMessageHint.
   ///
   /// In en, this message translates to:
-  /// **'Pass'**
-  String get pass;
+  /// **'Write a message to Platform Manager…'**
+  String get typeMessageHint;
 
-  /// No description provided for @fail.
+  /// No description provided for @noMessagesYet.
   ///
   /// In en, this message translates to:
-  /// **'Fail'**
-  String get fail;
+  /// **'No messages yet. Ask questions about scope or pricing here.'**
+  String get noMessagesYet;
 
-  /// No description provided for @captureInspectionPhoto.
+  /// No description provided for @signedContractTitle.
   ///
   /// In en, this message translates to:
-  /// **'Capture inspection photo'**
-  String get captureInspectionPhoto;
+  /// **'Signed paper contract'**
+  String get signedContractTitle;
 
-  /// No description provided for @selectedFile.
+  /// No description provided for @contractNotUploadedYet.
   ///
   /// In en, this message translates to:
-  /// **'Selected: {name}'**
-  String selectedFile(Object name);
+  /// **'Pending signed paper contract scan from Platform Manager.'**
+  String get contractNotUploadedYet;
 
-  /// No description provided for @uploading.
+  /// No description provided for @downloadContract.
   ///
   /// In en, this message translates to:
-  /// **'Uploading…'**
-  String get uploading;
+  /// **'Download / Save contract'**
+  String get downloadContract;
 
-  /// No description provided for @uploadPhoto.
+  /// No description provided for @contractLegalBasisButton.
   ///
   /// In en, this message translates to:
-  /// **'Upload photo'**
-  String get uploadPhoto;
+  /// **'Legal & e-signature basis'**
+  String get contractLegalBasisButton;
 
-  /// No description provided for @retryUpload.
+  /// No description provided for @contractLegalBasisText.
   ///
   /// In en, this message translates to:
-  /// **'Retry upload'**
-  String get retryUpload;
+  /// **'Offline wet-signed contracts uploaded as verified scans comply with Vietnamese Electronic Transactions & Civil Code record-keeping requirements for commercial service execution.'**
+  String get contractLegalBasisText;
 
-  /// No description provided for @uploadFailed.
+  /// No description provided for @occurrencesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Upload failed: {error}. The selected photo is kept so you can retry.'**
-  String uploadFailed(Object error);
+  /// **'Scheduled occurrences'**
+  String get occurrencesTitle;
 
-  /// No description provided for @checkConnection.
+  /// No description provided for @occurrenceNumber.
   ///
   /// In en, this message translates to:
-  /// **'Check your connection and try again.'**
-  String get checkConnection;
+  /// **'Occurrence #{index}'**
+  String occurrenceNumber(Object index);
 
-  /// No description provided for @unauthorizedInspection.
+  /// No description provided for @openInspection.
   ///
   /// In en, this message translates to:
-  /// **'You are not authorized to access this inspection.'**
-  String get unauthorizedInspection;
+  /// **'Open inspection'**
+  String get openInspection;
 
-  /// No description provided for @inspectionUnavailable.
+  /// No description provided for @pendingAssignment.
   ///
   /// In en, this message translates to:
-  /// **'This inspection is no longer available.'**
-  String get inspectionUnavailable;
+  /// **'Pending dispatch'**
+  String get pendingAssignment;
 
-  /// No description provided for @requestFailed.
+  /// No description provided for @requestStatusOpen.
   ///
   /// In en, this message translates to:
-  /// **'The server could not complete this request.'**
-  String get requestFailed;
+  /// **'Open'**
+  String get requestStatusOpen;
 
-  /// No description provided for @checklistSaveFailed.
+  /// No description provided for @requestStatusQuoted.
   ///
   /// In en, this message translates to:
-  /// **'Checklist was not saved: {error}'**
-  String checklistSaveFailed(Object error);
+  /// **'Quoted'**
+  String get requestStatusQuoted;
 
-  /// No description provided for @writeShotListComparison.
+  /// No description provided for @requestStatusAccepted.
   ///
   /// In en, this message translates to:
-  /// **'Write the shot-list comparison first.'**
-  String get writeShotListComparison;
+  /// **'Accepted'**
+  String get requestStatusAccepted;
 
-  /// No description provided for @stateWhySessionNeeded.
+  /// No description provided for @requestStatusContractSigned.
   ///
   /// In en, this message translates to:
-  /// **'State why another field session is needed.'**
-  String get stateWhySessionNeeded;
+  /// **'Contract signed'**
+  String get requestStatusContractSigned;
 
-  /// No description provided for @additionalWorkRequested.
+  /// No description provided for @requestStatusAssigned.
   ///
   /// In en, this message translates to:
-  /// **'Additional field work requested. Continue in MF2 Preparation and wait for readiness review.'**
-  String get additionalWorkRequested;
+  /// **'Assigned'**
+  String get requestStatusAssigned;
 
-  /// No description provided for @evidenceSetAccepted.
+  /// No description provided for @requestStatusCancelled.
   ///
   /// In en, this message translates to:
-  /// **'Evidence set accepted for advisory analysis.'**
-  String get evidenceSetAccepted;
+  /// **'Cancelled'**
+  String get requestStatusCancelled;
 
-  /// No description provided for @evidenceQualityDecision.
+  /// No description provided for @inspectionsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Evidence quality decision'**
-  String get evidenceQualityDecision;
+  /// **'Inspections & Reports'**
+  String get inspectionsTitle;
 
-  /// No description provided for @evidenceQualityExplanation.
+  /// No description provided for @filterAll.
   ///
   /// In en, this message translates to:
-  /// **'MF3-03: compare the completed capture set against the shot-list. Choose to accept it or request another MF2 session; weather or site safety during work belongs to postponement/abort.'**
-  String get evidenceQualityExplanation;
+  /// **'All'**
+  String get filterAll;
 
-  /// No description provided for @noDecisionRecorded.
+  /// No description provided for @filterInProgress.
   ///
   /// In en, this message translates to:
-  /// **'No decision recorded yet.'**
-  String get noDecisionRecorded;
+  /// **'In progress'**
+  String get filterInProgress;
 
-  /// No description provided for @latestDecision.
+  /// No description provided for @filterReportReady.
   ///
   /// In en, this message translates to:
-  /// **'Latest: {decision}'**
-  String latestDecision(Object decision);
+  /// **'Report ready'**
+  String get filterReportReady;
 
-  /// No description provided for @loadingDecisionHistory.
+  /// No description provided for @filterActionNeeded.
   ///
   /// In en, this message translates to:
-  /// **'Loading decision history…'**
-  String get loadingDecisionHistory;
+  /// **'Action needed'**
+  String get filterActionNeeded;
 
-  /// No description provided for @decisionHistoryFailed.
+  /// No description provided for @inspectionDetailTitle.
   ///
   /// In en, this message translates to:
-  /// **'Could not load decision history.'**
-  String get decisionHistoryFailed;
+  /// **'Inspection Detail'**
+  String get inspectionDetailTitle;
 
-  /// No description provided for @shotListComparison.
+  /// No description provided for @tabTracking.
   ///
   /// In en, this message translates to:
-  /// **'Shot-list comparison'**
-  String get shotListComparison;
+  /// **'Tracking'**
+  String get tabTracking;
 
-  /// No description provided for @shotListComparisonHint.
+  /// No description provided for @tabOfficialReport.
   ///
   /// In en, this message translates to:
-  /// **'Required. What the set covers and what it does not.'**
-  String get shotListComparisonHint;
+  /// **'Report'**
+  String get tabOfficialReport;
 
-  /// No description provided for @whyAnotherSession.
+  /// No description provided for @tabSettlement.
   ///
   /// In en, this message translates to:
-  /// **'Why is another field session needed?'**
-  String get whyAnotherSession;
+  /// **'Settlement'**
+  String get tabSettlement;
 
-  /// No description provided for @anotherSessionHint.
+  /// No description provided for @progressMilestonesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Required only when requesting another MF2 session.'**
-  String get anotherSessionHint;
+  /// **'Inspection lifecycle'**
+  String get progressMilestonesTitle;
 
-  /// No description provided for @acceptEvidenceSet.
+  /// No description provided for @milestoneMissionSetup.
   ///
   /// In en, this message translates to:
-  /// **'Accept evidence set'**
-  String get acceptEvidenceSet;
+  /// **'Mission setup & dispatch'**
+  String get milestoneMissionSetup;
 
-  /// No description provided for @additionalSessionNeeded.
+  /// No description provided for @milestoneDroneFlight.
   ///
   /// In en, this message translates to:
-  /// **'Additional session needed'**
-  String get additionalSessionNeeded;
+  /// **'Drone aerial inspection'**
+  String get milestoneDroneFlight;
 
-  /// No description provided for @response.
+  /// No description provided for @milestoneEvidenceAi.
   ///
   /// In en, this message translates to:
-  /// **'Response'**
-  String get response;
+  /// **'Evidence intake & AI detection'**
+  String get milestoneEvidenceAi;
 
-  /// No description provided for @numericResponse.
+  /// No description provided for @milestoneManagerReview.
   ///
   /// In en, this message translates to:
-  /// **'Numeric response'**
-  String get numericResponse;
+  /// **'Platform Manager review'**
+  String get milestoneManagerReview;
 
-  /// No description provided for @notesOptional.
+  /// No description provided for @milestonePublished.
   ///
   /// In en, this message translates to:
-  /// **'Notes (optional)'**
-  String get notesOptional;
+  /// **'Official report published'**
+  String get milestonePublished;
 
-  /// No description provided for @yes.
+  /// No description provided for @assignedDroneLabel.
   ///
   /// In en, this message translates to:
-  /// **'Yes'**
-  String get yes;
+  /// **'Assigned drone'**
+  String get assignedDroneLabel;
 
-  /// No description provided for @no.
+  /// No description provided for @flightPermitLabel.
   ///
   /// In en, this message translates to:
-  /// **'No'**
-  String get no;
+  /// **'Flight permit'**
+  String get flightPermitLabel;
 
-  /// No description provided for @saving.
+  /// No description provided for @fieldSessionsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Saving…'**
-  String get saving;
+  /// **'Field sessions'**
+  String get fieldSessionsTitle;
 
-  /// No description provided for @saveResponse.
+  /// No description provided for @noFieldSessionsYet.
   ///
   /// In en, this message translates to:
-  /// **'Save response'**
-  String get saveResponse;
+  /// **'No field sessions recorded yet.'**
+  String get noFieldSessionsYet;
 
-  /// No description provided for @saved.
+  /// No description provided for @evidenceGalleryTitle.
   ///
   /// In en, this message translates to:
-  /// **'Saved'**
-  String get saved;
+  /// **'Captured evidence ({count})'**
+  String evidenceGalleryTitle(Object count);
 
-  /// No description provided for @networkUnavailable.
+  /// No description provided for @noEvidenceYet.
   ///
   /// In en, this message translates to:
-  /// **'The network is unavailable. The note you typed is kept, so try again.'**
-  String get networkUnavailable;
+  /// **'No field evidence captured yet.'**
+  String get noEvidenceYet;
 
-  /// No description provided for @fieldSession.
+  /// No description provided for @confirmedFindingsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Field session'**
-  String get fieldSession;
+  /// **'Defect findings ({count})'**
+  String confirmedFindingsTitle(Object count);
 
-  /// No description provided for @startingNotClearance.
+  /// No description provided for @noFindingsYet.
   ///
   /// In en, this message translates to:
-  /// **'Starting a session is not flight clearance. It records that the paperwork and the pre-flight checklist were in order.'**
-  String get startingNotClearance;
+  /// **'No defect findings recorded.'**
+  String get noFindingsYet;
 
-  /// No description provided for @notStartable.
+  /// No description provided for @recommendedActionPrefix.
   ///
   /// In en, this message translates to:
-  /// **'This inspection is not currently startable. Complete MF2 Preparation and independent readiness review first.'**
-  String get notStartable;
+  /// **'Recommended action: {action}'**
+  String recommendedActionPrefix(Object action);
 
-  /// No description provided for @preFlightChecklistNote.
+  /// No description provided for @noReportVersionsYet.
   ///
   /// In en, this message translates to:
-  /// **'Pre-flight checklist note'**
-  String get preFlightChecklistNote;
+  /// **'The official report will appear here once published.'**
+  String get noReportVersionsYet;
 
-  /// No description provided for @preFlightChecklistHint.
+  /// No description provided for @reportVersionLabel.
   ///
   /// In en, this message translates to:
-  /// **'Identify the assigned Drone and record what you checked on site.'**
-  String get preFlightChecklistHint;
+  /// **'Version v{version}'**
+  String reportVersionLabel(Object version);
 
-  /// No description provided for @starting.
+  /// No description provided for @aiExecutiveSummaryTitle.
   ///
   /// In en, this message translates to:
-  /// **'Starting…'**
-  String get starting;
+  /// **'AI Executive Summary'**
+  String get aiExecutiveSummaryTitle;
 
-  /// No description provided for @startFieldSession.
+  /// No description provided for @keyHighlightsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Start field session'**
-  String get startFieldSession;
+  /// **'Key highlights'**
+  String get keyHighlightsLabel;
 
-  /// No description provided for @abortSessionQuestion.
+  /// No description provided for @recommendedActionsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Abort this session?'**
-  String get abortSessionQuestion;
+  /// **'Recommended actions'**
+  String get recommendedActionsLabel;
 
-  /// No description provided for @abortIrreversible.
+  /// No description provided for @overallRiskLabel.
   ///
   /// In en, this message translates to:
-  /// **'The session ends and will not resume under this record. This cannot be undone.'**
-  String get abortIrreversible;
+  /// **'Overall risk: {risk}'**
+  String overallRiskLabel(Object risk);
 
-  /// No description provided for @keepGoing.
+  /// No description provided for @downloadOfficialPdf.
   ///
   /// In en, this message translates to:
-  /// **'Keep going'**
-  String get keepGoing;
+  /// **'Download official PDF'**
+  String get downloadOfficialPdf;
 
-  /// No description provided for @abort.
+  /// No description provided for @reportUnpublishedNotice.
   ///
   /// In en, this message translates to:
-  /// **'Abort'**
-  String get abort;
+  /// **'Report PDF download becomes available once Platform Manager publishes this version.'**
+  String get reportUnpublishedNotice;
 
-  /// No description provided for @startedAt.
+  /// No description provided for @settlementStepAccept.
   ///
   /// In en, this message translates to:
-  /// **'Started {time} against readiness decision {decision}'**
-  String startedAt(Object time, Object decision);
+  /// **'1. Accept official report'**
+  String get settlementStepAccept;
 
-  /// No description provided for @justNow.
+  /// No description provided for @settlementStepPay.
   ///
   /// In en, this message translates to:
-  /// **'just now'**
-  String get justNow;
+  /// **'2. Settle service fee'**
+  String get settlementStepPay;
 
-  /// No description provided for @unknown.
+  /// No description provided for @settlementStepFulfilled.
   ///
   /// In en, this message translates to:
-  /// **'unknown'**
-  String get unknown;
+  /// **'3. Service fulfilled'**
+  String get settlementStepFulfilled;
 
-  /// No description provided for @reasonPostponing.
+  /// No description provided for @serviceInvoiceTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reason for postponing'**
-  String get reasonPostponing;
+  /// **'Service invoice'**
+  String get serviceInvoiceTitle;
 
-  /// No description provided for @postponeHint.
+  /// No description provided for @preVatBase.
   ///
   /// In en, this message translates to:
-  /// **'Weather or site safety. The mission can be attempted again.'**
-  String get postponeHint;
+  /// **'Pre-VAT base'**
+  String get preVatBase;
 
-  /// No description provided for @postpone.
+  /// No description provided for @vatLabel.
   ///
   /// In en, this message translates to:
-  /// **'Postpone'**
-  String get postpone;
+  /// **'VAT ({rate}%)'**
+  String vatLabel(Object rate);
 
-  /// No description provided for @fieldSessionOutcome.
+  /// No description provided for @amountToPay.
   ///
   /// In en, this message translates to:
-  /// **'Field session outcome'**
-  String get fieldSessionOutcome;
+  /// **'Amount due'**
+  String get amountToPay;
 
-  /// No description provided for @fieldSessionOutcomeHint.
+  /// No description provided for @totalPaid.
   ///
   /// In en, this message translates to:
-  /// **'Record coverage, observations, gaps and any incidents before ending the session.'**
-  String get fieldSessionOutcomeHint;
+  /// **'Total paid'**
+  String get totalPaid;
 
-  /// No description provided for @endFieldSession.
+  /// No description provided for @acceptReport.
   ///
   /// In en, this message translates to:
-  /// **'End field session'**
-  String get endFieldSession;
+  /// **'Accept report'**
+  String get acceptReport;
 
-  /// No description provided for @reasonAborting.
+  /// No description provided for @acceptReportConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Reason for aborting'**
-  String get reasonAborting;
+  /// **'Accepting official report v{version} locks deliverable acceptance and starts payment settlement.'**
+  String acceptReportConfirm(Object version);
 
-  /// No description provided for @abortIrreversibleShort.
+  /// No description provided for @reportAcceptedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'This session ends and will not resume under this record.'**
-  String get abortIrreversibleShort;
+  /// **'Report accepted. Complete payment below.'**
+  String get reportAcceptedSuccess;
 
-  /// No description provided for @abortSession.
+  /// No description provided for @requestClarification.
   ///
   /// In en, this message translates to:
-  /// **'Abort session'**
-  String get abortSession;
+  /// **'Request clarification'**
+  String get requestClarification;
 
-  /// No description provided for @cannotManageSession.
+  /// No description provided for @clarificationTitle.
   ///
   /// In en, this message translates to:
-  /// **'You are not allowed to manage this field session.'**
-  String get cannotManageSession;
+  /// **'Request clarification'**
+  String get clarificationTitle;
 
-  /// No description provided for @preparationNotFound.
+  /// No description provided for @clarificationPolicyNote.
   ///
   /// In en, this message translates to:
-  /// **'This inspection was not found, or it belongs to another organization.'**
-  String get preparationNotFound;
+  /// **'Maximum 2 clarification requests allowed before acceptance (current attempt: {attempt}/2).'**
+  String clarificationPolicyNote(Object attempt);
 
-  /// No description provided for @preparationServerRefused.
+  /// No description provided for @clarificationLimitReached.
   ///
   /// In en, this message translates to:
-  /// **'The server refused this request.'**
-  String get preparationServerRefused;
+  /// **'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.'**
+  String get clarificationLimitReached;
 
-  /// No description provided for @networkRetry.
+  /// No description provided for @clarificationReasonHint.
   ///
   /// In en, this message translates to:
-  /// **'Network unavailable. Try again when connected.'**
-  String get networkRetry;
+  /// **'Describe inaccurate defect locations, unclear photos, or severity questions…'**
+  String get clarificationReasonHint;
+
+  /// No description provided for @clarificationSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Clarification request submitted.'**
+  String get clarificationSubmitted;
+
+  /// No description provided for @payWithPayos.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via PayOS (VietQR)'**
+  String get payWithPayos;
+
+  /// No description provided for @payWithVnpay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via VNPay'**
+  String get payWithVnpay;
+
+  /// No description provided for @net15Notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.'**
+  String get net15Notice;
+
+  /// No description provided for @paymentPaidBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment confirmed! Inspection deliverables are officially verified and archived.'**
+  String get paymentPaidBanner;
+
+  /// No description provided for @payosOrderReady.
+  ///
+  /// In en, this message translates to:
+  /// **'PayOS Order #{orderCode} ready. Open checkout link or scan VietQR.'**
+  String payosOrderReady(Object orderCode);
+
+  /// No description provided for @openPaymentLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Open checkout link'**
+  String get openPaymentLink;
+
+  /// No description provided for @refreshPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh status'**
+  String get refreshPaymentStatus;
+
+  /// No description provided for @inspectionStatusScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get inspectionStatusScheduled;
+
+  /// No description provided for @inspectionStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get inspectionStatusInProgress;
+
+  /// No description provided for @inspectionStatusFieldCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Field completed'**
+  String get inspectionStatusFieldCompleted;
+
+  /// No description provided for @inspectionStatusUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get inspectionStatusUnderReview;
+
+  /// No description provided for @inspectionStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get inspectionStatusCompleted;
+
+  /// No description provided for @inspectionStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get inspectionStatusCancelled;
+
+  /// No description provided for @reportStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get reportStatusDraft;
+
+  /// No description provided for @reportStatusSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get reportStatusSubmitted;
+
+  /// No description provided for @reportStatusReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get reportStatusReturned;
+
+  /// No description provided for @reportStatusPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get reportStatusPublished;
+
+  /// No description provided for @reportStatusSuperseded.
+  ///
+  /// In en, this message translates to:
+  /// **'Superseded'**
+  String get reportStatusSuperseded;
+
+  /// No description provided for @paymentStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paymentStatusPaid;
+
+  /// No description provided for @paymentStatusDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due'**
+  String get paymentStatusDue;
+
+  /// No description provided for @paymentStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get paymentStatusPending;
+
+  /// No description provided for @paymentStatusNotApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending acceptance'**
+  String get paymentStatusNotApplicable;
+
+  /// No description provided for @severityCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get severityCritical;
+
+  /// No description provided for @severityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get severityHigh;
+
+  /// No description provided for @severityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get severityMedium;
+
+  /// No description provided for @severityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get severityLow;
 
   /// No description provided for @fieldSessionStatusInProgress.
   ///
@@ -872,197 +1508,47 @@ abstract class AppLocalizations {
   /// **'Field completed'**
   String get fieldSessionStatusCompleted;
 
-  /// No description provided for @statusDraft.
+  /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Draft'**
-  String get statusDraft;
+  /// **'Notifications'**
+  String get notificationsTitle;
 
-  /// No description provided for @statusSubmitted.
+  /// No description provided for @noNotificationsYet.
   ///
   /// In en, this message translates to:
-  /// **'Submitted'**
-  String get statusSubmitted;
+  /// **'You are all caught up.'**
+  String get noNotificationsYet;
 
-  /// No description provided for @statusReady.
+  /// No description provided for @unreadOnly.
   ///
   /// In en, this message translates to:
-  /// **'Ready'**
-  String get statusReady;
+  /// **'Unread only'**
+  String get unreadOnly;
 
-  /// No description provided for @statusActive.
+  /// No description provided for @unreadChatSection.
   ///
   /// In en, this message translates to:
-  /// **'Active'**
-  String get statusActive;
+  /// **'Unread order chat ({count})'**
+  String unreadChatSection(Object count);
 
-  /// No description provided for @statusAccepted.
+  /// No description provided for @accountTitle.
   ///
   /// In en, this message translates to:
-  /// **'Accepted'**
-  String get statusAccepted;
+  /// **'Account & Settings'**
+  String get accountTitle;
 
-  /// No description provided for @statusRejected.
+  /// No description provided for @organizationLabel.
   ///
   /// In en, this message translates to:
-  /// **'Rejected'**
-  String get statusRejected;
+  /// **'Organization ID: {id}'**
+  String organizationLabel(Object id);
 
-  /// No description provided for @statusSuspended.
+  /// No description provided for @preferencesSection.
   ///
   /// In en, this message translates to:
-  /// **'Suspended'**
-  String get statusSuspended;
-
-  /// No description provided for @decisionAdditionalSession.
-  ///
-  /// In en, this message translates to:
-  /// **'Additional session required'**
-  String get decisionAdditionalSession;
-
-  /// No description provided for @decisionAccepted.
-  ///
-  /// In en, this message translates to:
-  /// **'Accepted'**
-  String get decisionAccepted;
-
-  /// No description provided for @preparation.
-  ///
-  /// In en, this message translates to:
-  /// **'MF2 Preparation'**
-  String get preparation;
-
-  /// No description provided for @bothPlannedTimes.
-  ///
-  /// In en, this message translates to:
-  /// **'Set both planned start and end for the additional field session.'**
-  String get bothPlannedTimes;
-
-  /// No description provided for @preparationVersionSaved.
-  ///
-  /// In en, this message translates to:
-  /// **'Preparation version {version} saved.'**
-  String preparationVersionSaved(Object version);
-
-  /// No description provided for @preparationSubmitted.
-  ///
-  /// In en, this message translates to:
-  /// **'Preparation submitted for independent readiness review.'**
-  String get preparationSubmitted;
-
-  /// No description provided for @componentShotListJson.
-  ///
-  /// In en, this message translates to:
-  /// **'Component shot-list (JSON)'**
-  String get componentShotListJson;
-
-  /// No description provided for @evidenceTypesJson.
-  ///
-  /// In en, this message translates to:
-  /// **'Evidence types (JSON)'**
-  String get evidenceTypesJson;
-
-  /// No description provided for @accessConstraints.
-  ///
-  /// In en, this message translates to:
-  /// **'Access constraints'**
-  String get accessConstraints;
-
-  /// No description provided for @plannedSessionStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Planned session start (local time)'**
-  String get plannedSessionStart;
-
-  /// No description provided for @plannedSessionEnd.
-  ///
-  /// In en, this message translates to:
-  /// **'Planned session end (local time)'**
-  String get plannedSessionEnd;
-
-  /// No description provided for @safetyObservations.
-  ///
-  /// In en, this message translates to:
-  /// **'Safety observations'**
-  String get safetyObservations;
-
-  /// No description provided for @safetyAcknowledgment.
-  ///
-  /// In en, this message translates to:
-  /// **'Safety acknowledgment'**
-  String get safetyAcknowledgment;
-
-  /// No description provided for @saveDraft.
-  ///
-  /// In en, this message translates to:
-  /// **'Save draft'**
-  String get saveDraft;
-
-  /// No description provided for @submitting.
-  ///
-  /// In en, this message translates to:
-  /// **'Submitting…'**
-  String get submitting;
-
-  /// No description provided for @submitPreparation.
-  ///
-  /// In en, this message translates to:
-  /// **'Submit preparation'**
-  String get submitPreparation;
-
-  /// No description provided for @additionalSessionRequested.
-  ///
-  /// In en, this message translates to:
-  /// **'Additional field session requested. Update the plan/window and submit it. An independent ORG_MANAGER must approve current readiness before Start becomes available.'**
-  String get additionalSessionRequested;
-
-  /// No description provided for @preparationVersionStatus.
-  ///
-  /// In en, this message translates to:
-  /// **'Version {version} · {status}'**
-  String preparationVersionStatus(Object version, Object status);
-
-  /// No description provided for @preparationApproved.
-  ///
-  /// In en, this message translates to:
-  /// **'Preparation is approved. Readiness is bound to this version; changes require another review.'**
-  String get preparationApproved;
-
-  /// No description provided for @cannotEditPreparation.
-  ///
-  /// In en, this message translates to:
-  /// **'You are not allowed to edit this preparation.'**
-  String get cannotEditPreparation;
-
-  /// No description provided for @inspectionNotInOrganization.
-  ///
-  /// In en, this message translates to:
-  /// **'This inspection was not found in your organization.'**
-  String get inspectionNotInOrganization;
-
-  /// No description provided for @profile.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile'**
-  String get profile;
-
-  /// No description provided for @organization.
-  ///
-  /// In en, this message translates to:
-  /// **'Org: {organization}'**
-  String organization(Object organization);
-
-  /// No description provided for @notSignedIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Not signed in.'**
-  String get notSignedIn;
-
-  /// No description provided for @signOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign out'**
-  String get signOut;
+  /// **'Preferences'**
+  String get preferencesSection;
 
   /// No description provided for @language.
   ///
@@ -1082,11 +1568,71 @@ abstract class AppLocalizations {
   /// **'Tiếng Việt'**
   String get languageVietnamese;
 
-  /// No description provided for @userRoleAdmin.
+  /// No description provided for @themeModeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Administrator'**
-  String get userRoleAdmin;
+  /// **'Appearance'**
+  String get themeModeLabel;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @securitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get securitySection;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// No description provided for @logoutAllDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out all devices'**
+  String get logoutAllDevices;
+
+  /// No description provided for @logoutAllConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of every active session on web and mobile?'**
+  String get logoutAllConfirm;
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
+
+  /// No description provided for @notSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in.'**
+  String get notSignedIn;
+
+  /// No description provided for @userRoleCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get userRoleCustomer;
 
   /// No description provided for @userRolePlatformManager.
   ///
@@ -1094,11 +1640,11 @@ abstract class AppLocalizations {
   /// **'Platform Manager'**
   String get userRolePlatformManager;
 
-  /// No description provided for @userRoleOrgManager.
+  /// No description provided for @userRoleAdmin.
   ///
   /// In en, this message translates to:
-  /// **'Organization Manager'**
-  String get userRoleOrgManager;
+  /// **'Administrator'**
+  String get userRoleAdmin;
 
   /// No description provided for @userRoleInspector.
   ///
@@ -1106,47 +1652,11 @@ abstract class AppLocalizations {
   /// **'Inspector'**
   String get userRoleInspector;
 
-  /// No description provided for @userRoleClient.
+  /// No description provided for @userRoleMaintenanceEngineer.
   ///
   /// In en, this message translates to:
-  /// **'Client'**
-  String get userRoleClient;
-
-  /// No description provided for @assignmentStatusActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Active'**
-  String get assignmentStatusActive;
-
-  /// No description provided for @assignmentResponseAccepted.
-  ///
-  /// In en, this message translates to:
-  /// **'Accepted'**
-  String get assignmentResponseAccepted;
-
-  /// No description provided for @assignmentResponseRejected.
-  ///
-  /// In en, this message translates to:
-  /// **'Declined'**
-  String get assignmentResponseRejected;
-
-  /// No description provided for @assetStatusActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Active'**
-  String get assetStatusActive;
-
-  /// No description provided for @assetStatusInactive.
-  ///
-  /// In en, this message translates to:
-  /// **'Inactive'**
-  String get assetStatusInactive;
-
-  /// No description provided for @assetStatusRetired.
-  ///
-  /// In en, this message translates to:
-  /// **'Retired'**
-  String get assetStatusRetired;
+  /// **'Maintenance Engineer'**
+  String get userRoleMaintenanceEngineer;
 }
 
 class _AppLocalizationsDelegate

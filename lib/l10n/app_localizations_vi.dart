@@ -13,13 +13,25 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appName => 'SmartDroneInspection';
 
   @override
-  String get appTitle => 'SmartDroneInspection';
+  String get appTitle => 'SDI Khách hàng';
 
   @override
-  String get navInspections => 'Kiểm tra';
+  String get customerPortalSubtitle => 'Cổng Khách hàng';
 
   @override
-  String get navProfile => 'Hồ sơ';
+  String get navDashboard => 'Tổng quan';
+
+  @override
+  String get navAssets => 'Tài sản';
+
+  @override
+  String get navRequests => 'Yêu cầu';
+
+  @override
+  String get navInspections => 'Kiểm định';
+
+  @override
+  String get navAccount => 'Tài khoản';
 
   @override
   String get notFound => 'Không tìm thấy';
@@ -37,16 +49,121 @@ class AppLocalizationsVi extends AppLocalizations {
   String get retry => 'Thử lại';
 
   @override
+  String get cancel => 'Hủy';
+
+  @override
+  String get save => 'Lưu';
+
+  @override
+  String get close => 'Đóng';
+
+  @override
+  String get confirm => 'Xác nhận';
+
+  @override
+  String get refresh => 'Làm mới';
+
+  @override
+  String get search => 'Tìm kiếm';
+
+  @override
+  String get all => 'Tất cả';
+
+  @override
+  String get loading => 'Đang tải…';
+
+  @override
+  String get submitting => 'Đang gửi…';
+
+  @override
+  String get saving => 'Đang lưu…';
+
+  @override
+  String get download => 'Tải xuống';
+
+  @override
+  String get viewDetails => 'Xem chi tiết';
+
+  @override
   String get signIn => 'Đăng nhập';
 
   @override
-  String get signInWithGoogle => 'Đăng nhập bằng Google';
+  String get signInSubtitle =>
+      'Đăng nhập để quản lý tài sản, yêu cầu dịch vụ, báo cáo chính thức và thanh toán.';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Thiết lập tài khoản Cổng Khách hàng và xác thực email của bạn.';
+
+  @override
+  String get authResetSubtitle =>
+      'Nhập email đã đăng ký để nhận mã khôi phục 6 chữ số.';
+
+  @override
+  String get stepAccountDetails => 'Thông tin tài khoản';
+
+  @override
+  String get stepEmailVerification => 'Xác thực email';
+
+  @override
+  String get stepResetRequest => 'Xác thực email';
+
+  @override
+  String get stepResetVerify => 'Đặt lại mật khẩu';
+
+  @override
+  String passwordCharsProgress(Object count) {
+    return '$count/15+ ký tự';
+  }
+
+  @override
+  String get signInWithGoogle => 'Tiếp tục với Google';
 
   @override
   String get or => 'hoặc';
 
   @override
-  String get setNewPassword => 'Đặt mật khẩu mới';
+  String get createAccount => 'Tạo tài khoản Khách hàng';
+
+  @override
+  String get alreadyHaveAccount => 'Đã có tài khoản? Đăng nhập';
+
+  @override
+  String get forgotPassword => 'Quên mật khẩu?';
+
+  @override
+  String get resetPassword => 'Đặt lại mật khẩu';
+
+  @override
+  String get sendResetOtp => 'Gửi mã đặt lại';
+
+  @override
+  String get otpCodeLabel => 'Mã xác thực 6 chữ số';
+
+  @override
+  String get sendOtp => 'Gửi mã xác thực';
+
+  @override
+  String get verifyOtp => 'Xác nhận & tiếp tục';
+
+  @override
+  String otpPrompt(Object email) {
+    return 'Nhập mã xác thực đã gửi tới $email.';
+  }
+
+  @override
+  String otpResendCountdown(Object seconds) {
+    return 'Gửi lại sau $seconds giây';
+  }
+
+  @override
+  String get resendOtp => 'Gửi lại mã';
+
+  @override
+  String get fullName => 'Họ và tên';
+
+  @override
+  String get phoneNumberOptional => 'Số điện thoại (không bắt buộc)';
 
   @override
   String get email => 'Email';
@@ -58,501 +175,630 @@ class AppLocalizationsVi extends AppLocalizations {
   String get currentPassword => 'Mật khẩu hiện tại';
 
   @override
-  String get newPasswordRequirement => 'Mật khẩu mới (ít nhất 15 ký tự)';
+  String get newPassword => 'Mật khẩu mới';
+
+  @override
+  String get newPasswordRequirement => 'Mật khẩu mới (tối thiểu 15 ký tự)';
 
   @override
   String get confirmNewPassword => 'Xác nhận mật khẩu mới';
+
+  @override
+  String get setNewPassword => 'Đặt mật khẩu mới';
 
   @override
   String get passwordSetupNotice =>
       'Bạn cần đặt mật khẩu mới trước khi tiếp tục.';
 
   @override
-  String get passwordsDoNotMatch => 'Mật khẩu mới không khớp.';
+  String get passwordsDoNotMatch => 'Mật khẩu xác nhận không khớp.';
 
   @override
   String get required => 'Bắt buộc';
 
   @override
+  String get invalidEmail => 'Vui lòng nhập email hợp lệ.';
+
+  @override
   String get minimum15Characters => 'Tối thiểu 15 ký tự';
 
   @override
-  String get invalidCredentials => 'Thông tin đăng nhập không hợp lệ.';
+  String get invalidCredentials => 'Email hoặc mật khẩu không đúng.';
 
   @override
-  String get serverError => 'Lỗi máy chủ.';
+  String get customerOnlyAccessNotice =>
+      'Ứng dụng di động chỉ dành riêng cho tài khoản Khách hàng. Kiểm định viên và Quản lý nền tảng vui lòng sử dụng cổng web.';
 
   @override
-  String get cannotReachServer => 'Không thể kết nối đến máy chủ.';
+  String get registrationSuccess =>
+      'Tạo tài khoản thành công! Bạn có thể đăng nhập ngay.';
 
   @override
-  String get notFoundError => 'Không tìm thấy.';
+  String get pendingAirspaceReviewNotice =>
+      'Đã gửi đăng ký và đang chờ xét duyệt vùng bay. Chúng tôi sẽ liên hệ sau khi đánh giá.';
 
   @override
-  String get assets => 'Tài sản';
+  String get passwordResetSuccess =>
+      'Đã cập nhật mật khẩu. Vui lòng đăng nhập bằng mật khẩu mới.';
 
   @override
-  String get active => 'Đang hoạt động';
+  String get passwordChangedSuccess =>
+      'Đã đổi mật khẩu. Vui lòng đăng nhập lại.';
 
   @override
-  String get assignments => 'Phân công';
+  String get serverError => 'Lỗi máy chủ. Vui lòng thử lại.';
 
   @override
-  String get acceptingDoesNotClear =>
-      'Chấp nhận nghĩa là bạn nhận công việc, không có nghĩa là được phép bay. Người đánh giá được chỉ định của tổ chức sẽ quyết định dựa trên hồ sơ.';
+  String get cannotReachServer =>
+      'Không thể kết nối máy chủ. Kiểm tra mạng và thử lại.';
 
   @override
-  String get nothingToAnswer =>
-      'Không có phân công nào cần phản hồi. Quản lý tổ chức sẽ ghép bạn với máy bay không người lái trước khi bắt đầu chuẩn bị.';
+  String get notFoundError => 'Không tìm thấy dữ liệu.';
 
   @override
-  String droneValidity(Object serial, Object from, Object until) {
-    return 'Máy bay không người lái $serial · hiệu lực từ $from đến $until';
+  String get accessDeniedError => 'Bạn không có quyền thực hiện thao tác này.';
+
+  @override
+  String get dashboardTitle => 'Tổng quan Khách hàng';
+
+  @override
+  String get kpiRegisteredAssets => 'Tài sản đã đăng ký';
+
+  @override
+  String get kpiInProgress => 'Đang thực hiện';
+
+  @override
+  String get kpiOfficialReports => 'Báo cáo chính thức';
+
+  @override
+  String get kpiSettledFees => 'Đã thanh toán';
+
+  @override
+  String get quickActionNewRequest => 'Tạo yêu cầu';
+
+  @override
+  String get quickActionRegisterAsset => 'Thêm tài sản';
+
+  @override
+  String get recentInspectionsTitle => 'Kiểm định & thanh toán gần đây';
+
+  @override
+  String get assetOverviewTitle => 'Tổng quan tài sản';
+
+  @override
+  String get viewAll => 'Xem tất cả';
+
+  @override
+  String get noInspectionsYet => 'Chưa có đợt kiểm định nào.';
+
+  @override
+  String get noAssetsYet => 'Chưa có tài sản nào được đăng ký.';
+
+  @override
+  String get assetsTitle => 'Tài sản';
+
+  @override
+  String get searchAssetsHint => 'Tìm theo tên, mã tài sản hoặc địa điểm…';
+
+  @override
+  String get registerAsset => 'Đăng ký tài sản';
+
+  @override
+  String get editAsset => 'Chỉnh sửa tài sản';
+
+  @override
+  String get retireAsset => 'Ngừng sử dụng tài sản';
+
+  @override
+  String retireAssetConfirm(Object name) {
+    return 'Ngừng sử dụng \"$name\"? Tài sản ngừng sử dụng vẫn giữ trong lịch sử và không thể tạo yêu cầu mới.';
   }
 
   @override
-  String get unspecified => 'chưa xác định';
+  String get assetRetiredSuccess => 'Đã ngừng sử dụng tài sản.';
 
   @override
-  String get declineReason => 'Lý do từ chối';
+  String get assetSavedSuccess => 'Đã lưu thông tin tài sản.';
 
   @override
-  String get declineReasonHint =>
-      'Chỉ bắt buộc khi từ chối để quản trị viên biết cần khắc phục điều gì.';
+  String get assetName => 'Tên tài sản';
 
   @override
-  String get recording => 'Đang ghi nhận…';
+  String get assetCode => 'Mã tài sản';
 
   @override
-  String get accept => 'Chấp nhận';
+  String get assetCategory => 'Danh mục';
 
   @override
-  String get decline => 'Từ chối';
+  String get assetLocation => 'Địa chỉ / Mô tả vị trí';
 
   @override
-  String get serverRefusedResponse => 'Máy chủ đã từ chối phản hồi này.';
+  String get assetDescription => 'Mô tả kỹ thuật (không bắt buộc)';
 
   @override
-  String get cannotAnswerAssignment =>
-      'Bạn không được phép phản hồi phân công này.';
+  String get latitudeOptional => 'Vĩ độ (không bắt buộc)';
 
   @override
-  String get assignmentNotFound =>
-      'Không tìm thấy phân công này hoặc phân công thuộc tổ chức khác.';
+  String get longitudeOptional => 'Kinh độ (không bắt buộc)';
 
   @override
-  String get inspectionRecord => 'Hồ sơ kiểm tra';
+  String get structureHeightMeters =>
+      'Chiều cao công trình (m, không bắt buộc)';
 
   @override
-  String get backToAssignments => 'Quay lại danh sách phân công';
+  String get footprintAreaSqm => 'Diện tích mặt bằng (m², không bắt buộc)';
 
   @override
-  String inspectionNumber(Object id) {
-    return 'Kiểm tra $id';
+  String get inspectionItemsLabel =>
+      'Hạng mục kiểm định (cách nhau bởi dấu phẩy)';
+
+  @override
+  String get assetDocuments => 'Tài liệu tài sản';
+
+  @override
+  String get uploadDocument => 'Tải tài liệu lên';
+
+  @override
+  String get documentUploaded => 'Đã tải tài liệu lên.';
+
+  @override
+  String get noDocumentsYet => 'Chưa có tài liệu đính kèm.';
+
+  @override
+  String documentSavedTo(Object name) {
+    return 'Đã lưu: $name';
   }
 
   @override
-  String get openFieldSession => 'Mở phiên hiện trường';
+  String get assetStatusActive => 'Đang hoạt động';
 
   @override
-  String get openPreparation => 'Mở bước chuẩn bị MF2';
+  String get assetStatusPendingReview => 'Chờ duyệt';
 
   @override
-  String get checklist => 'Danh sách kiểm tra';
+  String get assetStatusInactive => 'Ngừng hoạt động';
 
   @override
-  String get evidence => 'Bằng chứng';
+  String get assetStatusRejected => 'Bị từ chối';
 
   @override
-  String get cameraPermissionError =>
-      'Không thể mở máy ảnh. Hãy kiểm tra quyền truy cập thiết bị rồi thử lại.';
+  String get assetStatusRetired => 'Đã ngừng sử dụng';
 
   @override
-  String get completeSessionBeforeEvidence =>
-      'Hãy hoàn tất phiên hiện trường trước khi đính kèm bằng chứng.';
+  String get requestsTitle => 'Yêu cầu dịch vụ';
 
   @override
-  String get evidenceUploaded => 'Bằng chứng đã được tải lên an toàn.';
+  String get searchRequestsHint => 'Tìm theo mô tả hoặc tài sản…';
 
   @override
-  String get selectVideoFile => 'Chọn tệp video';
+  String get newServiceRequest => 'Tạo yêu cầu dịch vụ';
 
   @override
-  String selectedVideo(Object name) {
-    return 'Video đã chọn: $name';
+  String get requestDetailsTitle => 'Chi tiết yêu cầu dịch vụ';
+
+  @override
+  String get selectAsset => 'Chọn tài sản đang hoạt động';
+
+  @override
+  String get noActiveAssetsForRequest =>
+      'Vui lòng đăng ký tài sản Đang hoạt động trước khi tạo yêu cầu.';
+
+  @override
+  String get requestTypeLabel => 'Hình thức lịch trình';
+
+  @override
+  String get requestTypeOneTime => 'Một lần';
+
+  @override
+  String get requestTypeRecurring => 'Định kỳ';
+
+  @override
+  String get preferredStartDate => 'Ngày kiểm định dự kiến';
+
+  @override
+  String leadTime20DaysNotice(Object days, Object date) {
+    return 'Đặt lịch trước tối thiểu $days ngày (sớm nhất: $date).';
   }
 
   @override
-  String get uploadVideoEvidence => 'Tải video làm bằng chứng';
+  String get leadTime20DaysError =>
+      'Ngày bắt đầu phải cách hôm nay tối thiểu 20 ngày.';
 
   @override
-  String get retryVideoUpload => 'Thử tải video lại';
+  String get timeWindowLabel => 'Khung giờ kiểm định';
 
   @override
-  String get filePickerError =>
-      'Không mở được trình chọn tệp. Vui lòng thử lại.';
+  String get recurrenceMonthsLabel => 'Chu kỳ lặp (tháng)';
 
   @override
-  String evidenceFileTooLarge(Object limit) {
-    return 'Tệp vượt quá giới hạn tải bằng chứng $limit.';
+  String get occurrenceCountLabel => 'Số đợt kiểm định';
+
+  @override
+  String get scopeDescriptionLabel => 'Phạm vi & mục tiêu kiểm định';
+
+  @override
+  String get requestCreatedSuccess => 'Đã gửi yêu cầu dịch vụ.';
+
+  @override
+  String get quoteSectionTitle => 'Báo giá dịch vụ';
+
+  @override
+  String get noQuoteYet =>
+      'Quản lý nền tảng đang xem xét yêu cầu và sẽ phát hành báo giá sớm.';
+
+  @override
+  String get quoteScopeLabel => 'Tóm tắt phạm vi';
+
+  @override
+  String get firstWindowLabel => 'Khung thời gian đề xuất';
+
+  @override
+  String get quoteAmountLabel => 'Đơn giá mỗi đợt';
+
+  @override
+  String get acceptQuote => 'Chấp nhận báo giá';
+
+  @override
+  String acceptQuoteConfirm(Object amount) {
+    return 'Chấp nhận báo giá ($amount)? Hợp đồng và lịch thực hiện sẽ được chuẩn bị.';
   }
 
   @override
-  String evidenceDetails(Object contentType, Object size, Object source) {
-    return '$contentType · $size byte · $source';
+  String get quoteAcceptedSuccess => 'Đã chấp nhận báo giá.';
+
+  @override
+  String get orderChatTitle => 'Trao đổi đơn hàng';
+
+  @override
+  String unreadMessagesBadge(Object count) {
+    return '$count chưa đọc';
   }
 
   @override
-  String get evidenceSourceMobileUpload => 'Tải lên từ ứng dụng di động';
+  String get typeMessageHint => 'Nhắn tin cho Quản lý nền tảng…';
 
   @override
-  String get pass => 'Đạt';
+  String get noMessagesYet =>
+      'Chưa có tin nhắn. Hãy trao đổi phạm vi hoặc báo giá tại đây.';
 
   @override
-  String get fail => 'Không đạt';
+  String get signedContractTitle => 'Hợp đồng giấy đã ký';
 
   @override
-  String get captureInspectionPhoto => 'Chụp ảnh kiểm tra';
+  String get contractNotUploadedYet =>
+      'Đang chờ Quản lý nền tảng tải bản scan hợp đồng đã ký.';
 
   @override
-  String selectedFile(Object name) {
-    return 'Đã chọn: $name';
+  String get downloadContract => 'Tải / Lưu hợp đồng';
+
+  @override
+  String get contractLegalBasisButton => 'Cơ sở pháp lý';
+
+  @override
+  String get contractLegalBasisText =>
+      'Hợp đồng ký tay được quét và lưu trữ đáp ứng yêu cầu lưu trữ chứng từ giao dịch thương mại và Bộ luật Dân sự.';
+
+  @override
+  String get occurrencesTitle => 'Các đợt thực hiện';
+
+  @override
+  String occurrenceNumber(Object index) {
+    return 'Đợt #$index';
   }
 
   @override
-  String get uploading => 'Đang tải lên…';
+  String get openInspection => 'Mở kiểm định';
 
   @override
-  String get uploadPhoto => 'Tải ảnh lên';
+  String get pendingAssignment => 'Chờ điều phối';
 
   @override
-  String get retryUpload => 'Thử tải lên lại';
+  String get requestStatusOpen => 'Đang mở';
 
   @override
-  String uploadFailed(Object error) {
-    return 'Tải lên thất bại: $error. Ảnh đã chọn vẫn được giữ lại để bạn thử lại.';
+  String get requestStatusQuoted => 'Đã báo giá';
+
+  @override
+  String get requestStatusAccepted => 'Đã chấp nhận';
+
+  @override
+  String get requestStatusContractSigned => 'Đã ký hợp đồng';
+
+  @override
+  String get requestStatusAssigned => 'Đã phân công';
+
+  @override
+  String get requestStatusCancelled => 'Đã hủy';
+
+  @override
+  String get inspectionsTitle => 'Kiểm định & Báo cáo';
+
+  @override
+  String get filterAll => 'Tất cả';
+
+  @override
+  String get filterInProgress => 'Đang thực hiện';
+
+  @override
+  String get filterReportReady => 'Đã có báo cáo';
+
+  @override
+  String get filterActionNeeded => 'Cần xử lý';
+
+  @override
+  String get inspectionDetailTitle => 'Chi tiết kiểm định';
+
+  @override
+  String get tabTracking => 'Tiến độ';
+
+  @override
+  String get tabOfficialReport => 'Báo cáo';
+
+  @override
+  String get tabSettlement => 'Thanh toán';
+
+  @override
+  String get progressMilestonesTitle => 'Tiến trình kiểm định';
+
+  @override
+  String get milestoneMissionSetup => 'Chuẩn bị & điều phối';
+
+  @override
+  String get milestoneDroneFlight => 'Bay thu thập dữ liệu';
+
+  @override
+  String get milestoneEvidenceAi => 'Dữ liệu hiện trường & AI';
+
+  @override
+  String get milestoneManagerReview => 'Quản lý thẩm định';
+
+  @override
+  String get milestonePublished => 'Phát hành báo cáo chính thức';
+
+  @override
+  String get assignedDroneLabel => 'Drone phân công';
+
+  @override
+  String get flightPermitLabel => 'Giấy phép bay';
+
+  @override
+  String get fieldSessionsTitle => 'Phiên thực địa';
+
+  @override
+  String get noFieldSessionsYet => 'Chưa có phiên thực địa nào được ghi nhận.';
+
+  @override
+  String evidenceGalleryTitle(Object count) {
+    return 'Bằng chứng hiện trường ($count)';
   }
 
   @override
-  String get checkConnection => 'Kiểm tra kết nối rồi thử lại.';
+  String get noEvidenceYet => 'Chưa có ảnh hoặc video hiện trường.';
 
   @override
-  String get unauthorizedInspection =>
-      'Bạn không được phép truy cập cuộc kiểm tra này.';
-
-  @override
-  String get inspectionUnavailable => 'Cuộc kiểm tra này không còn khả dụng.';
-
-  @override
-  String get requestFailed => 'Máy chủ không thể hoàn tất yêu cầu này.';
-
-  @override
-  String checklistSaveFailed(Object error) {
-    return 'Không lưu được danh sách kiểm tra: $error';
+  String confirmedFindingsTitle(Object count) {
+    return 'Phát hiện lỗi ($count)';
   }
 
   @override
-  String get writeShotListComparison =>
-      'Trước tiên, hãy ghi nội dung đối chiếu danh sách ảnh chụp.';
+  String get noFindingsYet => 'Chưa ghi nhận lỗi nào.';
 
   @override
-  String get stateWhySessionNeeded =>
-      'Hãy nêu lý do cần thêm một phiên hiện trường.';
-
-  @override
-  String get additionalWorkRequested =>
-      'Đã yêu cầu thêm công việc hiện trường. Hãy tiếp tục ở bước chuẩn bị MF2 và chờ đánh giá mức độ sẵn sàng.';
-
-  @override
-  String get evidenceSetAccepted =>
-      'Bộ bằng chứng đã được chấp nhận để phân tích hỗ trợ.';
-
-  @override
-  String get evidenceQualityDecision => 'Đánh giá chất lượng bằng chứng';
-
-  @override
-  String get evidenceQualityExplanation =>
-      'MF3-03: đối chiếu bộ ảnh đã hoàn tất với danh sách ảnh cần chụp. Chọn chấp nhận hoặc yêu cầu thêm phiên MF2; vấn đề thời tiết hoặc an toàn tại hiện trường cần được xử lý bằng hoãn hoặc hủy phiên.';
-
-  @override
-  String get noDecisionRecorded => 'Chưa có quyết định nào được ghi nhận.';
-
-  @override
-  String latestDecision(Object decision) {
-    return 'Mới nhất: $decision';
+  String recommendedActionPrefix(Object action) {
+    return 'Khuyến nghị xử lý: $action';
   }
 
   @override
-  String get loadingDecisionHistory => 'Đang tải lịch sử quyết định…';
+  String get noReportVersionsYet =>
+      'Báo cáo chính thức sẽ hiển thị tại đây sau khi được phát hành.';
 
   @override
-  String get decisionHistoryFailed => 'Không tải được lịch sử quyết định.';
-
-  @override
-  String get shotListComparison => 'Đối chiếu danh sách ảnh chụp';
-
-  @override
-  String get shotListComparisonHint =>
-      'Bắt buộc. Nêu những nội dung bộ ảnh đã bao quát và chưa bao quát.';
-
-  @override
-  String get whyAnotherSession => 'Vì sao cần thêm một phiên hiện trường?';
-
-  @override
-  String get anotherSessionHint =>
-      'Chỉ bắt buộc khi yêu cầu thêm một phiên MF2.';
-
-  @override
-  String get acceptEvidenceSet => 'Chấp nhận bộ bằng chứng';
-
-  @override
-  String get additionalSessionNeeded => 'Cần thêm phiên hiện trường';
-
-  @override
-  String get response => 'Phản hồi';
-
-  @override
-  String get numericResponse => 'Phản hồi dạng số';
-
-  @override
-  String get notesOptional => 'Ghi chú (không bắt buộc)';
-
-  @override
-  String get yes => 'Có';
-
-  @override
-  String get no => 'Không';
-
-  @override
-  String get saving => 'Đang lưu…';
-
-  @override
-  String get saveResponse => 'Lưu phản hồi';
-
-  @override
-  String get saved => 'Đã lưu';
-
-  @override
-  String get networkUnavailable =>
-      'Mạng không khả dụng. Ghi chú bạn đã nhập vẫn được giữ lại; hãy thử lại.';
-
-  @override
-  String get fieldSession => 'Phiên hiện trường';
-
-  @override
-  String get startingNotClearance =>
-      'Bắt đầu phiên không đồng nghĩa với việc được phép bay. Thao tác này ghi nhận hồ sơ và danh sách kiểm tra trước chuyến bay đã đầy đủ.';
-
-  @override
-  String get notStartable =>
-      'Hiện chưa thể bắt đầu cuộc kiểm tra này. Trước tiên hãy hoàn tất bước chuẩn bị MF2 và quy trình đánh giá mức độ sẵn sàng độc lập.';
-
-  @override
-  String get preFlightChecklistNote =>
-      'Ghi chú danh sách kiểm tra trước chuyến bay';
-
-  @override
-  String get preFlightChecklistHint =>
-      'Xác định máy bay không người lái được phân công và ghi lại các mục đã kiểm tra tại hiện trường.';
-
-  @override
-  String get starting => 'Đang bắt đầu…';
-
-  @override
-  String get startFieldSession => 'Bắt đầu phiên hiện trường';
-
-  @override
-  String get abortSessionQuestion => 'Hủy phiên này?';
-
-  @override
-  String get abortIrreversible =>
-      'Phiên sẽ kết thúc và không thể tiếp tục bằng hồ sơ này. Thao tác này không thể hoàn tác.';
-
-  @override
-  String get keepGoing => 'Tiếp tục';
-
-  @override
-  String get abort => 'Hủy';
-
-  @override
-  String startedAt(Object time, Object decision) {
-    return 'Bắt đầu lúc $time theo quyết định sẵn sàng $decision';
+  String reportVersionLabel(Object version) {
+    return 'Phiên bản v$version';
   }
 
   @override
-  String get justNow => 'vừa xong';
+  String get aiExecutiveSummaryTitle => 'Tóm tắt điều hành AI';
 
   @override
-  String get unknown => 'không xác định';
+  String get keyHighlightsLabel => 'Điểm nổi bật';
 
   @override
-  String get reasonPostponing => 'Lý do hoãn';
+  String get recommendedActionsLabel => 'Hành động khuyến nghị';
 
   @override
-  String get postponeHint =>
-      'Thời tiết hoặc an toàn tại hiện trường. Có thể thực hiện nhiệm vụ vào lần khác.';
+  String overallRiskLabel(Object risk) {
+    return 'Mức rủi ro tổng thể: $risk';
+  }
 
   @override
-  String get postpone => 'Hoãn';
+  String get downloadOfficialPdf => 'Tải báo cáo PDF chính thức';
 
   @override
-  String get fieldSessionOutcome => 'Kết quả phiên hiện trường';
+  String get reportUnpublishedNotice =>
+      'Bản PDF chính thức sẽ mở tải xuống sau khi Quản lý nền tảng phát hành phiên bản này.';
 
   @override
-  String get fieldSessionOutcomeHint =>
-      'Ghi lại phạm vi, quan sát, thiếu sót và sự cố (nếu có) trước khi kết thúc phiên.';
+  String get settlementStepAccept => '1. Nghiệm thu báo cáo';
 
   @override
-  String get endFieldSession => 'Kết thúc phiên hiện trường';
+  String get settlementStepPay => '2. Thanh toán phí dịch vụ';
 
   @override
-  String get reasonAborting => 'Lý do hủy';
+  String get settlementStepFulfilled => '3. Hoàn tất dịch vụ';
 
   @override
-  String get abortIrreversibleShort =>
-      'Phiên sẽ kết thúc và không thể tiếp tục bằng hồ sơ này.';
+  String get serviceInvoiceTitle => 'Hóa đơn dịch vụ';
 
   @override
-  String get abortSession => 'Hủy phiên';
+  String get preVatBase => 'Giá trước VAT';
 
   @override
-  String get cannotManageSession =>
-      'Bạn không được phép quản lý phiên hiện trường này.';
+  String vatLabel(Object rate) {
+    return 'Thuế VAT ($rate%)';
+  }
 
   @override
-  String get preparationNotFound =>
-      'Không tìm thấy cuộc kiểm tra này hoặc cuộc kiểm tra thuộc tổ chức khác.';
+  String get amountToPay => 'Số tiền cần thanh toán';
 
   @override
-  String get preparationServerRefused => 'Máy chủ đã từ chối yêu cầu này.';
+  String get totalPaid => 'Tổng đã thanh toán';
 
   @override
-  String get networkRetry => 'Mạng không khả dụng. Hãy thử lại khi có kết nối.';
+  String get acceptReport => 'Nghiệm thu báo cáo';
 
   @override
-  String get fieldSessionStatusInProgress => 'Đang thực hiện';
+  String acceptReportConfirm(Object version) {
+    return 'Nghiệm thu báo cáo v$version sẽ xác nhận bàn giao và chuyển sang bước thanh toán phí dịch vụ.';
+  }
 
   @override
-  String get fieldSessionStatusPostponed => 'Đã hoãn';
+  String get reportAcceptedSuccess =>
+      'Đã nghiệm thu báo cáo. Vui lòng hoàn tất thanh toán bên dưới.';
 
   @override
-  String get fieldSessionStatusAborted => 'Đã hủy';
+  String get requestClarification => 'Yêu cầu làm rõ';
 
   @override
-  String get fieldSessionStatusPlanned => 'Đã lên kế hoạch';
+  String get clarificationTitle => 'Yêu cầu làm rõ báo cáo';
+
+  @override
+  String clarificationPolicyNote(Object attempt) {
+    return 'Cho phép tối đa 02 lần yêu cầu làm rõ trước khi nghiệm thu (lần hiện tại: $attempt/2).';
+  }
+
+  @override
+  String get clarificationLimitReached =>
+      'Đã đạt giới hạn tối đa 02 lần yêu cầu làm rõ. Vui lòng liên hệ Quản lý nền tảng để đối soát.';
+
+  @override
+  String get clarificationReasonHint =>
+      'Nêu rõ vị trí lỗi chưa chính xác, ảnh mờ hoặc mức độ nghiêm trọng cần xem xét lại…';
+
+  @override
+  String get clarificationSubmitted => 'Đã gửi yêu cầu làm rõ.';
+
+  @override
+  String get payWithPayos => 'Thanh toán PayOS (VietQR)';
+
+  @override
+  String get payWithVnpay => 'Thanh toán VNPay';
+
+  @override
+  String get net15Notice =>
+      'Thời hạn thanh toán Net 15: Vui lòng thanh toán trong vòng 15 ngày. Bản PDF tải trước khi thanh toán mang dấu xem trước.';
+
+  @override
+  String get paymentPaidBanner =>
+      'Thanh toán thành công! Dịch vụ kiểm định và hồ sơ bàn giao đã được xác thực hoàn tất.';
+
+  @override
+  String payosOrderReady(Object orderCode) {
+    return 'Đã tạo đơn PayOS #$orderCode. Mở liên kết hoặc quét VietQR để thanh toán.';
+  }
+
+  @override
+  String get openPaymentLink => 'Mở trang thanh toán';
+
+  @override
+  String get refreshPaymentStatus => 'Cập nhật trạng thái';
+
+  @override
+  String get inspectionStatusScheduled => 'Đã lên lịch';
+
+  @override
+  String get inspectionStatusInProgress => 'Đang thực hiện';
+
+  @override
+  String get inspectionStatusFieldCompleted => 'Hoàn tất bay';
+
+  @override
+  String get inspectionStatusUnderReview => 'Đang thẩm định';
+
+  @override
+  String get inspectionStatusCompleted => 'Hoàn thành';
+
+  @override
+  String get inspectionStatusCancelled => 'Đã hủy';
+
+  @override
+  String get reportStatusDraft => 'Bản nháp';
+
+  @override
+  String get reportStatusSubmitted => 'Đã nộp';
+
+  @override
+  String get reportStatusReturned => 'Bị trả lại';
+
+  @override
+  String get reportStatusPublished => 'Đã phát hành';
+
+  @override
+  String get reportStatusSuperseded => 'Đã thay thế';
+
+  @override
+  String get paymentStatusPaid => 'Đã thanh toán';
+
+  @override
+  String get paymentStatusDue => 'Chờ thanh toán';
+
+  @override
+  String get paymentStatusPending => 'Chờ xử lý';
+
+  @override
+  String get paymentStatusNotApplicable => 'Chờ nghiệm thu';
+
+  @override
+  String get severityCritical => 'Nghiêm trọng';
+
+  @override
+  String get severityHigh => 'Cao';
+
+  @override
+  String get severityMedium => 'Trung bình';
+
+  @override
+  String get severityLow => 'Thấp';
+
+  @override
+  String get fieldSessionStatusInProgress => 'Đang tiến hành';
+
+  @override
+  String get fieldSessionStatusPostponed => 'Tạm hoãn';
+
+  @override
+  String get fieldSessionStatusAborted => 'Đã hủy giữa chừng';
+
+  @override
+  String get fieldSessionStatusPlanned => 'Đã lên lịch';
 
   @override
   String get fieldSessionStatusCompleted => 'Đã hoàn tất hiện trường';
 
   @override
-  String get statusDraft => 'Bản nháp';
+  String get notificationsTitle => 'Thông báo';
 
   @override
-  String get statusSubmitted => 'Đã gửi';
+  String get noNotificationsYet => 'Bạn không có thông báo mới.';
 
   @override
-  String get statusReady => 'Sẵn sàng';
+  String get unreadOnly => 'Chỉ chưa đọc';
 
   @override
-  String get statusActive => 'Đang hoạt động';
-
-  @override
-  String get statusAccepted => 'Đã chấp nhận';
-
-  @override
-  String get statusRejected => 'Đã từ chối';
-
-  @override
-  String get statusSuspended => 'Đã tạm dừng';
-
-  @override
-  String get decisionAdditionalSession => 'Yêu cầu phiên bổ sung';
-
-  @override
-  String get decisionAccepted => 'Đã chấp nhận';
-
-  @override
-  String get preparation => 'Bước chuẩn bị MF2';
-
-  @override
-  String get bothPlannedTimes =>
-      'Hãy đặt cả thời gian bắt đầu và kết thúc dự kiến cho phiên hiện trường bổ sung.';
-
-  @override
-  String preparationVersionSaved(Object version) {
-    return 'Đã lưu phiên bản chuẩn bị $version.';
+  String unreadChatSection(Object count) {
+    return 'Tin nhắn trao đổi chưa đọc ($count)';
   }
 
   @override
-  String get preparationSubmitted =>
-      'Đã gửi bước chuẩn bị để đánh giá mức độ sẵn sàng độc lập.';
+  String get accountTitle => 'Tài khoản & Cài đặt';
 
   @override
-  String get componentShotListJson => 'Danh sách ảnh chụp bộ phận (JSON)';
-
-  @override
-  String get evidenceTypesJson => 'Loại bằng chứng (JSON)';
-
-  @override
-  String get accessConstraints => 'Hạn chế tiếp cận';
-
-  @override
-  String get plannedSessionStart =>
-      'Thời gian bắt đầu phiên dự kiến (giờ địa phương)';
-
-  @override
-  String get plannedSessionEnd =>
-      'Thời gian kết thúc phiên dự kiến (giờ địa phương)';
-
-  @override
-  String get safetyObservations => 'Quan sát về an toàn';
-
-  @override
-  String get safetyAcknowledgment => 'Xác nhận an toàn';
-
-  @override
-  String get saveDraft => 'Lưu bản nháp';
-
-  @override
-  String get submitting => 'Đang gửi…';
-
-  @override
-  String get submitPreparation => 'Gửi bước chuẩn bị';
-
-  @override
-  String get additionalSessionRequested =>
-      'Đã yêu cầu thêm phiên hiện trường. Hãy cập nhật kế hoạch/khung giờ và gửi lại. ORG_MANAGER độc lập phải phê duyệt mức độ sẵn sàng hiện tại trước khi có thể bắt đầu.';
-
-  @override
-  String preparationVersionStatus(Object version, Object status) {
-    return 'Phiên bản $version · $status';
+  String organizationLabel(Object id) {
+    return 'Mã tổ chức: $id';
   }
 
   @override
-  String get preparationApproved =>
-      'Bước chuẩn bị đã được phê duyệt. Mức độ sẵn sàng áp dụng cho phiên bản này; mọi thay đổi cần được đánh giá lại.';
-
-  @override
-  String get cannotEditPreparation =>
-      'Bạn không được phép chỉnh sửa bước chuẩn bị này.';
-
-  @override
-  String get inspectionNotInOrganization =>
-      'Không tìm thấy cuộc kiểm tra này trong tổ chức của bạn.';
-
-  @override
-  String get profile => 'Hồ sơ';
-
-  @override
-  String organization(Object organization) {
-    return 'Tổ chức: $organization';
-  }
-
-  @override
-  String get notSignedIn => 'Chưa đăng nhập.';
-
-  @override
-  String get signOut => 'Đăng xuất';
+  String get preferencesSection => 'Tùy chọn hiển thị';
 
   @override
   String get language => 'Ngôn ngữ';
@@ -564,35 +810,48 @@ class AppLocalizationsVi extends AppLocalizations {
   String get languageVietnamese => 'Tiếng Việt';
 
   @override
-  String get userRoleAdmin => 'Quản trị viên';
+  String get themeModeLabel => 'Giao diện';
+
+  @override
+  String get themeSystem => 'Theo hệ thống';
+
+  @override
+  String get themeLight => 'Sáng';
+
+  @override
+  String get themeDark => 'Tối';
+
+  @override
+  String get securitySection => 'Bảo mật';
+
+  @override
+  String get changePassword => 'Đổi mật khẩu';
+
+  @override
+  String get logoutAllDevices => 'Đăng xuất khỏi mọi thiết bị';
+
+  @override
+  String get logoutAllConfirm =>
+      'Đăng xuất khỏi tất cả phiên đang hoạt động trên web và di động?';
+
+  @override
+  String get signOut => 'Đăng xuất';
+
+  @override
+  String get notSignedIn => 'Chưa đăng nhập.';
+
+  @override
+  String get userRoleCustomer => 'Khách hàng';
 
   @override
   String get userRolePlatformManager => 'Quản lý nền tảng';
 
   @override
-  String get userRoleOrgManager => 'Quản lý tổ chức';
+  String get userRoleAdmin => 'Quản trị viên';
 
   @override
-  String get userRoleInspector => 'Thanh tra viên';
+  String get userRoleInspector => 'Kiểm định viên';
 
   @override
-  String get userRoleClient => 'Khách hàng';
-
-  @override
-  String get assignmentStatusActive => 'Đang hoạt động';
-
-  @override
-  String get assignmentResponseAccepted => 'Đã chấp nhận';
-
-  @override
-  String get assignmentResponseRejected => 'Đã từ chối';
-
-  @override
-  String get assetStatusActive => 'Đang hoạt động';
-
-  @override
-  String get assetStatusInactive => 'Ngừng hoạt động';
-
-  @override
-  String get assetStatusRetired => 'Đã ngừng sử dụng';
+  String get userRoleMaintenanceEngineer => 'Kỹ sư bảo trì';
 }

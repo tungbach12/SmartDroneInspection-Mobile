@@ -56,13 +56,14 @@ extension ApiFailurePatterns on ApiFailure {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( NetworkFailure value)?  network,TResult Function( ValidationFailure value)?  validation,TResult Function( UnauthorizedFailure value)?  unauthorized,TResult Function( NotFoundFailure value)?  notFound,TResult Function( ServerFailure value)?  server,TResult Function( UnknownFailure value)?  unknown,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( NetworkFailure value)?  network,TResult Function( ValidationFailure value)?  validation,TResult Function( UnauthorizedFailure value)?  unauthorized,TResult Function( ForbiddenFailure value)?  forbidden,TResult Function( NotFoundFailure value)?  notFound,TResult Function( ServerFailure value)?  server,TResult Function( UnknownFailure value)?  unknown,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case NetworkFailure() when network != null:
 return network(_that);case ValidationFailure() when validation != null:
 return validation(_that);case UnauthorizedFailure() when unauthorized != null:
-return unauthorized(_that);case NotFoundFailure() when notFound != null:
+return unauthorized(_that);case ForbiddenFailure() when forbidden != null:
+return forbidden(_that);case NotFoundFailure() when notFound != null:
 return notFound(_that);case ServerFailure() when server != null:
 return server(_that);case UnknownFailure() when unknown != null:
 return unknown(_that);case _:
@@ -83,13 +84,14 @@ return unknown(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( NetworkFailure value)  network,required TResult Function( ValidationFailure value)  validation,required TResult Function( UnauthorizedFailure value)  unauthorized,required TResult Function( NotFoundFailure value)  notFound,required TResult Function( ServerFailure value)  server,required TResult Function( UnknownFailure value)  unknown,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( NetworkFailure value)  network,required TResult Function( ValidationFailure value)  validation,required TResult Function( UnauthorizedFailure value)  unauthorized,required TResult Function( ForbiddenFailure value)  forbidden,required TResult Function( NotFoundFailure value)  notFound,required TResult Function( ServerFailure value)  server,required TResult Function( UnknownFailure value)  unknown,}){
 final _that = this;
 switch (_that) {
 case NetworkFailure():
 return network(_that);case ValidationFailure():
 return validation(_that);case UnauthorizedFailure():
-return unauthorized(_that);case NotFoundFailure():
+return unauthorized(_that);case ForbiddenFailure():
+return forbidden(_that);case NotFoundFailure():
 return notFound(_that);case ServerFailure():
 return server(_that);case UnknownFailure():
 return unknown(_that);}
@@ -106,13 +108,14 @@ return unknown(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( NetworkFailure value)?  network,TResult? Function( ValidationFailure value)?  validation,TResult? Function( UnauthorizedFailure value)?  unauthorized,TResult? Function( NotFoundFailure value)?  notFound,TResult? Function( ServerFailure value)?  server,TResult? Function( UnknownFailure value)?  unknown,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( NetworkFailure value)?  network,TResult? Function( ValidationFailure value)?  validation,TResult? Function( UnauthorizedFailure value)?  unauthorized,TResult? Function( ForbiddenFailure value)?  forbidden,TResult? Function( NotFoundFailure value)?  notFound,TResult? Function( ServerFailure value)?  server,TResult? Function( UnknownFailure value)?  unknown,}){
 final _that = this;
 switch (_that) {
 case NetworkFailure() when network != null:
 return network(_that);case ValidationFailure() when validation != null:
 return validation(_that);case UnauthorizedFailure() when unauthorized != null:
-return unauthorized(_that);case NotFoundFailure() when notFound != null:
+return unauthorized(_that);case ForbiddenFailure() when forbidden != null:
+return forbidden(_that);case NotFoundFailure() when notFound != null:
 return notFound(_that);case ServerFailure() when server != null:
 return server(_that);case UnknownFailure() when unknown != null:
 return unknown(_that);case _:
@@ -132,12 +135,13 @@ return unknown(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  network,TResult Function( Map<String, String> errors)?  validation,TResult Function()?  unauthorized,TResult Function()?  notFound,TResult Function( int? status,  String? detail)?  server,TResult Function( String message)?  unknown,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  network,TResult Function( Map<String, String> errors)?  validation,TResult Function()?  unauthorized,TResult Function( String? detail)?  forbidden,TResult Function()?  notFound,TResult Function( int? status,  String? detail)?  server,TResult Function( String message)?  unknown,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case NetworkFailure() when network != null:
 return network();case ValidationFailure() when validation != null:
 return validation(_that.errors);case UnauthorizedFailure() when unauthorized != null:
-return unauthorized();case NotFoundFailure() when notFound != null:
+return unauthorized();case ForbiddenFailure() when forbidden != null:
+return forbidden(_that.detail);case NotFoundFailure() when notFound != null:
 return notFound();case ServerFailure() when server != null:
 return server(_that.status,_that.detail);case UnknownFailure() when unknown != null:
 return unknown(_that.message);case _:
@@ -158,12 +162,13 @@ return unknown(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  network,required TResult Function( Map<String, String> errors)  validation,required TResult Function()  unauthorized,required TResult Function()  notFound,required TResult Function( int? status,  String? detail)  server,required TResult Function( String message)  unknown,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  network,required TResult Function( Map<String, String> errors)  validation,required TResult Function()  unauthorized,required TResult Function( String? detail)  forbidden,required TResult Function()  notFound,required TResult Function( int? status,  String? detail)  server,required TResult Function( String message)  unknown,}) {final _that = this;
 switch (_that) {
 case NetworkFailure():
 return network();case ValidationFailure():
 return validation(_that.errors);case UnauthorizedFailure():
-return unauthorized();case NotFoundFailure():
+return unauthorized();case ForbiddenFailure():
+return forbidden(_that.detail);case NotFoundFailure():
 return notFound();case ServerFailure():
 return server(_that.status,_that.detail);case UnknownFailure():
 return unknown(_that.message);}
@@ -180,12 +185,13 @@ return unknown(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  network,TResult? Function( Map<String, String> errors)?  validation,TResult? Function()?  unauthorized,TResult? Function()?  notFound,TResult? Function( int? status,  String? detail)?  server,TResult? Function( String message)?  unknown,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  network,TResult? Function( Map<String, String> errors)?  validation,TResult? Function()?  unauthorized,TResult? Function( String? detail)?  forbidden,TResult? Function()?  notFound,TResult? Function( int? status,  String? detail)?  server,TResult? Function( String message)?  unknown,}) {final _that = this;
 switch (_that) {
 case NetworkFailure() when network != null:
 return network();case ValidationFailure() when validation != null:
 return validation(_that.errors);case UnauthorizedFailure() when unauthorized != null:
-return unauthorized();case NotFoundFailure() when notFound != null:
+return unauthorized();case ForbiddenFailure() when forbidden != null:
+return forbidden(_that.detail);case NotFoundFailure() when notFound != null:
 return notFound();case ServerFailure() when server != null:
 return server(_that.status,_that.detail);case UnknownFailure() when unknown != null:
 return unknown(_that.message);case _:
@@ -333,6 +339,74 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class ForbiddenFailure implements ApiFailure {
+  const ForbiddenFailure([this.detail]);
+  
+
+ final  String? detail;
+
+/// Create a copy of ApiFailure
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ForbiddenFailureCopyWith<ForbiddenFailure> get copyWith => _$ForbiddenFailureCopyWithImpl<ForbiddenFailure>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ForbiddenFailure&&(identical(other.detail, detail) || other.detail == detail));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,detail);
+}
+
+@override
+String toString() {
+    return 'ApiFailure.forbidden(detail: $detail)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ForbiddenFailureCopyWith<$Res> implements $ApiFailureCopyWith<$Res> {
+  factory $ForbiddenFailureCopyWith(ForbiddenFailure value, $Res Function(ForbiddenFailure) _then) = _$ForbiddenFailureCopyWithImpl;
+@useResult
+$Res call({
+ String? detail
+});
+
+
+
+
+}
+/// @nodoc
+class _$ForbiddenFailureCopyWithImpl<$Res>
+    implements $ForbiddenFailureCopyWith<$Res> {
+  _$ForbiddenFailureCopyWithImpl(this._self, this._then);
+
+  final ForbiddenFailure _self;
+  final $Res Function(ForbiddenFailure) _then;
+
+/// Create a copy of ApiFailure
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? detail = freezed,}) {
+  return _then(ForbiddenFailure(
+freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
 
 /// @nodoc
 

@@ -1,8 +1,7 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
@@ -11,252 +10,230 @@ void main() {
   late Dio dio;
   late InspectionRepository repository;
   late List<RequestOptions> requests;
-  late List<FormData> uploadedForms;
 
   setUp(() {
-    uploadedForms = [];
     requests = [];
     dio = Dio(BaseOptions(baseUrl: 'https://api.example.test/api/v1'));
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
           requests.add(options);
-          if (options.method == 'GET' &&
-              options.path.endsWith('/inspections')) {
+          if (options.method == 'GET' && options.path == '/inspections') {
             handler.resolve(
               Response(
                 requestOptions: options,
                 statusCode: 200,
-                data: [_inspectionResponse()],
+                data: {
+                  'items': [_inspectionJson()],
+                  'totalCount': 1,
+                },
               ),
             );
             return;
           }
           if (options.method == 'GET' &&
-              options.path.contains('/inspections/inspection-1') &&
-              !options.path.endsWith('/evidence') &&
-              !options.path.endsWith('/field-sessions')) {
+              options.path == '/inspections/insp-1/report/versions') {
             handler.resolve(
               Response(
                 requestOptions: options,
                 statusCode: 200,
-                data: _inspectionResponse(),
+                data: [
+                  {
+                    'id': 'ver-1',
+                    'versionNo': 2,
+                    'status': 'PUBLISHED',
+                    'createdAt': '2026-10-02T08:00:00Z',
+                    'publishedAt': '2026-10-03T10:00:00Z',
+                    'reportContext': {
+                      'flightPermitFileName': 'permit-2026.pdf',
+                      'assignedDrone': {
+                        'manufacturer': 'DJI',
+                        'model': 'Matrice 350 RTK',
+                        'serialNumber': 'SN-001',
+                      },
+                    },
+                  },
+                ],
+              ),
+            );
+            return;
+          }
+          if (options.method == 'GET' &&
+              options.path ==
+                  '/inspections/insp-1/report/versions/ver-1/ai-summary') {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'summary': 'Minor joint corrosion observed.',
+                  'keyHighlights': ['Joint A needs resealing'],
+                  'recommendedActions': 'Schedule repair within 30 days.',
+                  'overallRisk': 'MEDIUM',
+                },
+              ),
+            );
+            return;
+          }
+          if (options.method == 'GET' &&
+              options.path ==
+                  '/inspections/insp-1/report/versions/ver-1/document') {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: [37, 80, 68, 70],
               ),
             );
             return;
           }
           if (options.method == 'POST' &&
-              options.path.endsWith('/flight-permit')) {
+              options.path ==
+                  '/inspections/insp-1/report/versions/ver-1/accept') {
+            handler.resolve(Response(requestOptions: options, statusCode: 204));
+            return;
+          }
+          if (options.method == 'POST' &&
+              options.path ==
+                  '/inspections/insp-1/report/versions/ver-1/clarification') {
+            handler.resolve(Response(requestOptions: options, statusCode: 200));
+            return;
+          }
+          if (options.method == 'GET' &&
+              options.path == '/inspections/insp-1/report/payment-status') {
             handler.resolve(
               Response(
                 requestOptions: options,
                 statusCode: 200,
-                data: _inspectionResponse(
-                  status: 'READY_FOR_FLIGHT',
-                  permitFileKey: 'permits/flight-permit.pdf',
-                  permitFileName: 'flight-permit.pdf',
-                ),
+                data: {
+                  'reportAccepted': true,
+                  'paid': false,
+                  'paymentStatus': 'PAYMENT_DUE',
+                  'amount': 11000000,
+                  'serviceBaseAmount': 10000000,
+                  'vatRate': 10,
+                  'vatAmount': 1000000,
+                },
               ),
             );
             return;
           }
-          if (options.method == 'POST' && options.path.endsWith('/evidence')) {
-            uploadedForms.add(options.data as FormData);
+          if (options.method == 'POST' &&
+              options.path == '/inspections/insp-1/payos/create-payment-link') {
             handler.resolve(
               Response(
                 requestOptions: options,
-                statusCode: 201,
-                data: _evidenceResponse(),
+                statusCode: 200,
+                data: {
+                  'orderCode': 998877,
+                  'amount': 11000000,
+                  'paymentLinkId': 'pl-1',
+                  'checkoutUrl': 'https://pay.payos.vn/web/998877',
+                  'qrCode': '000201010212...',
+                },
               ),
             );
             return;
           }
-          handler.resolve(
-            Response(
-              requestOptions: options,
-              statusCode: 200,
-              data: options.path.endsWith('/evidence')
-                  ? [_evidenceResponse(isDeleted: true)]
-                  : [],
-            ),
-          );
+          if (options.method == 'POST' &&
+              options.path == '/inspections/insp-1/vnpay/create-payment-url') {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'orderCode': 556677,
+                  'amount': 11000000,
+                  'txnRef': 'TXN556677',
+                  'checkoutUrl':
+                      'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
+                },
+              ),
+            );
+            return;
+          }
+          handler.reject(DioException(requestOptions: options));
         },
       ),
     );
     repository = InspectionRepository(dio);
   });
 
-  tearDown(() => dio.close(force: true));
-
-  test('lists assigned inspections and parses inspection items', () async {
+  test('listInspections unwraps paginated items map', () async {
     final result = await repository.listInspections();
     expect(result, isA<ApiSuccess<List<Inspection>>>());
-    final inspections = (result as ApiSuccess<List<Inspection>>).data;
-    expect(inspections.single.id, 'inspection-1');
-    expect(inspections.single.assetName, 'Bridge Alpha');
-    expect(inspections.single.inspectionItems, ['Deck', 'Piers']);
-    expect(inspections.single.status, 'ASSIGNED');
-    expect(requests.single.method, 'GET');
-    expect(requests.single.path, '/inspections');
+    final items = (result as ApiSuccess<List<Inspection>>).data;
+    expect(items, hasLength(1));
+    expect(items.first.id, 'insp-1');
+    expect(items.first.hasPublishedReport, isTrue);
   });
 
-  test('gets inspection detail by ID', () async {
-    final result = await repository.getInspection('inspection-1');
-    expect(result, isA<ApiSuccess<Inspection>>());
-    final inspection = (result as ApiSuccess<Inspection>).data;
-    expect(inspection.id, 'inspection-1');
-    expect(inspection.droneModel, 'Matrice 300');
-    expect(requests.single.path, '/inspections/inspection-1');
-  });
+  test('listReportVersions, ai-summary, and PDF download parse Customer deliverable', () async {
+    final versions = await repository.listReportVersions('insp-1');
+    expect(versions, isA<ApiSuccess<List<InspectionReportVersion>>>());
+    final v =
+        (versions as ApiSuccess<List<InspectionReportVersion>>).data.single;
+    expect(v.versionNo, 2);
+    expect(v.droneSummary, 'DJI · Matrice 350 RTK · SN-001');
+    expect(v.flightPermitFileName, 'permit-2026.pdf');
 
-  test(
-    'uploads flight permit transitioning status to READY_FOR_FLIGHT',
-    () async {
-      final directory = await Directory.systemTemp.createTemp('permit-');
-      addTearDown(() => directory.delete(recursive: true));
-      final permitPath =
-          '${directory.path}${Platform.pathSeparator}flight-permit.pdf';
-      await File(permitPath).writeAsBytes([0x25, 0x50, 0x44, 0x46]);
-
-      final result = await repository.uploadFlightPermit(
-        inspectionId: 'inspection-1',
-        file: XFile(permitPath, name: 'flight-permit.pdf'),
-      );
-
-      expect(result, isA<ApiSuccess<Inspection>>());
-      final inspection = (result as ApiSuccess<Inspection>).data;
-      expect(inspection.status, 'READY_FOR_FLIGHT');
-      expect(inspection.flightPermitFileName, 'flight-permit.pdf');
-
-      final request = requests.single;
-      expect(request.method, 'POST');
-      expect(request.path, '/inspections/inspection-1/flight-permit');
-      final form = request.data as FormData;
-      expect(form.files.single.key, 'file');
-      expect(form.files.single.value.filename, 'flight-permit.pdf');
-    },
-  );
-
-  test('parses evidence responses without retired API fields and retains isDeleted', () async {
-    final result = await repository.listEvidence('inspection-1');
-
-    expect(result, isA<ApiSuccess>());
-    final evidence = (result as ApiSuccess).data.single;
-    expect(evidence.isDeleted, isTrue);
-    expect(evidence.toJson().keys, contains('isDeleted'));
-    expect(evidence.toJson().keys, isNot(contains('uploadStatus')));
-    expect(evidence.toJson().keys, isNot(contains('retiredAt')));
-    expect(evidence.toJson().keys, isNot(contains('checksumSha256')));
-    expect(evidence.toJson().keys, isNot(contains('source')));
-    expect(evidence.toJson().keys, isNot(contains('externalReference')));
-    expect(evidence.toJson().keys, isNot(contains('uploadedByUserId')));
-    expect(evidence.toJson().keys, isNot(contains('retiredByUserId')));
-    expect(evidence.toJson().keys, isNot(contains('retirementReason')));
-  });
-
-  test('uploads a captured file as multipart without a source field', () async {
-    final directory = await Directory.systemTemp.createTemp(
-      'inspection-photo-',
+    final ai = await repository.getReportAiSummary(
+      inspectionId: 'insp-1',
+      versionId: 'ver-1',
     );
-    addTearDown(() => directory.delete(recursive: true));
-    final photoPath =
-        '${directory.path}${Platform.pathSeparator}north-span.jpg';
-    await File(photoPath).writeAsBytes([0xff, 0xd8, 0xff, 0xd9]);
-    final capturedAt = DateTime.utc(2026, 9, 24, 8, 30);
+    expect(ai, isA<ApiSuccess<ReportAiSummary>>());
+    expect((ai as ApiSuccess<ReportAiSummary>).data.overallRisk, 'MEDIUM');
 
-    final result = await repository.uploadEvidence(
-      inspectionId: 'inspection-1',
-      file: XFile(photoPath, name: 'north-span.jpg'),
-      captureTime: capturedAt,
+    final pdf = await repository.downloadOfficialReportPdf(
+      inspectionId: 'insp-1',
+      versionId: 'ver-1',
     );
-
-    expect(result, isA<ApiSuccess>());
-    final request = requests.single;
-    expect(request.method, 'POST');
-    expect(request.path, '/inspections/inspection-1/evidence');
-    final form = uploadedForms.single;
-    expect(form.fields.map((entry) => entry.key), isNot(contains('source')));
+    expect(pdf, isA<ApiSuccess<Uint8List>>());
     expect(
-      form.fields.any(
-        (entry) =>
-            entry.key == 'captureTime' &&
-            entry.value == capturedAt.toIso8601String(),
-      ),
-      isTrue,
+      (pdf as ApiSuccess<Uint8List>).data,
+      Uint8List.fromList([37, 80, 68, 70]),
     );
-    expect(form.files.single.key, 'file');
-    expect(form.files.single.value.filename, 'north-span.jpg');
   });
 
-  test(
-    'uploads a video with session linkage and no invented capture time',
-    () async {
-      final directory = await Directory.systemTemp.createTemp(
-        'inspection-video-',
-      );
-      addTearDown(() => directory.delete(recursive: true));
-      final videoPath =
-          '${directory.path}${Platform.pathSeparator}north-span.mp4';
-      await File(videoPath).writeAsBytes([0, 0, 0, 24, 102, 116, 121, 112]);
+  test('settlement flow calls accept, clarification with reason query, PayOS, and VNPay', () async {
+    final acceptRes = await repository.acceptReport(
+      inspectionId: 'insp-1',
+      versionId: 'ver-1',
+    );
+    expect(acceptRes, isA<ApiSuccess<void>>());
 
-      final result = await repository.uploadEvidence(
-        inspectionId: 'inspection-1',
-        file: XFile(videoPath, name: 'north-span.mp4'),
-        fieldSessionId: 'session-1',
-      );
+    final clarRes = await repository.requestReportClarification(
+      inspectionId: 'insp-1',
+      versionId: 'ver-1',
+      reason: 'Verify north tower cable close-up.',
+    );
+    expect(clarRes, isA<ApiSuccess<void>>());
+    expect(
+      requests.last.queryParameters['reason'],
+      'Verify north tower cable close-up.',
+    );
 
-      expect(result, isA<ApiSuccess>());
-      final request = requests.single;
-      expect(request.method, 'POST');
-      expect(request.path, '/inspections/inspection-1/evidence');
-      final form = uploadedForms.single;
-      expect(form.fields.map((entry) => entry.key), contains('fieldSessionId'));
-      expect(
-        form.fields.any(
-          (entry) =>
-              entry.key == 'fieldSessionId' && entry.value == 'session-1',
-        ),
-        isTrue,
-      );
-      expect(
-        form.fields.map((entry) => entry.key),
-        isNot(contains('captureTime')),
-      );
-      expect(form.files.single.key, 'file');
-      expect(form.files.single.value.filename, 'north-span.mp4');
-    },
-  );
+    final paymentStatus = await repository.getReportPaymentStatus('insp-1');
+    expect(paymentStatus, isA<ApiSuccess<ReportPaymentStatus>>());
+    expect((paymentStatus as ApiSuccess<ReportPaymentStatus>).data.vatRate, 10);
+
+    final payos = await repository.createPayosPaymentLink('insp-1');
+    expect((payos as ApiSuccess<PayosCheckoutDetails>).data.orderCode, 998877);
+
+    final vnpay = await repository.createVnpayPaymentUrl('insp-1');
+    expect(
+      (vnpay as ApiSuccess<VnpayCheckoutDetails>).data.txnRef,
+      'TXN556677',
+    );
+  });
 }
 
-Map<String, dynamic> _inspectionResponse({
-  String status = 'ASSIGNED',
-  String? permitFileKey,
-  String? permitFileName,
-}) => {
-  'id': 'inspection-1',
+Map<String, dynamic> _inspectionJson() => {
+  'id': 'insp-1',
   'assetId': 'asset-1',
-  'assetName': 'Bridge Alpha',
-  'droneSerialNumber': 'DR-001',
-  'droneModel': 'Matrice 300',
-  'status': status,
-  'flightPermitFileKey': permitFileKey,
-  'flightPermitFileName': permitFileName,
-  'flightPermitUploadedAt': permitFileKey != null
-      ? '2026-10-01T10:00:00Z'
-      : null,
-  'inspectionItems': ['Deck', 'Piers'],
-};
-
-Map<String, dynamic> _evidenceResponse({bool isDeleted = false}) => {
-  'id': 'evidence-1',
-  'inspectionId': 'inspection-1',
-  'fieldSessionId': null,
-  'fileName': 'north-span.jpg',
-  'contentType': 'image/jpeg',
-  'sizeBytes': 4,
-  'captureTime': '2026-09-24T08:30:00Z',
-  'latitude': null,
-  'longitude': null,
-  'createdAt': '2026-09-24T08:30:01Z',
-  'isDeleted': isDeleted,
+  'assetName': 'Cau Nhat Tan',
+  'status': 'COMPLETED',
+  'reportStatus': 'PUBLISHED',
+  'reportVersionNo': 2,
+  'paymentStatus': 'PAYMENT_DUE',
 };

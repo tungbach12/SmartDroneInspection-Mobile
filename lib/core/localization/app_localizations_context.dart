@@ -7,71 +7,80 @@ extension AppLocalizationsContext on BuildContext {
       lookupAppLocalizations(const Locale('en'));
 }
 
+String localizedRole(AppLocalizations l10n, String role) => switch (role) {
+  'CUSTOMER' || 'ORG_MANAGER' => l10n.userRoleCustomer,
+  'MANAGER' || 'PLATFORM_MANAGER' => l10n.userRolePlatformManager,
+  'ADMIN' => l10n.userRoleAdmin,
+  'INSPECTOR' => l10n.userRoleInspector,
+  'MAINTENANCE_ENGINEER' => l10n.userRoleMaintenanceEngineer,
+  _ => role,
+};
+
+String localizedAssetStatus(AppLocalizations l10n, String status) =>
+    switch (status.toUpperCase()) {
+      'ACTIVE' => l10n.assetStatusActive,
+      'PENDING_REVIEW' => l10n.assetStatusPendingReview,
+      'INACTIVE' => l10n.assetStatusInactive,
+      'REJECTED' => l10n.assetStatusRejected,
+      'RETIRED' => l10n.assetStatusRetired,
+      _ => status,
+    };
+
+String localizedServiceRequestStatus(AppLocalizations l10n, String status) =>
+    switch (status.toUpperCase()) {
+      'OPEN' => l10n.requestStatusOpen,
+      'QUOTED' => l10n.requestStatusQuoted,
+      'ACCEPTED' => l10n.requestStatusAccepted,
+      'CONTRACT_SIGNED' => l10n.requestStatusContractSigned,
+      'ASSIGNED' => l10n.requestStatusAssigned,
+      'CANCELLED' => l10n.requestStatusCancelled,
+      _ => status,
+    };
+
+String localizedInspectionStatus(AppLocalizations l10n, String status) =>
+    switch (status.toUpperCase()) {
+      'SCHEDULED' => l10n.inspectionStatusScheduled,
+      'IN_PROGRESS' => l10n.inspectionStatusInProgress,
+      'FIELD_COMPLETED' => l10n.inspectionStatusFieldCompleted,
+      'UNDER_REVIEW' => l10n.inspectionStatusUnderReview,
+      'COMPLETED' => l10n.inspectionStatusCompleted,
+      'CANCELLED' => l10n.inspectionStatusCancelled,
+      _ => status,
+    };
+
+String localizedReportStatus(AppLocalizations l10n, String status) =>
+    switch (status.toUpperCase()) {
+      'DRAFT' => l10n.reportStatusDraft,
+      'SUBMITTED' => l10n.reportStatusSubmitted,
+      'RETURNED' => l10n.reportStatusReturned,
+      'PUBLISHED' => l10n.reportStatusPublished,
+      'SUPERSEDED' => l10n.reportStatusSuperseded,
+      _ => status,
+    };
+
+String localizedPaymentStatus(AppLocalizations l10n, String status) =>
+    switch (status.toUpperCase()) {
+      'PAID' => l10n.paymentStatusPaid,
+      'PAYMENT_DUE' => l10n.paymentStatusDue,
+      'PENDING' => l10n.paymentStatusPending,
+      _ => l10n.paymentStatusNotApplicable,
+    };
+
+String localizedFindingSeverity(AppLocalizations l10n, String severity) =>
+    switch (severity.toUpperCase()) {
+      'CRITICAL' => l10n.severityCritical,
+      'HIGH' => l10n.severityHigh,
+      'MEDIUM' => l10n.severityMedium,
+      'LOW' => l10n.severityLow,
+      _ => severity,
+    };
+
 String localizedFieldSessionStatus(AppLocalizations l10n, String status) =>
-    switch (status) {
+    switch (status.toUpperCase()) {
       'IN_PROGRESS' => l10n.fieldSessionStatusInProgress,
       'POSTPONED' => l10n.fieldSessionStatusPostponed,
       'ABORTED' => l10n.fieldSessionStatusAborted,
       'PLANNED' => l10n.fieldSessionStatusPlanned,
       'FIELD_COMPLETED' => l10n.fieldSessionStatusCompleted,
-      _ => status,
-    };
-
-String localizedWorkflowStatus(AppLocalizations l10n, String status) =>
-    switch (status) {
-      'DRAFT' => l10n.statusDraft,
-      'SUBMITTED' => l10n.statusSubmitted,
-      'READY' => l10n.statusReady,
-      'ACTIVE' => l10n.statusActive,
-      'ACCEPTED' => l10n.statusAccepted,
-      'REJECTED' => l10n.statusRejected,
-      'SUSPENDED' => l10n.statusSuspended,
-      _ => status,
-    };
-
-String localizedChecklistChoice(AppLocalizations l10n, String choice) =>
-    switch (choice) {
-      'PASS' => l10n.pass,
-      'FAIL' => l10n.fail,
-      'true' => l10n.yes,
-      'false' => l10n.no,
-      _ => choice,
-    };
-
-String localizedDecision(AppLocalizations l10n, String decision) =>
-    switch (decision) {
-      'ACCEPTED' => l10n.decisionAccepted,
-      'ADDITIONAL_SESSION_REQUIRED' => l10n.decisionAdditionalSession,
-      _ => decision.replaceAll('_', ' '),
-    };
-
-String localizedRole(AppLocalizations l10n, String role) => switch (role) {
-  'ADMIN' => l10n.userRoleAdmin,
-  'PLATFORM_MANAGER' => l10n.userRolePlatformManager,
-  'ORG_MANAGER' => l10n.userRoleOrgManager,
-  'INSPECTOR' => l10n.userRoleInspector,
-  'CLIENT' => l10n.userRoleClient,
-  _ => role,
-};
-
-String localizedAssignmentStatus(AppLocalizations l10n, String status) =>
-    switch (status) {
-      'ACTIVE' => l10n.assignmentStatusActive,
-      'SUSPENDED' => l10n.statusSuspended,
-      _ => status,
-    };
-
-String localizedAssignmentResponse(AppLocalizations l10n, String response) =>
-    switch (response) {
-      'ACCEPTED' => l10n.assignmentResponseAccepted,
-      'REJECTED' => l10n.assignmentResponseRejected,
-      _ => response,
-    };
-
-String localizedAssetStatus(AppLocalizations l10n, String status) =>
-    switch (status) {
-      'ACTIVE' || 'Active' => l10n.assetStatusActive,
-      'INACTIVE' => l10n.assetStatusInactive,
-      'RETIRED' => l10n.assetStatusRetired,
       _ => status,
     };

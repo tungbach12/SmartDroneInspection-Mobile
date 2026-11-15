@@ -1,44 +1,54 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
+import 'package:smart_drone_inspection/core/localization/locale_labels.dart';
 import 'package:smart_drone_inspection/l10n/app_localizations.dart';
 
 void main() {
-  test('localizes workflow values without changing protocol identifiers', () {
-    final english = lookupAppLocalizations(const Locale('en'));
-    final vietnamese = lookupAppLocalizations(const Locale('vi'));
+  test('localizes roles including legacy aliases in EN and VI', () {
+    final en = lookupAppLocalizations(const Locale('en'));
+    final vi = lookupAppLocalizations(const Locale('vi'));
 
-    expect(localizedWorkflowStatus(english, 'READY'), 'Ready');
-    expect(localizedWorkflowStatus(vietnamese, 'READY'), 'Sẵn sàng');
-    expect(localizedWorkflowStatus(vietnamese, 'FUTURE_STATE'), 'FUTURE_STATE');
-    expect(localizedAssetStatus(english, 'INACTIVE'), 'Inactive');
-    expect(localizedAssetStatus(english, 'RETIRED'), 'Retired');
-    expect(localizedAssetStatus(vietnamese, 'INACTIVE'), 'Ngừng hoạt động');
-    expect(localizedAssetStatus(vietnamese, 'RETIRED'), 'Đã ngừng sử dụng');
-    expect(localizedAssetStatus(vietnamese, 'UNKNOWN'), 'UNKNOWN');
+    expect(localizedRole(en, 'CUSTOMER'), 'Customer');
+    expect(localizedRole(en, 'ORG_MANAGER'), 'Customer');
+    expect(localizedRole(en, 'MANAGER'), 'Platform Manager');
+    expect(localizedRole(en, 'PLATFORM_MANAGER'), 'Platform Manager');
+    expect(localizedRole(vi, 'CUSTOMER'), 'Khách hàng');
+    expect(localizedRole(vi, 'ORG_MANAGER'), 'Khách hàng');
+    expect(localizedRole(vi, 'INSPECTOR'), 'Kiểm định viên');
+  });
 
-    // The mapping only changes the displayed label, not the supplied protocol value.
-    const protocolValue = 'INACTIVE';
-    localizedAssetStatus(vietnamese, protocolValue);
-    expect(protocolValue, 'INACTIVE');
+  test('localizes asset, service request, and inspection statuses', () {
+    final en = lookupAppLocalizations(const Locale('en'));
+    final vi = lookupAppLocalizations(const Locale('vi'));
 
+    expect(localizedAssetStatus(en, 'ACTIVE'), 'Active');
+    expect(localizedAssetStatus(vi, 'RETIRED'), 'Đã ngừng sử dụng');
+
+    expect(localizedServiceRequestStatus(en, 'QUOTED'), 'Quoted');
     expect(
-      localizedDecision(vietnamese, 'ADDITIONAL_SESSION_REQUIRED'),
-      'Yêu cầu phiên bổ sung',
+      localizedServiceRequestStatus(vi, 'CONTRACT_SIGNED'),
+      'Đã ký hợp đồng',
     );
-    expect(
-      localizedFieldSessionStatus(vietnamese, 'FIELD_COMPLETED'),
-      'Đã hoàn tất hiện trường',
-    );
-    expect(localizedChecklistChoice(vietnamese, 'true'), 'Có');
-    expect(localizedChecklistChoice(vietnamese, 'PASS'), 'Đạt');
-    expect(
-      localizedChecklistChoice(vietnamese, 'SERVER_VALUE'),
-      'SERVER_VALUE',
-    );
-    expect(localizedRole(english, 'PLATFORM_MANAGER'), 'Platform Manager');
-    expect(localizedRole(vietnamese, 'PLATFORM_MANAGER'), 'Quản lý nền tảng');
-    expect(localizedRole(english, 'ORG_MANAGER'), 'Organization Manager');
-    expect(localizedRole(vietnamese, 'ORG_MANAGER'), 'Quản lý tổ chức');
+
+    expect(localizedInspectionStatus(en, 'UNDER_REVIEW'), 'Under review');
+    expect(localizedInspectionStatus(vi, 'COMPLETED'), 'Hoàn thành');
+  });
+
+  test('localizes report, payment, severity, and field session statuses', () {
+    final en = lookupAppLocalizations(const Locale('en'));
+    final vi = lookupAppLocalizations(const Locale('vi'));
+
+    expect(localizedReportStatus(en, 'PUBLISHED'), 'Published');
+    expect(localizedReportStatus(vi, 'PUBLISHED'), 'Đã phát hành');
+
+    expect(localizedPaymentStatus(en, 'PAYMENT_DUE'), 'Payment due');
+    expect(localizedPaymentStatus(en, 'UNKNOWN'), 'Pending acceptance');
+    expect(localizedPaymentStatus(vi, 'PAID'), 'Đã thanh toán');
+
+    expect(localizedFindingSeverity(en, 'CRITICAL'), 'Critical');
+    expect(localizedFindingSeverity(vi, 'HIGH'), 'Cao');
+
+    expect(localizedFieldSessionStatus(en, 'ABORTED'), 'Aborted');
+    expect(localizedFieldSessionStatus(vi, 'IN_PROGRESS'), 'Đang tiến hành');
   });
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:smart_drone_inspection/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/localization/locale_provider.dart';
 import 'package:smart_drone_inspection/core/router/app_router.dart';
 import 'package:smart_drone_inspection/core/theme/app_theme.dart';
+import 'package:smart_drone_inspection/core/theme/theme_mode_provider.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
+import 'package:smart_drone_inspection/l10n/app_localizations.dart';
+import 'package:smart_drone_inspection/shared/widgets/brand_loading_view.dart';
 
 void main() {
   runApp(const ProviderScope(child: SmartDroneInspectionApp()));
@@ -17,7 +19,9 @@ class SmartDroneInspectionApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final localeAsync = ref.watch(localeNotifierProvider);
+    final themeModeAsync = ref.watch(themeModeNotifierProvider);
     final locale = localeAsync.value ?? const Locale('en');
+    final themeMode = themeModeAsync.value ?? ThemeMode.light;
 
     return MaterialApp.router(
       title: lookupAppLocalizations(locale).appName,
@@ -26,7 +30,7 @@ class SmartDroneInspectionApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, child) => _HydrationGate(
@@ -51,7 +55,7 @@ class _HydrationGate extends ConsumerWidget {
       authNotifierProvider.select((value) => value.isLoading),
     );
     if (hydrating || localeLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: BrandLoadingView(message: 'Customer Portal'));
     }
     return child;
   }

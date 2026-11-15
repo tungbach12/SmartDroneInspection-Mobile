@@ -3,79 +3,80 @@ import 'package:smart_drone_inspection/features/auth/domain/models/auth_user.dar
 import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dart';
 
 void main() {
-  group('AuthUser.fromJson', () {
-    test('parses and retains supported mobile roles', () {
-      const canonicalRoles = [
-        'ADMIN',
-        'PLATFORM_MANAGER',
-        'ORG_MANAGER',
-        'INSPECTOR',
-      ];
-      final user = AuthUser.fromJson({
-        'id': 'u1',
-        'email': 'a@b.c',
-        'fullName': 'A B',
-        'roles': canonicalRoles,
-        'organizationId': null,
-      });
-
-      expect(user.roles, [
-        UserRole.admin,
-        UserRole.platformManager,
-        UserRole.orgManager,
-        UserRole.inspector,
-      ]);
-      expect(user.roles.map((role) => role.code), canonicalRoles);
-      expect(UserRole.values.map((role) => role.code), canonicalRoles);
-      expect(user.organizationId, isNull);
+  group('UserRole.parse', () {
+    test('normalizes CUSTOMER and legacy ORG_MANAGER to customer', () {
+      expect(UserRole.parse('CUSTOMER'), UserRole.customer);
+      expect(UserRole.parse('ORG_MANAGER'), UserRole.customer);
+      expect(UserRole.parse(' org_manager '), UserRole.customer);
     });
 
-    test('does not accept legacy client or provider roles', () {
-      expect(UserRole.parse('CLIENT'), isNull);
-      expect(UserRole.parse('PROVIDER_MANAGER'), isNull);
-      expect(UserRole.parse('MAINTENANCE_ENGINEER'), isNull);
+    test('normalizes MANAGER and legacy PLATFORM_MANAGER to manager', () {
+      expect(UserRole.parse('MANAGER'), UserRole.manager);
+      expect(UserRole.parse('PLATFORM_MANAGER'), UserRole.manager);
+      expect(UserRole.parse('ADMIN'), UserRole.admin);
+      expect(UserRole.parse('INSPECTOR'), UserRole.inspector);
+      expect(
+        UserRole.parse('MAINTENANCE_ENGINEER'),
+        UserRole.maintenanceEngineer,
+      );
+    });
 
+    test('returns null for unknown or non-string roles', () {
+      expect(UserRole.parse('UNKNOWN_ROLE'), isNull);
+      expect(UserRole.parse(null), isNull);
+      expect(UserRole.parse(123), isNull);
+    });
+  });
+
+  group('AuthUser.fromJson', () {
+    test('parses Customer payload and sets isCustomer true', () {
       final user = AuthUser.fromJson({
-        'id': 'u1',
-        'email': 'a@b.c',
-        'fullName': 'A B',
-        'roles': ['ADMIN', 'CLIENT', 'PROVIDER_MANAGER', 'LEGACY_SUPERUSER'],
+        'id': 'user-1',
+        'email': 'customer@example.com',
+        'fullName': 'Minh Customer',
+        'roles': ['ORG_MANAGER', 'CUSTOMER'],
+        'phoneNumber': '+84901234567',
         'organizationId': 'org-1',
       });
 
-      expect(user.roles.map((role) => role.code), ['ADMIN']);
+      expect(user.id, 'user-1');
+      expect(user.email, 'customer@example.com');
+      expect(user.fullName, 'Minh Customer');
+      expect(user.roles, [UserRole.customer]);
+      expect(user.isCustomer, isTrue);
+      expect(user.phoneNumber, '+84901234567');
       expect(user.organizationId, 'org-1');
     });
 
-    test('UserRole.parse returns null for unknown', () {
-      expect(UserRole.parse('SERVICE_MANAGER'), isNull);
-      expect(UserRole.parse(42), isNull);
-    });
-
-    test('parses and copies pilot license information for inspector', () {
-      final user = AuthUser.fromJson({
-        'id': 'u1',
-        'email': 'inspector@test.com',
-        'fullName': 'Test Inspector',
+    test('identifies non-Customer account with isCustomer false', () {
+      final inspector = AuthUser.fromJson({
+        'id': 'user-2',
+        'email': 'inspector@example.com',
+        'fullName': 'Lan Inspector',
         'roles': ['INSPECTOR'],
-        'pilotLicenseNumber': 'VN-PL-9988',
-        'pilotLicenseClass': 'CLASS_A',
-        'pilotLicenseExpiresAt': '2028-12-31T23:59:59Z',
-        'pilotLicenseFileKey': 'licenses/u1.pdf',
       });
 
-      expect(user.pilotLicenseNumber, 'VN-PL-9988');
-      expect(user.pilotLicenseClass, 'CLASS_A');
-      expect(user.pilotLicenseExpiresAt, '2028-12-31T23:59:59Z');
-      expect(user.pilotLicenseFileKey, 'licenses/u1.pdf');
+      expect(inspector.hasRole(UserRole.inspector), isTrue);
+      expect(inspector.isCustomer, isFalse);
+    });
+
+    test('copyWith updates optional fields cleanly', () {
+      const user = AuthUser(
+        id: 'u1',
+        email: 'a@b.c',
+        fullName: 'A B',
+        roles: [UserRole.customer],
+      );
 
       final updated = user.copyWith(
-        pilotLicenseNumber: 'VN-PL-1122',
-        pilotLicenseClass: 'CLASS_B',
+        fullName: 'A Updated',
+        organizationId: 'org-9',
       );
-      expect(updated.pilotLicenseNumber, 'VN-PL-1122');
-      expect(updated.pilotLicenseClass, 'CLASS_B');
-      expect(updated.pilotLicenseExpiresAt, '2028-12-31T23:59:59Z');
+
+      expect(updated.fullName, 'A Updated');
+      expect(updated.organizationId, 'org-9');
+      expect(updated.email, 'a@b.c');
+      expect(updated.isCustomer, isTrue);
     });
   });
 }
