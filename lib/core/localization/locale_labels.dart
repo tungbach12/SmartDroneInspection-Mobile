@@ -1,10 +1,10 @@
 export 'app_localizations_context.dart'
     show
         localizedAssetStatus,
-        localizedAssignmentResponse,
-        localizedAssignmentStatus,
-        localizedChecklistChoice,
-        localizedDecision,
         localizedFieldSessionStatus,
+        localizedFindingSeverity,
+        localizedInspectionStatus,
+        localizedPaymentStatus,
+        localizedReportStatus,
         localizedRole,
-        localizedWorkflowStatus;
+        localizedServiceRequestStatus;

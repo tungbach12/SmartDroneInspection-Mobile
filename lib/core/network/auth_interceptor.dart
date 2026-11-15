@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_drone_inspection/core/network/providers.dart';
+import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/token_store.dart';
+import 'package:smart_drone_inspection/core/network/providers.dart';
+import 'package:smart_drone_inspection/features/auth/data/auth_repository.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 
 /// Wraps [Dio] with JWT attach and single-flight 401 refresh.
@@ -50,13 +52,18 @@ class AuthInterceptor extends Interceptor {
       if (refresh == null) {
         throw DioException(requestOptions: err.requestOptions);
       }
-      final response = await _ref
-          .read(refreshDioProvider)
-          .post('/mobile/auth/refresh', data: {'refreshToken': refresh});
-      await _tokens.save(
-        access: response.data['accessToken'] as String,
-        refresh: response.data['refreshToken'] as String,
-      );
+      final res = await _ref
+          .read(authRepositoryProvider)
+          .refresh(refreshToken: refresh);
+      switch (res) {
+        case ApiSuccess(:final data) when data.accessToken != null:
+          await _tokens.save(
+            access: data.accessToken!,
+            refresh: data.refreshToken ?? refresh,
+          );
+        default:
+          throw DioException(requestOptions: err.requestOptions);
+      }
       _refreshLock!.complete();
     } catch (e) {
       _refreshLock!.completeError(e);

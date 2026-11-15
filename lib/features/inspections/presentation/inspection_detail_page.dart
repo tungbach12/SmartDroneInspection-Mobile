@@ -1,22 +1,28 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:smart_drone_inspection/core/localization/app_localizations_context.dart';
-import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
+import 'package:smart_drone_inspection/core/utils/formatters.dart';
+import 'package:smart_drone_inspection/features/auth/presentation/auth_error_helper.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
-import 'package:smart_drone_inspection/features/inspections/domain/models/field_session.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
-import 'package:smart_drone_inspection/features/inspections/presentation/widgets/airspace_advisory_card.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
+import 'package:smart_drone_inspection/shared/widgets/common_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InspectionDetailPage extends ConsumerStatefulWidget {
-  const InspectionDetailPage({required this.inspectionId, super.key});
+  const InspectionDetailPage({
+    super.key,
+    required this.inspectionId,
+    this.initialTab = 0,
+  });
 
   final String inspectionId;
+  final int initialTab;
 
   @override
   ConsumerState<InspectionDetailPage> createState() =>
@@ -24,628 +30,1135 @@ class InspectionDetailPage extends ConsumerStatefulWidget {
 }
 
 class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
-  XFile? _selectedPhoto;
-  DateTime? _captureTime;
-  bool _uploadingPhoto = false;
-  String? _photoUploadError;
+  String? _selectedVersionId;
+  bool _actionBusy = false;
 
-  XFile? _selectedVideo;
-  bool _uploadingVideo = false;
-  String? _videoUploadError;
-
-  XFile? _selectedPermit;
-  bool _uploadingPermit = false;
-  String? _permitUploadError;
-  String? _operationError;
-
-  Future<void> _capturePhoto() async {
-    setState(() {
-      _photoUploadError = null;
-      _operationError = null;
-    });
-    try {
-      final photo = await ref.read(inspectionPhotoPickerProvider)();
-      if (!mounted || photo == null) return;
-      setState(() {
-        _selectedPhoto = photo;
-        _captureTime = DateTime.now().toUtc();
-      });
-    } on Exception {
-      if (!mounted) return;
-      setState(() {
-        _operationError = context.l10n.cameraPermissionError;
-      });
-    }
+  void _refreshBundle() {
+    ref.invalidate(inspectionBundleProvider(widget.inspectionId));
+    ref.read(inspectionsNotifierProvider.notifier).refresh();
   }
 
-  Future<void> _uploadPhoto() async {
-    final photo = _selectedPhoto;
-    final captureTime = _captureTime;
-    if (photo == null || captureTime == null) return;
-
-    final sessionsResult = await ref
+  Future<void> _openEvidence(InspectionEvidence item) async {
+    setState(() => _actionBusy = true);
+    final res = await ref
         .read(inspectionRepositoryProvider)
-        .listFieldSessions(widget.inspectionId);
-    if (!mounted) return;
-    final completedSessionId = switch (sessionsResult) {
-      ApiSuccess<List<FieldSession>>(:final data) =>
-        data.where((session) => session.isCompleted).lastOrNull?.id,
-      ApiError<List<FieldSession>>() => null,
-    };
-    if (completedSessionId == null) {
-      setState(() {
-        _photoUploadError = context.l10n.completeSessionBeforeEvidence;
-      });
-      return;
-    }
-    setState(() {
-      _uploadingPhoto = true;
-      _photoUploadError = null;
-      _operationError = null;
-    });
-    final result = await ref
-        .read(inspectionRepositoryProvider)
-        .uploadEvidence(
+        .downloadEvidenceBytes(
           inspectionId: widget.inspectionId,
-          file: photo,
-          captureTime: captureTime,
-          fieldSessionId: completedSessionId,
+          evidenceId: item.id,
         );
     if (!mounted) return;
-    switch (result) {
-      case ApiSuccess<InspectionEvidence>():
-        ref.invalidate(inspectionEvidenceProvider(widget.inspectionId));
-        setState(() {
-          _selectedPhoto = null;
-          _captureTime = null;
-          _uploadingPhoto = false;
-        });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(context.l10n.evidenceUploaded)));
-      case ApiError<InspectionEvidence>(:final failure):
-        setState(() {
-          _uploadingPhoto = false;
-          _photoUploadError = _failureMessage(context, failure);
-        });
-    }
-  }
+    setState(() => _actionBusy = false);
 
-  Future<void> _pickVideoFile() async {
-    setState(() {
-      _videoUploadError = null;
-    });
-    try {
-      final video = await ref.read(inspectionVideoPickerProvider)();
-      if (!mounted || video == null) return;
-      setState(() {
-        _selectedVideo = video;
-      });
-    } on Exception {
-      if (!mounted) return;
-      setState(() {
-        _videoUploadError = context.l10n.filePickerError;
-      });
-    }
-  }
-
-  Future<void> _uploadVideo() async {
-    final video = _selectedVideo;
-    if (video == null) return;
-
-    int fileSize;
-    try {
-      fileSize = await video.length();
-    } on Exception {
-      if (!mounted) return;
-      setState(() {
-        _videoUploadError = context.l10n.filePickerError;
-      });
-      return;
-    }
-    if (!mounted) return;
-    if (fileSize > EvidenceUploadLimit.maxBytes) {
-      setState(() {
-        _videoUploadError = context.l10n.evidenceFileTooLarge('10 MiB');
-      });
-      return;
-    }
-
-    final sessionsResult = await ref
-        .read(inspectionRepositoryProvider)
-        .listFieldSessions(widget.inspectionId);
-    if (!mounted) return;
-    final completedSessionId = switch (sessionsResult) {
-      ApiSuccess<List<FieldSession>>(:final data) =>
-        data.where((session) => session.isCompleted).lastOrNull?.id,
-      ApiError<List<FieldSession>>() => null,
-    };
-    if (completedSessionId == null) {
-      setState(() {
-        _videoUploadError = context.l10n.completeSessionBeforeEvidence;
-      });
-      return;
-    }
-
-    setState(() {
-      _uploadingVideo = true;
-      _videoUploadError = null;
-    });
-    final result = await ref
-        .read(inspectionRepositoryProvider)
-        .uploadEvidence(
-          inspectionId: widget.inspectionId,
-          file: video,
-          fieldSessionId: completedSessionId,
-        );
-    if (!mounted) return;
-    switch (result) {
-      case ApiSuccess<InspectionEvidence>():
-        ref.invalidate(inspectionEvidenceProvider(widget.inspectionId));
-        setState(() {
-          _selectedVideo = null;
-          _uploadingVideo = false;
-        });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(context.l10n.evidenceUploaded)));
-      case ApiError<InspectionEvidence>(:final failure):
-        setState(() {
-          _uploadingVideo = false;
-          _videoUploadError = _failureMessage(context, failure);
-        });
-    }
-  }
-
-  Future<void> _pickPermitFile() async {
-    setState(() {
-      _permitUploadError = null;
-    });
-    try {
-      final file = await ref.read(flightPermitPickerProvider)();
-      if (!mounted || file == null) return;
-      setState(() {
-        _selectedPermit = file;
-      });
-    } on Exception {
-      if (!mounted) return;
-      setState(() {
-        _permitUploadError = 'Could not access file chooser.';
-      });
-    }
-  }
-
-  Future<void> _uploadPermit() async {
-    final file = _selectedPermit;
-    if (file == null) return;
-    setState(() {
-      _uploadingPermit = true;
-      _permitUploadError = null;
-    });
-    final result = await ref
-        .read(inspectionRepositoryProvider)
-        .uploadFlightPermit(inspectionId: widget.inspectionId, file: file);
-    if (!mounted) return;
-    switch (result) {
-      case ApiSuccess<Inspection>():
-        ref.invalidate(inspectionDetailProvider(widget.inspectionId));
-        setState(() {
-          _selectedPermit = null;
-          _uploadingPermit = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Flight permit uploaded. Inspection ready for flight!',
+    switch (res) {
+      case ApiSuccess(:final data):
+        if (item.isImage) {
+          await showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(item.fileName),
+              content: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.memory(data, fit: BoxFit.contain),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final saved = await FilePicker.saveFile(
+                      dialogTitle: item.fileName,
+                      fileName: item.fileName,
+                      bytes: data,
+                    );
+                    if (ctx.mounted && saved != null) {
+                      Navigator.of(ctx).pop();
+                    }
+                  },
+                  child: Text(context.l10n.download),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(context.l10n.close),
+                ),
+              ],
             ),
-          ),
+          );
+        } else {
+          final saved = await FilePicker.saveFile(
+            dialogTitle: item.fileName,
+            fileName: item.fileName,
+            bytes: data,
+          );
+          if (mounted && saved != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(context.l10n.documentSavedTo(item.fileName)),
+              ),
+            );
+          }
+        }
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
         );
-      case ApiError<Inspection>(:final failure):
-        setState(() {
-          _uploadingPermit = false;
-          _permitUploadError = _failureMessage(context, failure);
-        });
+    }
+  }
+
+  Future<void> _downloadReportPdf(InspectionReportVersion version) async {
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .downloadOfficialReportPdf(
+          inspectionId: widget.inspectionId,
+          versionId: version.id,
+        );
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess(:final data):
+        final fileName = 'inspection-report-v${version.versionNo}.pdf';
+        final saved = await FilePicker.saveFile(
+          dialogTitle: fileName,
+          fileName: fileName,
+          bytes: data,
+        );
+        if (mounted && saved != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.documentSavedTo(fileName))),
+          );
+        }
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
+    }
+  }
+
+  Future<void> _acceptReport(InspectionReportVersion version) async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.acceptReport),
+        content: Text(l10n.acceptReportConfirm(version.versionNo)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .acceptReport(inspectionId: widget.inspectionId, versionId: version.id);
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess():
+        _refreshBundle();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.reportAcceptedSuccess)));
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
+    }
+  }
+
+  Future<void> _requestClarification(
+    InspectionReportVersion version,
+    int priorCount,
+  ) async {
+    final l10n = context.l10n;
+    if (priorCount >= 2) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.clarificationTitle),
+          content: Text(l10n.clarificationLimitReached),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final reasonCtrl = TextEditingController();
+    final submitted = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.clarificationTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.clarificationPolicyNote(priorCount + 1),
+              style: Theme.of(ctx).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: reasonCtrl,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: l10n.clarificationReasonHint,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+    final reason = reasonCtrl.text.trim();
+    reasonCtrl.dispose();
+    if (submitted != true || reason.isEmpty || !mounted) return;
+
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .requestReportClarification(
+          inspectionId: widget.inspectionId,
+          versionId: version.id,
+          reason: reason,
+        );
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess():
+        _refreshBundle();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.clarificationSubmitted)));
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
+    }
+  }
+
+  Future<void> _payWithPayos() async {
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .createPayosPaymentLink(widget.inspectionId);
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess(:final data):
+        final uri = Uri.tryParse(data.checkoutUrl);
+        if (uri != null) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.payosOrderReady(data.orderCode))),
+        );
+        _refreshBundle();
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
+    }
+  }
+
+  Future<void> _payWithVnpay() async {
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .createVnpayPaymentUrl(widget.inspectionId);
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess(:final data):
+        final uri = Uri.tryParse(data.checkoutUrl);
+        if (uri != null) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+        _refreshBundle();
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final inspectionAsync = ref.watch(
-      inspectionDetailProvider(widget.inspectionId),
+    final l10n = context.l10n;
+    final bundleAsync = ref.watch(
+      inspectionBundleProvider(widget.inspectionId),
     );
-    final evidence = ref.watch(inspectionEvidenceProvider(widget.inspectionId));
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back),
-          tooltip: context.l10n.backToAssignments,
-        ),
-        title: Text(context.l10n.inspectionRecord),
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(inspectionDetailProvider(widget.inspectionId));
-          ref.invalidate(inspectionEvidenceProvider(widget.inspectionId));
-          await Future.wait([
-            ref.read(inspectionDetailProvider(widget.inspectionId).future),
-            ref.read(inspectionEvidenceProvider(widget.inspectionId).future),
-          ]);
-        },
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Text(
-              context.l10n.inspectionNumber(
-                widget.inspectionId.length >= 8
-                    ? widget.inspectionId.substring(0, 8)
-                    : widget.inspectionId,
-              ),
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: () =>
-                  context.push('/inspection/${widget.inspectionId}/session'),
-              icon: const Icon(Icons.flight_takeoff_outlined),
-              label: Text(context.l10n.openFieldSession),
-            ),
-            if (_operationError != null) ...[
-              const SizedBox(height: 12),
-              _InlineError(message: _operationError!),
+    return DefaultTabController(
+      length: 3,
+      initialIndex: widget.initialTab.clamp(0, 2),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.inspectionDetailTitle),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: l10n.tabTracking),
+              Tab(text: l10n.tabOfficialReport),
+              Tab(text: l10n.tabSettlement),
             ],
-            const SizedBox(height: 16),
-            AsyncValueWidget<Inspection>(
-              value: inspectionAsync,
-              onRetry: () =>
-                  ref.invalidate(inspectionDetailProvider(widget.inspectionId)),
-              builder: (inspection) => Column(
+          ),
+        ),
+        body: AsyncValueWidget<CustomerInspectionBundle>(
+          value: bundleAsync,
+          onRetry: _refreshBundle,
+          builder: (bundle) {
+            final versions = bundle.reportVersions;
+            final openVersion = versions.isEmpty
+                ? null
+                : versions.firstWhere(
+                    (v) => v.id == _selectedVersionId,
+                    orElse: () => versions.first,
+                  );
+
+            return TabBarView(
+              children: [
+                _TrackingTab(
+                  bundle: bundle,
+                  busy: _actionBusy,
+                  onRefresh: () async => _refreshBundle(),
+                  onTapEvidence: _openEvidence,
+                ),
+                _OfficialReportTab(
+                  inspectionId: widget.inspectionId,
+                  bundle: bundle,
+                  openVersion: openVersion,
+                  busy: _actionBusy,
+                  onSelectVersion: (id) =>
+                      setState(() => _selectedVersionId = id),
+                  onRefresh: () async => _refreshBundle(),
+                  onDownloadPdf: _downloadReportPdf,
+                ),
+                _SettlementTab(
+                  bundle: bundle,
+                  openVersion: openVersion,
+                  busy: _actionBusy,
+                  onRefresh: () async => _refreshBundle(),
+                  onAcceptReport: _acceptReport,
+                  onRequestClarification: _requestClarification,
+                  onPayPayos: _payWithPayos,
+                  onPayVnpay: _payWithVnpay,
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _TrackingTab extends StatelessWidget {
+  const _TrackingTab({
+    required this.bundle,
+    required this.busy,
+    required this.onRefresh,
+    required this.onTapEvidence,
+  });
+
+  final CustomerInspectionBundle bundle;
+  final bool busy;
+  final Future<void> Function() onRefresh;
+  final void Function(InspectionEvidence) onTapEvidence;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final inspection = bundle.inspection;
+    final status = bundle.workflowState?.status ?? inspection.status;
+    final hasPublished = bundle.reportVersions.any((v) => v.isPublished);
+
+    final s1 = [
+      'IN_PROGRESS',
+      'FIELD_COMPLETED',
+      'UNDER_REVIEW',
+      'COMPLETED',
+    ].contains(status);
+    final s2 = [
+      'FIELD_COMPLETED',
+      'UNDER_REVIEW',
+      'COMPLETED',
+    ].contains(status);
+    final s3 = ['UNDER_REVIEW', 'COMPLETED'].contains(status);
+    final s4 = status == 'COMPLETED' || hasPublished;
+    final s5 = hasPublished;
+
+    final milestones = [
+      (l10n.milestoneMissionSetup, s1),
+      (l10n.milestoneDroneFlight, s2),
+      (l10n.milestoneEvidenceAi, s3),
+      (l10n.milestoneManagerReview, s4),
+      (l10n.milestonePublished, s5),
+    ];
+
+    final confirmedFindings = bundle.findings
+        .where((f) => f.status == 'CONFIRMED' || s3)
+        .toList();
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _InspectionOverviewCard(inspection: inspection),
-                  const SizedBox(height: 16),
-                  _FlightPermitCard(
-                    inspection: inspection,
-                    selectedFile: _selectedPermit,
-                    uploading: _uploadingPermit,
-                    uploadError: _permitUploadError,
-                    onPickFile: _pickPermitFile,
-                    onUpload: _uploadPermit,
-                  ),
-                  const SizedBox(height: 16),
-                  AirspaceAdvisoryCard(assetName: inspection.assetName),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Inspection Items',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          inspection.assetName ?? inspection.assetId,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      StatusPill(
+                        label: localizedInspectionStatus(l10n, status),
+                        tone: statusToneForCode(status),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  _InspectionItemsCard(items: inspection.inspectionItems),
+                  if (inspection.plannedStartAt != null)
+                    Text(
+                      '${formatDateTimeShort(inspection.plannedStartAt)} → ${formatDateTimeShort(inspection.plannedEndAt)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  if (inspection.droneSerialNumber != null ||
+                      inspection.droneModel != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      '${l10n.assignedDroneLabel}: ${[inspection.droneModel, inspection.droneSerialNumber].whereType<String>().join(' · ')}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                  if (inspection.flightPermitFileName != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      '${l10n.flightPermitLabel}: ${inspection.flightPermitFileName}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              context.l10n.evidence,
-              style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.progressMilestonesTitle,
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 10),
+                  for (var i = 0; i < milestones.length; i++)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Row(
+                        children: [
+                          Icon(
+                            milestones[i].$2
+                                ? Icons.check_circle_rounded
+                                : Icons.radio_button_unchecked_rounded,
+                            size: 20,
+                            color: milestones[i].$2
+                                ? const Color(0xFF16A34A)
+                                : Theme.of(context).colorScheme.outline,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(child: Text(milestones[i].$1)),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 12),
+
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.fieldSessionsTitle,
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 8),
+                  if (bundle.fieldSessions.isEmpty)
+                    Text(
+                      l10n.noFieldSessionsYet,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
+                  else
+                    for (final s in bundle.fieldSessions)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Row(
+                          children: [
+                            StatusPill(
+                              label: localizedFieldSessionStatus(
+                                l10n,
+                                s.status,
+                              ),
+                              tone: statusToneForCode(s.status),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                formatDateTimeShort(s.startedAt),
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ],
+                        ),
+                        subtitle: Text(
+                          s.outcomeNotes ??
+                              s.abortReason ??
+                              s.postponementReason ??
+                              s.preFlightChecklistNote ??
+                              '',
+                        ),
+                      ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.evidenceGalleryTitle(bundle.evidence.length),
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 8),
+                  if (bundle.evidence.isEmpty)
+                    Text(
+                      l10n.noEvidenceYet,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
+                  else
+                    for (final ev in bundle.evidence)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(
+                          ev.isVideo
+                              ? Icons.videocam_outlined
+                              : Icons.photo_outlined,
+                        ),
+                        title: Text(ev.fileName),
+                        subtitle: Text(
+                          '${formatBytes(ev.sizeBytes)} · ${formatDateTimeShort(ev.createdAt)}',
+                        ),
+                        trailing: const Icon(Icons.open_in_new_rounded),
+                        onTap: busy ? null : () => onTapEvidence(ev),
+                      ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.confirmedFindingsTitle(confirmedFindings.length),
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 8),
+                  if (confirmedFindings.isEmpty)
+                    Text(
+                      l10n.noFindingsYet,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
+                  else
+                    for (final f in confirmedFindings) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    f.defectLabel,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                StatusPill(
+                                  label: localizedFindingSeverity(
+                                    l10n,
+                                    f.severity,
+                                  ),
+                                  tone: statusToneForCode(f.severity),
+                                ),
+                              ],
+                            ),
+                            if (f.technicalNotes.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(f.technicalNotes),
+                            ],
+                            if (f.recommendedAction != null &&
+                                f.recommendedAction!.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.recommendedActionPrefix(
+                                  f.recommendedAction!,
+                                ),
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const Divider(),
+                    ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OfficialReportTab extends ConsumerWidget {
+  const _OfficialReportTab({
+    required this.inspectionId,
+    required this.bundle,
+    required this.openVersion,
+    required this.busy,
+    required this.onSelectVersion,
+    required this.onRefresh,
+    required this.onDownloadPdf,
+  });
+
+  final String inspectionId;
+  final CustomerInspectionBundle bundle;
+  final InspectionReportVersion? openVersion;
+  final bool busy;
+  final ValueChanged<String> onSelectVersion;
+  final Future<void> Function() onRefresh;
+  final ValueChanged<InspectionReportVersion> onDownloadPdf;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    if (bundle.reportVersions.isEmpty || openVersion == null) {
+      return EmptyState(
+        icon: Icons.description_outlined,
+        title: l10n.noReportVersionsYet,
+      );
+    }
+
+    final aiAsync = ref.watch(
+      reportAiSummaryProvider((
+        inspectionId: inspectionId,
+        versionId: openVersion!.id,
+      )),
+    );
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (bundle.reportVersions.length > 1)
+                    DropdownButtonFormField<String>(
+                      initialValue: openVersion!.id,
+                      items: [
+                        for (final v in bundle.reportVersions)
+                          DropdownMenuItem(
+                            value: v.id,
+                            child: Text(
+                              '${l10n.reportVersionLabel(v.versionNo)} · ${localizedReportStatus(l10n, v.status)}',
+                            ),
+                          ),
+                      ],
+                      onChanged: (id) {
+                        if (id != null) onSelectVersion(id);
+                      },
+                    )
+                  else
+                    Row(
+                      children: [
+                        Text(
+                          l10n.reportVersionLabel(openVersion!.versionNo),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const Spacer(),
+                        StatusPill(
+                          label: localizedReportStatus(
+                            l10n,
+                            openVersion!.status,
+                          ),
+                          tone: statusToneForCode(openVersion!.status),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 12),
+                  if (openVersion!.publishedAt != null)
+                    Text(
+                      formatDateTimeShort(openVersion!.publishedAt),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  const SizedBox(height: 12),
+                  if (openVersion!.isPublished)
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        key: const Key('download-official-pdf-btn'),
+                        onPressed: busy
+                            ? null
+                            : () => onDownloadPdf(openVersion!),
+                        icon: const Icon(Icons.picture_as_pdf_outlined),
+                        label: Text(l10n.downloadOfficialPdf),
+                      ),
+                    )
+                  else
+                    Text(
+                      l10n.reportUnpublishedNotice,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.aiExecutiveSummaryTitle,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  aiAsync.when(
+                    data: (ai) {
+                      final summaryText =
+                          ai?.summary ?? openVersion!.summary ?? '';
+                      if (summaryText.isEmpty && ai == null) {
+                        return Text(l10n.nothingHereYet);
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (ai != null) ...[
+                            StatusPill(
+                              label: l10n.overallRiskLabel(ai.overallRisk),
+                              tone: statusToneForCode(ai.overallRisk),
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                          if (summaryText.isNotEmpty) Text(summaryText),
+                          if (ai != null && ai.keyHighlights.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              l10n.keyHighlightsLabel,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            for (final h in ai.keyHighlights)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Text('• $h'),
+                              ),
+                          ],
+                          if (ai != null &&
+                              ai.recommendedActions.isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            Text(
+                              l10n.recommendedActionsLabel,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(ai.recommendedActions),
+                          ],
+                        ],
+                      );
+                    },
+                    loading: () => const LinearProgressIndicator(),
+                    error: (_, _) =>
+                        Text(openVersion!.summary ?? l10n.nothingHereYet),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SettlementTab extends StatelessWidget {
+  const _SettlementTab({
+    required this.bundle,
+    required this.openVersion,
+    required this.busy,
+    required this.onRefresh,
+    required this.onAcceptReport,
+    required this.onRequestClarification,
+    required this.onPayPayos,
+    required this.onPayVnpay,
+  });
+
+  final CustomerInspectionBundle bundle;
+  final InspectionReportVersion? openVersion;
+  final bool busy;
+  final Future<void> Function() onRefresh;
+  final ValueChanged<InspectionReportVersion> onAcceptReport;
+  final void Function(InspectionReportVersion, int priorCount)
+  onRequestClarification;
+  final VoidCallback onPayPayos;
+  final VoidCallback onPayVnpay;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    if (openVersion == null || !openVersion!.isPublished) {
+      return EmptyState(
+        icon: Icons.payments_outlined,
+        title: l10n.noReportVersionsYet,
+      );
+    }
+
+    final payment = bundle.paymentStatus;
+    final isPaid = payment?.paid ?? bundle.inspection.isPaid;
+    final isAccepted =
+        (payment?.reportAccepted ??
+            bundle.inspection.reportAccepted ??
+            false) ||
+        isPaid;
+    final priorClarifications = bundle.inspection.clarificationCount > 0
+        ? bundle.inspection.clarificationCount
+        : bundle.reportVersions.where((v) => v.clarificationRequested).length;
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _MilestoneRow(
+                    title: l10n.settlementStepAccept,
+                    done: isAccepted,
+                    active: !isAccepted,
+                  ),
+                  _MilestoneRow(
+                    title: l10n.settlementStepPay,
+                    done: isPaid,
+                    active: isAccepted && !isPaid,
+                  ),
+                  _MilestoneRow(
+                    title: l10n.settlementStepFulfilled,
+                    done: isPaid,
+                    active: false,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          if (payment?.amount != null && payment!.amount! > 0) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    OutlinedButton.icon(
-                      onPressed: _uploadingPhoto ? null : _capturePhoto,
-                      icon: const Icon(Icons.photo_camera_outlined),
-                      label: Text(context.l10n.captureInspectionPhoto),
+                    Text(
+                      l10n.serviceInvoiceTitle,
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700),
                     ),
-                    if (_selectedPhoto != null) ...[
-                      const SizedBox(height: 8),
-                      Text(context.l10n.selectedFile(_selectedPhoto!.name)),
-                      const SizedBox(height: 8),
-                      FilledButton.icon(
-                        onPressed: _uploadingPhoto ? null : _uploadPhoto,
-                        icon: const Icon(Icons.cloud_upload_outlined),
-                        label: Text(
-                          _uploadingPhoto
-                              ? context.l10n.uploading
-                              : _photoUploadError == null
-                              ? context.l10n.uploadPhoto
-                              : context.l10n.retryUpload,
+                    const SizedBox(height: 10),
+                    if (payment.serviceBaseAmount != null)
+                      _InvoiceLine(
+                        label: l10n.preVatBase,
+                        value: formatVnd(payment.serviceBaseAmount),
+                      ),
+                    if (payment.vatRate != null && payment.vatAmount != null)
+                      _InvoiceLine(
+                        label: l10n.vatLabel(
+                          payment.vatRate!.toStringAsFixed(0),
                         ),
+                        value: '+${formatVnd(payment.vatAmount)}',
                       ),
-                    ],
-                    if (_photoUploadError != null) ...[
-                      const SizedBox(height: 8),
-                      _InlineError(
-                        message: context.l10n.uploadFailed(_photoUploadError!),
-                      ),
-                    ],
-                    const SizedBox(height: 16),
-                    OutlinedButton.icon(
-                      key: const Key('choose-video-file-btn'),
-                      onPressed: _uploadingVideo ? null : _pickVideoFile,
-                      icon: const Icon(Icons.video_library_outlined),
-                      label: Text(context.l10n.selectVideoFile),
+                    const Divider(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isPaid ? l10n.totalPaid : l10n.amountToPay,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          formatVnd(payment.amount),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: isPaid
+                                    ? const Color(0xFF16A34A)
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
+                      ],
                     ),
-                    if (_selectedVideo != null) ...[
-                      const SizedBox(height: 8),
-                      Text(context.l10n.selectedVideo(_selectedVideo!.name)),
-                      const SizedBox(height: 8),
-                      FilledButton.icon(
-                        key: const Key('upload-video-evidence-btn'),
-                        onPressed: _uploadingVideo ? null : _uploadVideo,
-                        icon: const Icon(Icons.cloud_upload_outlined),
-                        label: Text(
-                          _uploadingVideo
-                              ? context.l10n.uploading
-                              : _videoUploadError == null
-                              ? context.l10n.uploadVideoEvidence
-                              : context.l10n.retryVideoUpload,
-                        ),
-                      ),
-                    ],
-                    if (_videoUploadError != null) ...[
-                      const SizedBox(height: 8),
-                      _InlineError(message: _videoUploadError!),
-                    ],
                   ],
                 ),
               ),
             ),
-            AsyncValueWidget<List<InspectionEvidence>>(
-              value: evidence,
-              onRetry: () => ref.invalidate(
-                inspectionEvidenceProvider(widget.inspectionId),
-              ),
-              emptyCheck: (items) => items.isEmpty,
-              builder: (items) => Card(
-                child: Column(
-                  children: items
-                      .map(
-                        (item) => ListTile(
-                          leading: Icon(
-                            item.contentType.startsWith('video/')
-                                ? Icons.video_file_outlined
-                                : item.contentType.startsWith('image/')
-                                ? Icons.image_outlined
-                                : Icons.insert_drive_file_outlined,
-                          ),
-                          title: Text(item.fileName),
-                          subtitle: Text(
-                            '${item.contentType} · ${item.sizeBytes} bytes',
-                          ),
-                          trailing: !item.isDeleted
-                              ? null
-                              : const Chip(label: Text('Retired')),
+            const SizedBox(height: 12),
+          ],
+
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: isPaid
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.verified_rounded,
+                              color: Color(0xFF16A34A),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                l10n.paymentPaidBanner,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF16A34A),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      )
-                      .toList(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _InspectionOverviewCard extends StatelessWidget {
-  const _InspectionOverviewCard({required this.inspection});
-
-  final Inspection inspection;
-
-  @override
-  Widget build(BuildContext context) {
-    final (statusLabel, statusColor) = switch (inspection.status) {
-      'ASSIGNED' => ('Assigned', Colors.orange),
-      'READY_FOR_FLIGHT' => ('Ready for Flight', Colors.blue),
-      'IN_PROGRESS' => ('In Progress', Colors.teal),
-      'FIELD_COMPLETED' => ('Field Completed', Colors.green),
-      _ => (inspection.status, Colors.grey),
-    };
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    inspection.assetName ?? 'Asset #${inspection.assetId}',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                Chip(
-                  visualDensity: VisualDensity.compact,
-                  label: Text(
-                    statusLabel,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: statusColor.shade900,
-                      fontWeight: FontWeight.bold,
+                        if (payment?.orderCode != null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            '${payment?.paymentMethod ?? 'PayOS'} #${payment!.orderCode}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ],
+                    )
+                  : isAccepted
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          l10n.net15Notice,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 14),
+                        FilledButton.icon(
+                          key: const Key('pay-vnpay-btn'),
+                          onPressed: busy ? null : onPayVnpay,
+                          icon: const Icon(Icons.open_in_new_rounded),
+                          label: Text(l10n.payWithVnpay),
+                        ),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          key: const Key('pay-payos-btn'),
+                          onPressed: busy ? null : onPayPayos,
+                          icon: const Icon(Icons.qr_code_2_rounded),
+                          label: Text(l10n.payWithPayos),
+                        ),
+                        const SizedBox(height: 8),
+                        TextButton.icon(
+                          onPressed: busy ? null : onRefresh,
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: Text(l10n.refreshPaymentStatus),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FilledButton.icon(
+                          key: const Key('accept-report-btn'),
+                          onPressed: busy
+                              ? null
+                              : () => onAcceptReport(openVersion!),
+                          icon: const Icon(Icons.check_circle_outline),
+                          label: Text(l10n.acceptReport),
+                        ),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          key: const Key('request-clarification-btn'),
+                          onPressed: busy
+                              ? null
+                              : () => onRequestClarification(
+                                  openVersion!,
+                                  priorClarifications,
+                                ),
+                          icon: const Icon(Icons.help_outline_rounded),
+                          label: Text(l10n.requestClarification),
+                        ),
+                      ],
                     ),
-                  ),
-                  backgroundColor: statusColor.shade50,
-                  side: BorderSide(color: statusColor.shade300),
-                ),
-              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Drone: ${inspection.droneModel ?? "Model N/A"} (${inspection.droneSerialNumber ?? "Serial N/A"})',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _FlightPermitCard extends StatelessWidget {
-  const _FlightPermitCard({
-    required this.inspection,
-    required this.selectedFile,
-    required this.uploading,
-    required this.uploadError,
-    required this.onPickFile,
-    required this.onUpload,
+class _MilestoneRow extends StatelessWidget {
+  const _MilestoneRow({
+    required this.title,
+    required this.done,
+    required this.active,
   });
 
-  final Inspection inspection;
-  final XFile? selectedFile;
-  final bool uploading;
-  final String? uploadError;
-  final VoidCallback onPickFile;
-  final VoidCallback onUpload;
+  final String title;
+  final bool done;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
-    final hasPermit = inspection.hasFlightPermit;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  hasPermit ? Icons.verified : Icons.assignment_outlined,
-                  color: hasPermit ? Colors.green : Colors.orange,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Flight Permit',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Icon(
+            done
+                ? Icons.check_circle_rounded
+                : active
+                ? Icons.radio_button_checked_rounded
+                : Icons.radio_button_unchecked_rounded,
+            size: 20,
+            color: done
+                ? const Color(0xFF16A34A)
+                : active
+                ? scheme.primary
+                : scheme.outline,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+              ),
             ),
-            const SizedBox(height: 8),
-            if (hasPermit) ...[
-              Text(
-                'Permit file: ${inspection.flightPermitFileName ?? "Attached"}',
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              if (inspection.flightPermitUploadedAt != null)
-                Text(
-                  'Uploaded at: ${inspection.flightPermitUploadedAt!.split("T").first}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              const SizedBox(height: 8),
-            ] else ...[
-              const Text(
-                'A flight permit is required before starting field flight sessions.',
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                key: const Key('choose-permit-file-btn'),
-                onPressed: uploading ? null : onPickFile,
-                icon: const Icon(Icons.attach_file),
-                label: Text(
-                  selectedFile == null ? 'Select Permit File' : 'Change File',
-                ),
-              ),
-              if (selectedFile != null) ...[
-                const SizedBox(height: 8),
-                Text('Selected: ${selectedFile!.name}'),
-                const SizedBox(height: 8),
-                FilledButton.icon(
-                  key: const Key('upload-permit-btn'),
-                  onPressed: uploading ? null : onUpload,
-                  icon: const Icon(Icons.cloud_upload_outlined),
-                  label: Text(
-                    uploading ? 'Uploading...' : 'Upload Flight Permit',
-                  ),
-                ),
-              ],
-              if (uploadError != null) ...[
-                const SizedBox(height: 8),
-                _InlineError(message: uploadError!),
-              ],
-            ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _InspectionItemsCard extends StatelessWidget {
-  const _InspectionItemsCard({required this.items});
+class _InvoiceLine extends StatelessWidget {
+  const _InvoiceLine({required this.label, required this.value});
 
-  final List<String> items;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('No inspection items specified for this asset.'),
-        ),
-      );
-    }
-
-    return Card(
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: items.length,
-        separatorBuilder: (_, _) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return ListTile(
-            dense: true,
-            leading: CircleAvatar(
-              radius: 12,
-              child: Text('${index + 1}', style: const TextStyle(fontSize: 11)),
-            ),
-            title: Text(item),
-          );
-        },
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.bodySmall),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }
 }
-
-class _InlineError extends StatelessWidget {
-  const _InlineError({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        message,
-        style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
-      ),
-    );
-  }
-}
-
-String _failureMessage(BuildContext context, ApiFailure failure) =>
-    switch (failure) {
-      NetworkFailure() => context.l10n.checkConnection,
-      ValidationFailure(:final errors) => errors.values.join('\n'),
-      UnauthorizedFailure() => context.l10n.unauthorizedInspection,
-      NotFoundFailure() => context.l10n.inspectionUnavailable,
-      ServerFailure(:final detail) => detail ?? context.l10n.requestFailed,
-      UnknownFailure(:final message) => message,
-    };

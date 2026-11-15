@@ -23,9 +23,13 @@ String _localizedApiFailure(BuildContext context, ApiFailure failure) =>
     switch (failure) {
       NetworkFailure() => context.l10n.cannotReachServer,
       ValidationFailure(:final errors) => errors.values.join(' '),
-      UnauthorizedFailure() => context.l10n.unauthorizedInspection,
+      UnauthorizedFailure() => context.l10n.invalidCredentials,
+      ForbiddenFailure(:final detail) =>
+        detail == customerOnlyErrorCode
+            ? context.l10n.customerOnlyAccessNotice
+            : (detail ?? context.l10n.accessDeniedError),
       NotFoundFailure() => context.l10n.notFoundError,
-      ServerFailure(:final detail) => detail ?? context.l10n.requestFailed,
+      ServerFailure(:final detail) => detail ?? context.l10n.serverError,
       UnknownFailure(:final message) => message,
     };
 

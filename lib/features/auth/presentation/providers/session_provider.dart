@@ -1,19 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/localization/locale_provider.dart';
+import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/auth/data/auth_repository.dart';
 import 'package:smart_drone_inspection/features/auth/domain/models/auth_session.dart';
-import 'package:smart_drone_inspection/features/auth/domain/models/auth_user.dart';
 
-/// Session source of truth. Hydrates on first build: loads persisted tokens,
-/// then best-effort refresh — valid session → authenticated; anything else
-/// → tokens cleared, anonymous.
+/// Session source of truth for the Customer-only mobile app.
+/// Hydrates on startup and enforces that only CUSTOMER accounts can enter.
 class AuthNotifier extends AsyncNotifier<AuthSession> {
   @override
   Future<AuthSession> build() async {
-    // The first refresh is a backend-managed response and must use the
-    // persisted locale rather than the temporary English startup fallback.
     await ref.read(localeNotifierProvider.future);
 
     final tokens = ref.watch(tokenStoreProvider);
@@ -28,8 +25,13 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
           .refresh(refreshToken: refresh);
       switch (result) {
         case ApiSuccess(:final data):
+          final user = data.user;
+          if (user == null || !user.isCustomer) {
+            await tokens.clear();
+            return const AuthSession.anonymous();
+          }
           if (data.requiresPasswordChange) {
-            return AuthSession.passwordChangeRequired(data.user);
+            return AuthSession.passwordChangeRequired(user);
           }
           final access = data.accessToken;
           final nextRefresh = data.refreshToken;
@@ -38,7 +40,7 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
             return const AuthSession.anonymous();
           }
           await tokens.save(access: access, refresh: nextRefresh);
-          return AuthSession.authenticated(data.user);
+          return AuthSession.authenticated(user);
         case ApiError():
           await tokens.clear();
           return const AuthSession.anonymous();
@@ -54,36 +56,33 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     required String password,
   }) async {
     state = const AsyncLoading<AuthSession>();
-    final tokens = ref.read(tokenStoreProvider);
     final result = await ref
         .read(authRepositoryProvider)
         .login(email: email, password: password);
-    switch (result) {
-      case ApiSuccess(:final data):
-        if (data.requiresPasswordChange) {
-          final session = AuthSession.passwordChangeRequired(data.user);
-          state = AsyncData<AuthSession>(session);
-          return ApiResult<AuthSession>.success(session);
-        }
-        final access = data.accessToken;
-        final nextRefresh = data.refreshToken;
-        if (access == null || nextRefresh == null) {
-          const session = AuthSession.anonymous();
-          state = const AsyncData<AuthSession>(session);
-          return const ApiResult<AuthSession>.success(session);
-        }
-        await tokens.save(access: access, refresh: nextRefresh);
-        final session = AuthSession.authenticated(data.user);
-        state = AsyncData<AuthSession>(session);
-        return ApiResult<AuthSession>.success(session);
-      case ApiError(:final failure):
-        const session = AuthSession.anonymous();
-        state = const AsyncData<AuthSession>(session);
-        return ApiResult<AuthSession>.failure(failure);
-    }
+    return _applyAuthFlowResult(result, email: email);
   }
 
-  Future<void> handleOAuthCallback({
+  Future<ApiResult<AuthSession>> verifyLoginOtp({
+    required String challengeToken,
+    required String code,
+  }) async {
+    state = const AsyncLoading<AuthSession>();
+    final result = await ref
+        .read(authRepositoryProvider)
+        .verifyLoginOtp(challengeToken: challengeToken, code: code);
+    return _applyAuthFlowResult(result);
+  }
+
+  Future<ApiResult<void>> sendLoginOtp({
+    required String challengeToken,
+    required String channel,
+  }) {
+    return ref
+        .read(authRepositoryProvider)
+        .sendLoginOtp(challengeToken: challengeToken, channel: channel);
+  }
+
+  Future<ApiResult<AuthSession>> handleOAuthCallback({
     required String accessToken,
     required String refreshToken,
   }) async {
@@ -93,13 +92,7 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     final result = await ref
         .read(authRepositoryProvider)
         .refresh(refreshToken: refreshToken);
-    switch (result) {
-      case ApiSuccess(:final data):
-        state = AsyncData<AuthSession>(AuthSession.authenticated(data.user));
-      case ApiError():
-        await tokens.clear();
-        state = const AsyncData<AuthSession>(AuthSession.anonymous());
-    }
+    return _applyAuthFlowResult(result);
   }
 
   Future<ApiResult<AuthSession>> completeInitialPasswordSetup({
@@ -108,7 +101,6 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     required String newPassword,
   }) async {
     state = const AsyncLoading<AuthSession>();
-    final tokens = ref.read(tokenStoreProvider);
     final result = await ref
         .read(authRepositoryProvider)
         .completeInitialPasswordSetup(
@@ -116,47 +108,33 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
           currentPassword: currentPassword,
           newPassword: newPassword,
         );
-    switch (result) {
-      case ApiSuccess(:final data):
-        final access = data.accessToken;
-        final nextRefresh = data.refreshToken;
-        if (data.requiresPasswordChange ||
-            access == null ||
-            nextRefresh == null) {
-          const session = AuthSession.anonymous();
-          state = const AsyncData<AuthSession>(session);
-          return const ApiResult<AuthSession>.success(session);
-        }
-        await tokens.save(access: access, refresh: nextRefresh);
-        final session = AuthSession.authenticated(data.user);
-        state = AsyncData<AuthSession>(session);
-        return ApiResult<AuthSession>.success(session);
-      case ApiError(:final failure):
-        const session = AuthSession.anonymous();
-        state = const AsyncData<AuthSession>(session);
-        return ApiResult<AuthSession>.failure(failure);
-    }
+    return _applyAuthFlowResult(result, email: email);
   }
 
-  Future<ApiResult<AuthUser>> updatePilotLicense({
-    required String licenseNumber,
-    required String licenseClass,
-    required DateTime expiresAt,
-    String? fileKey,
+  Future<ApiResult<void>> changePassword({
+    required String currentPassword,
+    required String newPassword,
   }) async {
-    final result = await ref.read(authRepositoryProvider).updatePilotLicense(
-          licenseNumber: licenseNumber,
-          licenseClass: licenseClass,
-          expiresAt: expiresAt,
-          fileKey: fileKey,
+    final result = await ref
+        .read(authRepositoryProvider)
+        .changePassword(
+          currentPassword: currentPassword,
+          newPassword: newPassword,
         );
-    switch (result) {
-      case ApiSuccess(:final data):
-        state = AsyncData<AuthSession>(AuthSession.authenticated(data));
-        return ApiResult.success(data);
-      case ApiError(:final failure):
-        return ApiResult.failure(failure);
+    if (result is ApiSuccess<void>) {
+      await ref.read(tokenStoreProvider).clear();
+      state = const AsyncData<AuthSession>(AuthSession.anonymous());
     }
+    return result;
+  }
+
+  Future<ApiResult<void>> logoutAll() async {
+    final result = await ref.read(authRepositoryProvider).logoutAll();
+    if (result is ApiSuccess<void>) {
+      await ref.read(tokenStoreProvider).clear();
+      state = const AsyncData<AuthSession>(AuthSession.anonymous());
+    }
+    return result;
   }
 
   Future<void> logout() async {
@@ -176,6 +154,71 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
   /// Hard reset used by the AuthInterceptor when a refresh retry fails.
   void invalidateSession() {
     state = const AsyncData<AuthSession>(AuthSession.anonymous());
+  }
+
+  Future<ApiResult<AuthSession>> _applyAuthFlowResult(
+    ApiResult<AuthFlow> result, {
+    String? email,
+  }) async {
+    final tokens = ref.read(tokenStoreProvider);
+    switch (result) {
+      case ApiSuccess(:final data):
+        if (data.requiresOtp && data.challengeToken != null) {
+          final session = AuthSession.otpRequired(
+            challengeToken: data.challengeToken!,
+            availableOtpChannels: data.availableOtpChannels,
+            pendingEmail: email,
+            user: data.user,
+          );
+          state = AsyncData<AuthSession>(session);
+          return ApiResult<AuthSession>.success(session);
+        }
+
+        final user = data.user;
+        if (user != null && !user.isCustomer) {
+          final refreshToRevoke = data.refreshToken ?? tokens.refresh;
+          if (refreshToRevoke != null && refreshToRevoke.isNotEmpty) {
+            try {
+              await ref
+                  .read(authRepositoryProvider)
+                  .logout(refreshToken: refreshToRevoke);
+            } catch (_) {
+              // Ignore best-effort revocation failures.
+            }
+          }
+          await tokens.clear();
+          state = const AsyncData<AuthSession>(AuthSession.anonymous());
+          return const ApiResult<AuthSession>.failure(
+            ApiFailure.forbidden(customerOnlyErrorCode),
+          );
+        }
+
+        if (data.requiresPasswordChange && user != null) {
+          final session = AuthSession.passwordChangeRequired(user);
+          state = AsyncData<AuthSession>(session);
+          return ApiResult<AuthSession>.success(session);
+        }
+
+        final access = data.accessToken;
+        final nextRefresh = data.refreshToken;
+        if (user == null || access == null || nextRefresh == null) {
+          await tokens.clear();
+          const session = AuthSession.anonymous();
+          state = const AsyncData<AuthSession>(session);
+          return const ApiResult<AuthSession>.success(session);
+        }
+
+        await tokens.save(access: access, refresh: nextRefresh);
+        final session = AuthSession.authenticated(user);
+        state = AsyncData<AuthSession>(session);
+        return ApiResult<AuthSession>.success(session);
+
+      case ApiError(:final failure):
+        await tokens.clear();
+        const session = AuthSession.anonymous();
+        state = const AsyncData<AuthSession>(session);
+        return ApiResult<AuthSession>.failure(failure);
+    }
   }
 }
 

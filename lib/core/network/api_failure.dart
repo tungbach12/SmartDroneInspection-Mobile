@@ -3,13 +3,16 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'api_failure.freezed.dart';
 
-/// Typed failure — mirrors ASP.NET ProblemDetails status codes.
+const String customerOnlyErrorCode = 'CUSTOMER_ONLY_MOBILE';
+
+/// Typed failure — mirrors ProblemDetails status codes.
 @freezed
 sealed class ApiFailure with _$ApiFailure {
   const factory ApiFailure.network() = NetworkFailure;
   const factory ApiFailure.validation(Map<String, String> errors) =
       ValidationFailure;
   const factory ApiFailure.unauthorized() = UnauthorizedFailure;
+  const factory ApiFailure.forbidden([String? detail]) = ForbiddenFailure;
   const factory ApiFailure.notFound() = NotFoundFailure;
   const factory ApiFailure.server(int? status, String? detail) = ServerFailure;
   const factory ApiFailure.unknown(String message) = UnknownFailure;
@@ -25,6 +28,7 @@ class ApiFailureException implements Exception {
     NetworkFailure() => 'NetworkFailure',
     ValidationFailure(:final errors) => errors.values.join(' '),
     UnauthorizedFailure() => 'UnauthorizedFailure',
+    ForbiddenFailure(:final detail) => detail ?? 'ForbiddenFailure',
     NotFoundFailure() => 'NotFoundFailure',
     ServerFailure(:final detail) => detail ?? 'ServerFailure',
     UnknownFailure(:final message) => message,
@@ -44,7 +48,7 @@ ApiFailure mapDioError(DioException e) => switch (e.type) {
   _ => switch (e.response?.statusCode) {
     400 => ValidationFailure(_parseErrors(e.response?.data)),
     401 => const UnauthorizedFailure(),
-    403 => const UnauthorizedFailure(),
+    403 => ForbiddenFailure(_parseDetail(e.response?.data)),
     404 => const NotFoundFailure(),
     _ => ServerFailure(e.response?.statusCode, _parseDetail(e.response?.data)),
   },
@@ -62,7 +66,8 @@ Map<String, String> _parseErrors(dynamic data) {
 
 String? _parseDetail(dynamic data) {
   if (data is Map<String, dynamic>) {
-    return (data['detail'] ?? data['title']) as String?;
+    final detail = data['detail'] ?? data['message'] ?? data['title'];
+    return detail is String && detail.trim().isNotEmpty ? detail : null;
   }
   return null;
 }

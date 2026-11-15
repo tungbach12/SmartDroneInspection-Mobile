@@ -1,20 +1,26 @@
 enum UserRole {
   admin('ADMIN'),
-  platformManager('PLATFORM_MANAGER'),
-  orgManager('ORG_MANAGER'),
-  inspector('INSPECTOR');
+  manager('MANAGER'),
+  customer('CUSTOMER'),
+  inspector('INSPECTOR'),
+  maintenanceEngineer('MAINTENANCE_ENGINEER');
 
   const UserRole(this.code);
 
   final String code;
 
-  /// Tolerant parse — unknown role codes are ignored (no crash on
-  /// forward-compatible server payloads).
+  /// Tolerant parse normalizing legacy ORG_MANAGER -> CUSTOMER and
+  /// PLATFORM_MANAGER -> MANAGER matching live frontend authApi.ts.
   static UserRole? parse(Object? raw) {
     if (raw is! String) return null;
-    for (final role in UserRole.values) {
-      if (role.code == raw) return role;
-    }
-    return null;
+    final normalized = raw.trim().toUpperCase();
+    return switch (normalized) {
+      'CUSTOMER' || 'ORG_MANAGER' => UserRole.customer,
+      'MANAGER' || 'PLATFORM_MANAGER' => UserRole.manager,
+      'ADMIN' => UserRole.admin,
+      'INSPECTOR' => UserRole.inspector,
+      'MAINTENANCE_ENGINEER' => UserRole.maintenanceEngineer,
+      _ => null,
+    };
   }
 }

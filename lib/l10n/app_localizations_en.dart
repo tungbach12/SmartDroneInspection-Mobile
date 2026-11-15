@@ -13,13 +13,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'SmartDroneInspection';
 
   @override
-  String get appTitle => 'SmartDroneInspection';
+  String get appTitle => 'SDI Customer';
+
+  @override
+  String get customerPortalSubtitle => 'Customer Portal';
+
+  @override
+  String get navDashboard => 'Home';
+
+  @override
+  String get navAssets => 'Assets';
+
+  @override
+  String get navRequests => 'Requests';
 
   @override
   String get navInspections => 'Inspections';
 
   @override
-  String get navProfile => 'Profile';
+  String get navAccount => 'Account';
 
   @override
   String get notFound => 'Not found';
@@ -37,16 +49,121 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get loading => 'Loading…';
+
+  @override
+  String get submitting => 'Submitting…';
+
+  @override
+  String get saving => 'Saving…';
+
+  @override
+  String get download => 'Download';
+
+  @override
+  String get viewDetails => 'View details';
+
+  @override
   String get signIn => 'Sign in';
 
   @override
-  String get signInWithGoogle => 'Sign in with Google';
+  String get signInSubtitle =>
+      'Sign in to manage assets, service requests, official reports, and payments.';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Set up your Customer Portal account and verify your email.';
+
+  @override
+  String get authResetSubtitle =>
+      'Enter your registered email to receive a 6-digit reset code.';
+
+  @override
+  String get stepAccountDetails => 'Account details';
+
+  @override
+  String get stepEmailVerification => 'Verification';
+
+  @override
+  String get stepResetRequest => 'Verify email';
+
+  @override
+  String get stepResetVerify => 'Reset password';
+
+  @override
+  String passwordCharsProgress(Object count) {
+    return '$count/15+ characters';
+  }
+
+  @override
+  String get signInWithGoogle => 'Continue with Google';
 
   @override
   String get or => 'or';
 
   @override
-  String get setNewPassword => 'Set new password';
+  String get createAccount => 'Create Customer account';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? Sign in';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetPassword => 'Reset password';
+
+  @override
+  String get sendResetOtp => 'Send reset code';
+
+  @override
+  String get otpCodeLabel => '6-digit verification code';
+
+  @override
+  String get sendOtp => 'Send verification code';
+
+  @override
+  String get verifyOtp => 'Verify & continue';
+
+  @override
+  String otpPrompt(Object email) {
+    return 'Enter the verification code sent to $email.';
+  }
+
+  @override
+  String otpResendCountdown(Object seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get resendOtp => 'Resend code';
+
+  @override
+  String get fullName => 'Full name';
+
+  @override
+  String get phoneNumberOptional => 'Phone number (optional)';
 
   @override
   String get email => 'Email';
@@ -58,374 +175,586 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentPassword => 'Current password';
 
   @override
+  String get newPassword => 'New password';
+
+  @override
   String get newPasswordRequirement => 'New password (15+ characters)';
 
   @override
   String get confirmNewPassword => 'Confirm new password';
 
   @override
+  String get setNewPassword => 'Set new password';
+
+  @override
   String get passwordSetupNotice =>
       'You must set a new password before continuing.';
 
   @override
-  String get passwordsDoNotMatch => 'New passwords do not match.';
+  String get passwordsDoNotMatch => 'Passwords do not match.';
 
   @override
   String get required => 'Required';
 
   @override
+  String get invalidEmail => 'Enter a valid email address.';
+
+  @override
   String get minimum15Characters => 'Minimum 15 characters';
 
   @override
-  String get invalidCredentials => 'Invalid credentials.';
+  String get invalidCredentials => 'Invalid email or password.';
 
   @override
-  String get serverError => 'Server error.';
+  String get customerOnlyAccessNotice =>
+      'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.';
 
   @override
-  String get cannotReachServer => 'Cannot reach the server.';
+  String get registrationSuccess => 'Account created! You can now sign in.';
 
   @override
-  String get notFoundError => 'Not found.';
+  String get pendingAirspaceReviewNotice =>
+      'Registration submitted and pending airspace review. We will contact you after assessment.';
 
   @override
-  String get assets => 'Assets';
+  String get passwordResetSuccess =>
+      'Password updated. Sign in with your new password.';
 
   @override
-  String get active => 'Active';
+  String get passwordChangedSuccess =>
+      'Password changed. Please sign in again.';
 
   @override
-  String get assignments => 'Assignments';
+  String get serverError => 'Server error. Please try again.';
 
   @override
-  String get acceptingDoesNotClear =>
-      'Accepting records that you took the work. It does not mean the mission may fly: a named organization reviewer decides that from the paperwork.';
+  String get cannotReachServer =>
+      'Cannot reach the server. Check your connection.';
 
   @override
-  String get nothingToAnswer =>
-      'Nothing to answer. An Organization Manager pairs you with a Drone before preparation can start.';
+  String get notFoundError => 'Record not found.';
 
   @override
-  String droneValidity(Object serial, Object from, Object until) {
-    return 'Drone $serial · valid from $from to $until';
+  String get accessDeniedError => 'You are not allowed to perform this action.';
+
+  @override
+  String get dashboardTitle => 'Customer Overview';
+
+  @override
+  String get kpiRegisteredAssets => 'Registered assets';
+
+  @override
+  String get kpiInProgress => 'In progress';
+
+  @override
+  String get kpiOfficialReports => 'Official reports';
+
+  @override
+  String get kpiSettledFees => 'Settled fees';
+
+  @override
+  String get quickActionNewRequest => 'New request';
+
+  @override
+  String get quickActionRegisterAsset => 'Add asset';
+
+  @override
+  String get recentInspectionsTitle => 'Recent inspections & fees';
+
+  @override
+  String get assetOverviewTitle => 'Asset overview';
+
+  @override
+  String get viewAll => 'View all';
+
+  @override
+  String get noInspectionsYet => 'No inspections yet.';
+
+  @override
+  String get noAssetsYet => 'No registered assets yet.';
+
+  @override
+  String get assetsTitle => 'Assets';
+
+  @override
+  String get searchAssetsHint => 'Search by asset name, code, or location…';
+
+  @override
+  String get registerAsset => 'Register asset';
+
+  @override
+  String get editAsset => 'Edit asset';
+
+  @override
+  String get retireAsset => 'Retire asset';
+
+  @override
+  String retireAssetConfirm(Object name) {
+    return 'Retire \"$name\"? Retired assets remain in history and cannot accept new requests.';
   }
 
   @override
-  String get unspecified => 'unspecified';
+  String get assetRetiredSuccess => 'Asset retired.';
 
   @override
-  String get declineReason => 'Reason for declining';
+  String get assetSavedSuccess => 'Asset saved.';
 
   @override
-  String get declineReasonHint =>
-      'Required only when declining, so an administrator knows what to fix.';
+  String get assetName => 'Asset name';
 
   @override
-  String get recording => 'Recording…';
+  String get assetCode => 'Asset code';
 
   @override
-  String get accept => 'Accept';
+  String get assetCategory => 'Category';
 
   @override
-  String get decline => 'Decline';
+  String get assetLocation => 'Location address / description';
 
   @override
-  String get serverRefusedResponse => 'The server refused this response.';
+  String get assetDescription => 'Technical description (optional)';
 
   @override
-  String get cannotAnswerAssignment =>
-      'You are not allowed to answer this assignment.';
+  String get latitudeOptional => 'Latitude (optional)';
 
   @override
-  String get assignmentNotFound =>
-      'This assignment was not found, or it belongs to another organization.';
+  String get longitudeOptional => 'Longitude (optional)';
 
   @override
-  String get inspectionRecord => 'Inspection record';
+  String get structureHeightMeters => 'Structure height (m, optional)';
 
   @override
-  String get backToAssignments => 'Back to assignments';
+  String get footprintAreaSqm => 'Footprint area (m², optional)';
 
   @override
-  String inspectionNumber(Object id) {
-    return 'Inspection $id';
+  String get inspectionItemsLabel => 'Inspection checkpoints (comma-separated)';
+
+  @override
+  String get assetDocuments => 'Asset documents';
+
+  @override
+  String get uploadDocument => 'Upload document';
+
+  @override
+  String get documentUploaded => 'Document uploaded.';
+
+  @override
+  String get noDocumentsYet => 'No documents attached yet.';
+
+  @override
+  String documentSavedTo(Object name) {
+    return 'Saved: $name';
   }
 
   @override
-  String get openFieldSession => 'Open field session';
+  String get assetStatusActive => 'Active';
 
   @override
-  String get openPreparation => 'Open MF2 Preparation';
+  String get assetStatusPendingReview => 'Pending review';
 
   @override
-  String get checklist => 'Checklist';
+  String get assetStatusInactive => 'Inactive';
 
   @override
-  String get evidence => 'Evidence';
+  String get assetStatusRejected => 'Rejected';
 
   @override
-  String get cameraPermissionError =>
-      'Camera could not be opened. Check device permission and try again.';
+  String get assetStatusRetired => 'Retired';
 
   @override
-  String get completeSessionBeforeEvidence =>
-      'Complete the field session before attaching evidence.';
+  String get requestsTitle => 'Service Requests';
 
   @override
-  String get evidenceUploaded => 'Evidence uploaded securely.';
+  String get searchRequestsHint => 'Search by description or asset…';
 
   @override
-  String get selectVideoFile => 'Select video file';
+  String get newServiceRequest => 'New service request';
 
   @override
-  String selectedVideo(Object name) {
-    return 'Selected video: $name';
+  String get requestDetailsTitle => 'Service Request';
+
+  @override
+  String get selectAsset => 'Select active asset';
+
+  @override
+  String get noActiveAssetsForRequest =>
+      'Register an Active asset before creating a service request.';
+
+  @override
+  String get requestTypeLabel => 'Service schedule';
+
+  @override
+  String get requestTypeOneTime => 'One-time';
+
+  @override
+  String get requestTypeRecurring => 'Recurring';
+
+  @override
+  String get preferredStartDate => 'Preferred inspection date';
+
+  @override
+  String leadTime20DaysNotice(Object days, Object date) {
+    return 'Schedule at least $days days ahead (earliest: $date).';
   }
 
   @override
-  String get uploadVideoEvidence => 'Upload video evidence';
+  String get leadTime20DaysError => 'Date must be at least 20 days from today.';
 
   @override
-  String get retryVideoUpload => 'Retry video upload';
+  String get timeWindowLabel => 'Inspection hours';
 
   @override
-  String get filePickerError =>
-      'Could not open the file picker. Please try again.';
+  String get recurrenceMonthsLabel => 'Repeat every (months)';
 
   @override
-  String evidenceFileTooLarge(Object limit) {
-    return 'This file exceeds the $limit evidence upload limit.';
+  String get occurrenceCountLabel => 'Number of cycles';
+
+  @override
+  String get scopeDescriptionLabel => 'Scope & inspection objectives';
+
+  @override
+  String get requestCreatedSuccess => 'Service request submitted.';
+
+  @override
+  String get quoteSectionTitle => 'Quotation';
+
+  @override
+  String get noQuoteYet =>
+      'Platform Manager is reviewing your request and will issue a quotation shortly.';
+
+  @override
+  String get quoteScopeLabel => 'Scope summary';
+
+  @override
+  String get firstWindowLabel => 'Proposed window';
+
+  @override
+  String get quoteAmountLabel => 'Fee per inspection';
+
+  @override
+  String get acceptQuote => 'Accept quotation';
+
+  @override
+  String acceptQuoteConfirm(Object amount) {
+    return 'Accept this quotation ($amount)? An inspection contract and occurrence schedule will be prepared.';
   }
 
   @override
-  String evidenceDetails(Object contentType, Object size, Object source) {
-    return '$contentType · $size bytes · $source';
+  String get quoteAcceptedSuccess => 'Quotation accepted.';
+
+  @override
+  String get orderChatTitle => 'Order Chat';
+
+  @override
+  String unreadMessagesBadge(Object count) {
+    return '$count unread';
   }
 
   @override
-  String get evidenceSourceMobileUpload => 'Mobile upload';
+  String get typeMessageHint => 'Write a message to Platform Manager…';
 
   @override
-  String get pass => 'Pass';
+  String get noMessagesYet =>
+      'No messages yet. Ask questions about scope or pricing here.';
 
   @override
-  String get fail => 'Fail';
+  String get signedContractTitle => 'Signed paper contract';
 
   @override
-  String get captureInspectionPhoto => 'Capture inspection photo';
+  String get contractNotUploadedYet =>
+      'Pending signed paper contract scan from Platform Manager.';
 
   @override
-  String selectedFile(Object name) {
-    return 'Selected: $name';
+  String get downloadContract => 'Download / Save contract';
+
+  @override
+  String get contractLegalBasisButton => 'Legal & e-signature basis';
+
+  @override
+  String get contractLegalBasisText =>
+      'Offline wet-signed contracts uploaded as verified scans comply with Vietnamese Electronic Transactions & Civil Code record-keeping requirements for commercial service execution.';
+
+  @override
+  String get occurrencesTitle => 'Scheduled occurrences';
+
+  @override
+  String occurrenceNumber(Object index) {
+    return 'Occurrence #$index';
   }
 
   @override
-  String get uploading => 'Uploading…';
+  String get openInspection => 'Open inspection';
 
   @override
-  String get uploadPhoto => 'Upload photo';
+  String get pendingAssignment => 'Pending dispatch';
 
   @override
-  String get retryUpload => 'Retry upload';
+  String get requestStatusOpen => 'Open';
 
   @override
-  String uploadFailed(Object error) {
-    return 'Upload failed: $error. The selected photo is kept so you can retry.';
+  String get requestStatusQuoted => 'Quoted';
+
+  @override
+  String get requestStatusAccepted => 'Accepted';
+
+  @override
+  String get requestStatusContractSigned => 'Contract signed';
+
+  @override
+  String get requestStatusAssigned => 'Assigned';
+
+  @override
+  String get requestStatusCancelled => 'Cancelled';
+
+  @override
+  String get inspectionsTitle => 'Inspections & Reports';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterInProgress => 'In progress';
+
+  @override
+  String get filterReportReady => 'Report ready';
+
+  @override
+  String get filterActionNeeded => 'Action needed';
+
+  @override
+  String get inspectionDetailTitle => 'Inspection Detail';
+
+  @override
+  String get tabTracking => 'Tracking';
+
+  @override
+  String get tabOfficialReport => 'Report';
+
+  @override
+  String get tabSettlement => 'Settlement';
+
+  @override
+  String get progressMilestonesTitle => 'Inspection lifecycle';
+
+  @override
+  String get milestoneMissionSetup => 'Mission setup & dispatch';
+
+  @override
+  String get milestoneDroneFlight => 'Drone aerial inspection';
+
+  @override
+  String get milestoneEvidenceAi => 'Evidence intake & AI detection';
+
+  @override
+  String get milestoneManagerReview => 'Platform Manager review';
+
+  @override
+  String get milestonePublished => 'Official report published';
+
+  @override
+  String get assignedDroneLabel => 'Assigned drone';
+
+  @override
+  String get flightPermitLabel => 'Flight permit';
+
+  @override
+  String get fieldSessionsTitle => 'Field sessions';
+
+  @override
+  String get noFieldSessionsYet => 'No field sessions recorded yet.';
+
+  @override
+  String evidenceGalleryTitle(Object count) {
+    return 'Captured evidence ($count)';
   }
 
   @override
-  String get checkConnection => 'Check your connection and try again.';
+  String get noEvidenceYet => 'No field evidence captured yet.';
 
   @override
-  String get unauthorizedInspection =>
-      'You are not authorized to access this inspection.';
-
-  @override
-  String get inspectionUnavailable => 'This inspection is no longer available.';
-
-  @override
-  String get requestFailed => 'The server could not complete this request.';
-
-  @override
-  String checklistSaveFailed(Object error) {
-    return 'Checklist was not saved: $error';
+  String confirmedFindingsTitle(Object count) {
+    return 'Defect findings ($count)';
   }
 
   @override
-  String get writeShotListComparison => 'Write the shot-list comparison first.';
+  String get noFindingsYet => 'No defect findings recorded.';
 
   @override
-  String get stateWhySessionNeeded =>
-      'State why another field session is needed.';
-
-  @override
-  String get additionalWorkRequested =>
-      'Additional field work requested. Continue in MF2 Preparation and wait for readiness review.';
-
-  @override
-  String get evidenceSetAccepted =>
-      'Evidence set accepted for advisory analysis.';
-
-  @override
-  String get evidenceQualityDecision => 'Evidence quality decision';
-
-  @override
-  String get evidenceQualityExplanation =>
-      'MF3-03: compare the completed capture set against the shot-list. Choose to accept it or request another MF2 session; weather or site safety during work belongs to postponement/abort.';
-
-  @override
-  String get noDecisionRecorded => 'No decision recorded yet.';
-
-  @override
-  String latestDecision(Object decision) {
-    return 'Latest: $decision';
+  String recommendedActionPrefix(Object action) {
+    return 'Recommended action: $action';
   }
 
   @override
-  String get loadingDecisionHistory => 'Loading decision history…';
+  String get noReportVersionsYet =>
+      'The official report will appear here once published.';
 
   @override
-  String get decisionHistoryFailed => 'Could not load decision history.';
-
-  @override
-  String get shotListComparison => 'Shot-list comparison';
-
-  @override
-  String get shotListComparisonHint =>
-      'Required. What the set covers and what it does not.';
-
-  @override
-  String get whyAnotherSession => 'Why is another field session needed?';
-
-  @override
-  String get anotherSessionHint =>
-      'Required only when requesting another MF2 session.';
-
-  @override
-  String get acceptEvidenceSet => 'Accept evidence set';
-
-  @override
-  String get additionalSessionNeeded => 'Additional session needed';
-
-  @override
-  String get response => 'Response';
-
-  @override
-  String get numericResponse => 'Numeric response';
-
-  @override
-  String get notesOptional => 'Notes (optional)';
-
-  @override
-  String get yes => 'Yes';
-
-  @override
-  String get no => 'No';
-
-  @override
-  String get saving => 'Saving…';
-
-  @override
-  String get saveResponse => 'Save response';
-
-  @override
-  String get saved => 'Saved';
-
-  @override
-  String get networkUnavailable =>
-      'The network is unavailable. The note you typed is kept, so try again.';
-
-  @override
-  String get fieldSession => 'Field session';
-
-  @override
-  String get startingNotClearance =>
-      'Starting a session is not flight clearance. It records that the paperwork and the pre-flight checklist were in order.';
-
-  @override
-  String get notStartable =>
-      'This inspection is not currently startable. Complete MF2 Preparation and independent readiness review first.';
-
-  @override
-  String get preFlightChecklistNote => 'Pre-flight checklist note';
-
-  @override
-  String get preFlightChecklistHint =>
-      'Identify the assigned Drone and record what you checked on site.';
-
-  @override
-  String get starting => 'Starting…';
-
-  @override
-  String get startFieldSession => 'Start field session';
-
-  @override
-  String get abortSessionQuestion => 'Abort this session?';
-
-  @override
-  String get abortIrreversible =>
-      'The session ends and will not resume under this record. This cannot be undone.';
-
-  @override
-  String get keepGoing => 'Keep going';
-
-  @override
-  String get abort => 'Abort';
-
-  @override
-  String startedAt(Object time, Object decision) {
-    return 'Started $time against readiness decision $decision';
+  String reportVersionLabel(Object version) {
+    return 'Version v$version';
   }
 
   @override
-  String get justNow => 'just now';
+  String get aiExecutiveSummaryTitle => 'AI Executive Summary';
 
   @override
-  String get unknown => 'unknown';
+  String get keyHighlightsLabel => 'Key highlights';
 
   @override
-  String get reasonPostponing => 'Reason for postponing';
+  String get recommendedActionsLabel => 'Recommended actions';
 
   @override
-  String get postponeHint =>
-      'Weather or site safety. The mission can be attempted again.';
+  String overallRiskLabel(Object risk) {
+    return 'Overall risk: $risk';
+  }
 
   @override
-  String get postpone => 'Postpone';
+  String get downloadOfficialPdf => 'Download official PDF';
 
   @override
-  String get fieldSessionOutcome => 'Field session outcome';
+  String get reportUnpublishedNotice =>
+      'Report PDF download becomes available once Platform Manager publishes this version.';
 
   @override
-  String get fieldSessionOutcomeHint =>
-      'Record coverage, observations, gaps and any incidents before ending the session.';
+  String get settlementStepAccept => '1. Accept official report';
 
   @override
-  String get endFieldSession => 'End field session';
+  String get settlementStepPay => '2. Settle service fee';
 
   @override
-  String get reasonAborting => 'Reason for aborting';
+  String get settlementStepFulfilled => '3. Service fulfilled';
 
   @override
-  String get abortIrreversibleShort =>
-      'This session ends and will not resume under this record.';
+  String get serviceInvoiceTitle => 'Service invoice';
 
   @override
-  String get abortSession => 'Abort session';
+  String get preVatBase => 'Pre-VAT base';
 
   @override
-  String get cannotManageSession =>
-      'You are not allowed to manage this field session.';
+  String vatLabel(Object rate) {
+    return 'VAT ($rate%)';
+  }
 
   @override
-  String get preparationNotFound =>
-      'This inspection was not found, or it belongs to another organization.';
+  String get amountToPay => 'Amount due';
 
   @override
-  String get preparationServerRefused => 'The server refused this request.';
+  String get totalPaid => 'Total paid';
 
   @override
-  String get networkRetry => 'Network unavailable. Try again when connected.';
+  String get acceptReport => 'Accept report';
+
+  @override
+  String acceptReportConfirm(Object version) {
+    return 'Accepting official report v$version locks deliverable acceptance and starts payment settlement.';
+  }
+
+  @override
+  String get reportAcceptedSuccess =>
+      'Report accepted. Complete payment below.';
+
+  @override
+  String get requestClarification => 'Request clarification';
+
+  @override
+  String get clarificationTitle => 'Request clarification';
+
+  @override
+  String clarificationPolicyNote(Object attempt) {
+    return 'Maximum 2 clarification requests allowed before acceptance (current attempt: $attempt/2).';
+  }
+
+  @override
+  String get clarificationLimitReached =>
+      'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.';
+
+  @override
+  String get clarificationReasonHint =>
+      'Describe inaccurate defect locations, unclear photos, or severity questions…';
+
+  @override
+  String get clarificationSubmitted => 'Clarification request submitted.';
+
+  @override
+  String get payWithPayos => 'Pay via PayOS (VietQR)';
+
+  @override
+  String get payWithVnpay => 'Pay via VNPay';
+
+  @override
+  String get net15Notice =>
+      'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.';
+
+  @override
+  String get paymentPaidBanner =>
+      'Payment confirmed! Inspection deliverables are officially verified and archived.';
+
+  @override
+  String payosOrderReady(Object orderCode) {
+    return 'PayOS Order #$orderCode ready. Open checkout link or scan VietQR.';
+  }
+
+  @override
+  String get openPaymentLink => 'Open checkout link';
+
+  @override
+  String get refreshPaymentStatus => 'Refresh status';
+
+  @override
+  String get inspectionStatusScheduled => 'Scheduled';
+
+  @override
+  String get inspectionStatusInProgress => 'In progress';
+
+  @override
+  String get inspectionStatusFieldCompleted => 'Field completed';
+
+  @override
+  String get inspectionStatusUnderReview => 'Under review';
+
+  @override
+  String get inspectionStatusCompleted => 'Completed';
+
+  @override
+  String get inspectionStatusCancelled => 'Cancelled';
+
+  @override
+  String get reportStatusDraft => 'Draft';
+
+  @override
+  String get reportStatusSubmitted => 'Submitted';
+
+  @override
+  String get reportStatusReturned => 'Returned';
+
+  @override
+  String get reportStatusPublished => 'Published';
+
+  @override
+  String get reportStatusSuperseded => 'Superseded';
+
+  @override
+  String get paymentStatusPaid => 'Paid';
+
+  @override
+  String get paymentStatusDue => 'Payment due';
+
+  @override
+  String get paymentStatusPending => 'Pending';
+
+  @override
+  String get paymentStatusNotApplicable => 'Pending acceptance';
+
+  @override
+  String get severityCritical => 'Critical';
+
+  @override
+  String get severityHigh => 'High';
+
+  @override
+  String get severityMedium => 'Medium';
+
+  @override
+  String get severityLow => 'Low';
 
   @override
   String get fieldSessionStatusInProgress => 'In progress';
@@ -443,112 +772,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldSessionStatusCompleted => 'Field completed';
 
   @override
-  String get statusDraft => 'Draft';
+  String get notificationsTitle => 'Notifications';
 
   @override
-  String get statusSubmitted => 'Submitted';
+  String get noNotificationsYet => 'You are all caught up.';
 
   @override
-  String get statusReady => 'Ready';
+  String get unreadOnly => 'Unread only';
 
   @override
-  String get statusActive => 'Active';
-
-  @override
-  String get statusAccepted => 'Accepted';
-
-  @override
-  String get statusRejected => 'Rejected';
-
-  @override
-  String get statusSuspended => 'Suspended';
-
-  @override
-  String get decisionAdditionalSession => 'Additional session required';
-
-  @override
-  String get decisionAccepted => 'Accepted';
-
-  @override
-  String get preparation => 'MF2 Preparation';
-
-  @override
-  String get bothPlannedTimes =>
-      'Set both planned start and end for the additional field session.';
-
-  @override
-  String preparationVersionSaved(Object version) {
-    return 'Preparation version $version saved.';
+  String unreadChatSection(Object count) {
+    return 'Unread order chat ($count)';
   }
 
   @override
-  String get preparationSubmitted =>
-      'Preparation submitted for independent readiness review.';
+  String get accountTitle => 'Account & Settings';
 
   @override
-  String get componentShotListJson => 'Component shot-list (JSON)';
-
-  @override
-  String get evidenceTypesJson => 'Evidence types (JSON)';
-
-  @override
-  String get accessConstraints => 'Access constraints';
-
-  @override
-  String get plannedSessionStart => 'Planned session start (local time)';
-
-  @override
-  String get plannedSessionEnd => 'Planned session end (local time)';
-
-  @override
-  String get safetyObservations => 'Safety observations';
-
-  @override
-  String get safetyAcknowledgment => 'Safety acknowledgment';
-
-  @override
-  String get saveDraft => 'Save draft';
-
-  @override
-  String get submitting => 'Submitting…';
-
-  @override
-  String get submitPreparation => 'Submit preparation';
-
-  @override
-  String get additionalSessionRequested =>
-      'Additional field session requested. Update the plan/window and submit it. An independent ORG_MANAGER must approve current readiness before Start becomes available.';
-
-  @override
-  String preparationVersionStatus(Object version, Object status) {
-    return 'Version $version · $status';
+  String organizationLabel(Object id) {
+    return 'Organization ID: $id';
   }
 
   @override
-  String get preparationApproved =>
-      'Preparation is approved. Readiness is bound to this version; changes require another review.';
-
-  @override
-  String get cannotEditPreparation =>
-      'You are not allowed to edit this preparation.';
-
-  @override
-  String get inspectionNotInOrganization =>
-      'This inspection was not found in your organization.';
-
-  @override
-  String get profile => 'Profile';
-
-  @override
-  String organization(Object organization) {
-    return 'Org: $organization';
-  }
-
-  @override
-  String get notSignedIn => 'Not signed in.';
-
-  @override
-  String get signOut => 'Sign out';
+  String get preferencesSection => 'Preferences';
 
   @override
   String get language => 'Language';
@@ -560,35 +806,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageVietnamese => 'Tiếng Việt';
 
   @override
-  String get userRoleAdmin => 'Administrator';
+  String get themeModeLabel => 'Appearance';
+
+  @override
+  String get themeSystem => 'System default';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get securitySection => 'Security';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get logoutAllDevices => 'Sign out all devices';
+
+  @override
+  String get logoutAllConfirm =>
+      'Sign out of every active session on web and mobile?';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get notSignedIn => 'Not signed in.';
+
+  @override
+  String get userRoleCustomer => 'Customer';
 
   @override
   String get userRolePlatformManager => 'Platform Manager';
 
   @override
-  String get userRoleOrgManager => 'Organization Manager';
+  String get userRoleAdmin => 'Administrator';
 
   @override
   String get userRoleInspector => 'Inspector';
 
   @override
-  String get userRoleClient => 'Client';
-
-  @override
-  String get assignmentStatusActive => 'Active';
-
-  @override
-  String get assignmentResponseAccepted => 'Accepted';
-
-  @override
-  String get assignmentResponseRejected => 'Declined';
-
-  @override
-  String get assetStatusActive => 'Active';
-
-  @override
-  String get assetStatusInactive => 'Inactive';
-
-  @override
-  String get assetStatusRetired => 'Retired';
+  String get userRoleMaintenanceEngineer => 'Maintenance Engineer';
 }
