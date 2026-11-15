@@ -224,12 +224,6 @@
   "cannotEditPreparation": "Bạn không được phép chỉnh sửa bước chuẩn bị này.",
   "inspectionNotInOrganization": "Không tìm thấy cuộc kiểm tra này trong tổ chức của bạn.",
   "profile": "Hồ sơ",
-  "zone": "Khu vực: {zone}",
-  "@zone": {
-    "placeholders": {
-      "zone": {}
-    }
-  },
   "organization": "Tổ chức: {organization}",
   "@organization": {
     "placeholders": {
@@ -246,9 +240,6 @@
   "userRoleOrgManager": "Quản lý tổ chức",
   "userRoleInspector": "Thanh tra viên",
   "userRoleClient": "Khách hàng",
-  "actorZonePlatform": "Nền tảng",
-  "actorZoneCustomerOrganization": "Tổ chức khách hàng",
-  "actorZoneServiceWorkforce": "Đội ngũ dịch vụ",
   "assignmentStatusActive": "Đang hoạt động",
   "assignmentResponseAccepted": "Đã chấp nhận",
   "assignmentResponseRejected": "Đã từ chối",

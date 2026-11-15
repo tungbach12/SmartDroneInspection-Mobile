@@ -61,14 +61,6 @@ class ProfilePage extends ConsumerWidget {
                     Chip(label: Text(localizedRole(context.l10n, role.code))),
                 ],
               ),
-              if (user.actorZone != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  context.l10n.zone(
-                    localizedActorZone(context.l10n, user.actorZone!.code),
-                  ),
-                ),
-              ],
               if (user.organizationId != null) ...[
                 const SizedBox(height: 8),
                 Text(context.l10n.organization(user.organizationId!)),
@@ -146,7 +138,7 @@ class ProfilePage extends ConsumerWidget {
     );
     DateTime selectedExpiry = user.pilotLicenseExpiresAt != null
         ? DateTime.tryParse(user.pilotLicenseExpiresAt!) ??
-            DateTime.now().add(const Duration(days: 365))
+              DateTime.now().add(const Duration(days: 365))
         : DateTime.now().add(const Duration(days: 365));
 
     showDialog<void>(

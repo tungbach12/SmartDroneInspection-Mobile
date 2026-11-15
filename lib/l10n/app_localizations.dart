@@ -1046,12 +1046,6 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get profile;
 
-  /// No description provided for @zone.
-  ///
-  /// In en, this message translates to:
-  /// **'Zone: {zone}'**
-  String zone(Object zone);
-
   /// No description provided for @organization.
   ///
   /// In en, this message translates to:
@@ -1117,24 +1111,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Client'**
   String get userRoleClient;
-
-  /// No description provided for @actorZonePlatform.
-  ///
-  /// In en, this message translates to:
-  /// **'Platform'**
-  String get actorZonePlatform;
-
-  /// No description provided for @actorZoneCustomerOrganization.
-  ///
-  /// In en, this message translates to:
-  /// **'Customer organization'**
-  String get actorZoneCustomerOrganization;
-
-  /// No description provided for @actorZoneServiceWorkforce.
-  ///
-  /// In en, this message translates to:
-  /// **'Service workforce'**
-  String get actorZoneServiceWorkforce;
 
   /// No description provided for @assignmentStatusActive.
   ///

@@ -1,4 +1,3 @@
-import 'package:smart_drone_inspection/features/auth/domain/models/actor_zone.dart';
 import 'package:smart_drone_inspection/features/auth/domain/models/user_role.dart';
 
 /// Mobile mirror of the backend UserResponse contract.
@@ -8,7 +7,6 @@ class AuthUser {
     required this.email,
     required this.fullName,
     required this.roles,
-    this.actorZone,
     this.organizationId,
     this.pilotLicenseNumber,
     this.pilotLicenseClass,
@@ -30,8 +28,6 @@ class AuthUser {
       email: json['email'] as String,
       fullName: json['fullName'] as String,
       roles: roles,
-      // Tolerant parse — unknown zones become null (fail closed), never crash.
-      actorZone: ActorZone.parse(json['actorZone']),
       organizationId: json['organizationId'] as String?,
       pilotLicenseNumber: json['pilotLicenseNumber'] as String?,
       pilotLicenseClass: json['pilotLicenseClass'] as String?,
@@ -44,7 +40,6 @@ class AuthUser {
   final String email;
   final String fullName;
   final List<UserRole> roles;
-  final ActorZone? actorZone;
   final String? organizationId;
   final String? pilotLicenseNumber;
   final String? pilotLicenseClass;
@@ -58,7 +53,6 @@ class AuthUser {
     String? email,
     String? fullName,
     List<UserRole>? roles,
-    ActorZone? actorZone,
     String? organizationId,
     String? pilotLicenseNumber,
     String? pilotLicenseClass,
@@ -70,7 +64,6 @@ class AuthUser {
       email: email ?? this.email,
       fullName: fullName ?? this.fullName,
       roles: roles ?? this.roles,
-      actorZone: actorZone ?? this.actorZone,
       organizationId: organizationId ?? this.organizationId,
       pilotLicenseNumber: pilotLicenseNumber ?? this.pilotLicenseNumber,
       pilotLicenseClass: pilotLicenseClass ?? this.pilotLicenseClass,

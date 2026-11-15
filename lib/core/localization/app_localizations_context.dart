@@ -54,13 +54,6 @@ String localizedRole(AppLocalizations l10n, String role) => switch (role) {
   _ => role,
 };
 
-String localizedActorZone(AppLocalizations l10n, String zone) => switch (zone) {
-  'PLATFORM' => l10n.actorZonePlatform,
-  'CUSTOMER_ORGANIZATION' => l10n.actorZoneCustomerOrganization,
-  'SERVICE_WORKFORCE' => l10n.actorZoneServiceWorkforce,
-  _ => zone,
-};
-
 String localizedAssignmentStatus(AppLocalizations l10n, String status) =>
     switch (status) {
       'ACTIVE' => l10n.assignmentStatusActive,

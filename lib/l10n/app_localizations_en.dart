@@ -540,11 +540,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile => 'Profile';
 
   @override
-  String zone(Object zone) {
-    return 'Zone: $zone';
-  }
-
-  @override
   String organization(Object organization) {
     return 'Org: $organization';
   }
@@ -578,15 +573,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userRoleClient => 'Client';
-
-  @override
-  String get actorZonePlatform => 'Platform';
-
-  @override
-  String get actorZoneCustomerOrganization => 'Customer organization';
-
-  @override
-  String get actorZoneServiceWorkforce => 'Service workforce';
 
   @override
   String get assignmentStatusActive => 'Active';
