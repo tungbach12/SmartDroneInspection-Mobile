@@ -1124,6 +1124,18 @@ abstract class AppLocalizations {
   /// **'Assigned drone'**
   String get assignedDroneLabel;
 
+  /// No description provided for @inspectorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector'**
+  String get inspectorLabel;
+
+  /// No description provided for @managerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get managerLabel;
+
   /// No description provided for @flightPermitLabel.
   ///
   /// In en, this message translates to:
@@ -1166,11 +1178,11 @@ abstract class AppLocalizations {
   /// **'No defect findings recorded.'**
   String get noFindingsYet;
 
-  /// No description provided for @recommendedActionPrefix.
+  /// No description provided for @noteLabel.
   ///
   /// In en, this message translates to:
-  /// **'Recommended action: {action}'**
-  String recommendedActionPrefix(Object action);
+  /// **'Note'**
+  String get noteLabel;
 
   /// No description provided for @noReportVersionsYet.
   ///

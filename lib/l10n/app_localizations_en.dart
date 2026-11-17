@@ -555,6 +555,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assignedDroneLabel => 'Assigned drone';
 
   @override
+  String get inspectorLabel => 'Inspector';
+
+  @override
+  String get managerLabel => 'Manager';
+
+  @override
   String get flightPermitLabel => 'Flight permit';
 
   @override
@@ -580,9 +586,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noFindingsYet => 'No defect findings recorded.';
 
   @override
-  String recommendedActionPrefix(Object action) {
-    return 'Recommended action: $action';
-  }
+  String get noteLabel => 'Note';
 
   @override
   String get noReportVersionsYet =>

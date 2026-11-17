@@ -52,10 +52,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Verify Customer role pill appears, default theme is Light, and stale Pilot License text is gone.
+      // Verify Customer role pill appears, default theme is Light, and stale Pilot License / Organization ID text is gone.
       expect(find.text('Customer'), findsOneWidget);
       expect(find.text('Light'), findsOneWidget);
       expect(find.textContaining('Pilot license'), findsNothing);
+      expect(find.textContaining('Organization ID'), findsNothing);
 
       await tester.tap(find.byKey(const Key('language-selector')));
       await tester.pumpAndSettle();

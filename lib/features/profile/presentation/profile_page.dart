@@ -270,30 +270,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ],
                             ),
                           ],
-                          if (user.organizationId != null &&
-                              user.organizationId!.isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.apartment_rounded,
-                                  size: 15,
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    l10n.organizationLabel(
-                                      user.organizationId!,
-                                    ),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
                         ],
                       ),
               ),
