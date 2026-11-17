@@ -361,6 +361,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   openVersion: openVersion,
                   busy: _actionBusy,
                   onRefresh: () async => _refreshBundle(),
+                  onDownloadPdf: _downloadReportPdf,
                   onAcceptReport: _acceptReport,
                   onRequestClarification: _requestClarification,
                   onPayPayos: _payWithPayos,
@@ -454,11 +455,19 @@ class _TrackingTab extends StatelessWidget {
                       '${formatDateTimeShort(inspection.plannedStartAt)} → ${formatDateTimeShort(inspection.plannedEndAt)}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
-                  if (inspection.droneSerialNumber != null ||
-                      inspection.droneModel != null) ...[
+                  if (inspection.inspectorName != null &&
+                      inspection.inspectorName!.trim().isNotEmpty) ...[
                     const SizedBox(height: 6),
                     Text(
-                      '${l10n.assignedDroneLabel}: ${[inspection.droneModel, inspection.droneSerialNumber].whereType<String>().join(' · ')}',
+                      '${l10n.inspectorLabel}: ${inspection.inspectorName!.trim()}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                  if (inspection.managerName != null &&
+                      inspection.managerName!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      '${l10n.managerLabel}: ${inspection.managerName!.trim()}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -593,7 +602,12 @@ class _TrackingTab extends StatelessWidget {
                         ),
                         title: Text(ev.fileName),
                         subtitle: Text(
-                          '${formatBytes(ev.sizeBytes)} · ${formatDateTimeShort(ev.createdAt)}',
+                          [
+                            if (ev.locationDescription != null &&
+                                ev.locationDescription!.trim().isNotEmpty)
+                              ev.locationDescription!.trim(),
+                            '${formatBytes(ev.sizeBytes)} · ${formatDateTimeShort(ev.createdAt)}',
+                          ].join('\n'),
                         ),
                         trailing: const Icon(Icons.open_in_new_rounded),
                         onTap: busy ? null : () => onTapEvidence(ev),
@@ -632,7 +646,9 @@ class _TrackingTab extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    f.defectLabel,
+                                    f.findingCode.trim().isNotEmpty
+                                        ? '${f.findingCode.trim()} · ${f.defectLabel}'
+                                        : f.defectLabel,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -647,18 +663,20 @@ class _TrackingTab extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            if (f.technicalNotes.isNotEmpty) ...[
+                            if (_meaningfulFindingNote(f) case final note?) ...[
                               const SizedBox(height: 4),
-                              Text(f.technicalNotes),
-                            ],
-                            if (f.recommendedAction != null &&
-                                f.recommendedAction!.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.recommendedActionPrefix(
-                                  f.recommendedAction!,
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: '${l10n.noteLabel}: ',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    TextSpan(text: note),
+                                  ],
                                 ),
-                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
                           ],
@@ -763,6 +781,16 @@ class _OfficialReportTab extends ConsumerWidget {
                       formatDateTimeShort(openVersion!.publishedAt),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
+                  if ((openVersion!.flightPermitFileName ??
+                          bundle.inspection.flightPermitFileName)
+                      case final permitName?
+                      when permitName.trim().isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${l10n.flightPermitLabel}: ${permitName.trim()}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   if (openVersion!.isPublished)
                     SizedBox(
@@ -878,6 +906,7 @@ class _SettlementTab extends StatelessWidget {
     required this.openVersion,
     required this.busy,
     required this.onRefresh,
+    required this.onDownloadPdf,
     required this.onAcceptReport,
     required this.onRequestClarification,
     required this.onPayPayos,
@@ -888,6 +917,7 @@ class _SettlementTab extends StatelessWidget {
   final InspectionReportVersion? openVersion;
   final bool busy;
   final Future<void> Function() onRefresh;
+  final ValueChanged<InspectionReportVersion> onDownloadPdf;
   final ValueChanged<InspectionReportVersion> onAcceptReport;
   final void Function(InspectionReportVersion, int priorCount)
   onRequestClarification;
@@ -1031,6 +1061,18 @@ class _SettlementTab extends StatelessWidget {
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            key: const Key('settlement-download-pdf-btn'),
+                            onPressed: busy
+                                ? null
+                                : () => onDownloadPdf(openVersion!),
+                            icon: const Icon(Icons.picture_as_pdf_outlined),
+                            label: Text(l10n.downloadOfficialPdf),
+                          ),
+                        ),
                       ],
                     )
                   : isAccepted
@@ -1043,17 +1085,17 @@ class _SettlementTab extends StatelessWidget {
                         ),
                         const SizedBox(height: 14),
                         FilledButton.icon(
-                          key: const Key('pay-vnpay-btn'),
-                          onPressed: busy ? null : onPayVnpay,
-                          icon: const Icon(Icons.open_in_new_rounded),
-                          label: Text(l10n.payWithVnpay),
-                        ),
-                        const SizedBox(height: 10),
-                        OutlinedButton.icon(
                           key: const Key('pay-payos-btn'),
                           onPressed: busy ? null : onPayPayos,
                           icon: const Icon(Icons.qr_code_2_rounded),
                           label: Text(l10n.payWithPayos),
+                        ),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          key: const Key('pay-vnpay-btn'),
+                          onPressed: busy ? null : onPayVnpay,
+                          icon: const Icon(Icons.open_in_new_rounded),
+                          label: Text(l10n.payWithVnpay),
                         ),
                         const SizedBox(height: 8),
                         TextButton.icon(
@@ -1066,6 +1108,15 @@ class _SettlementTab extends StatelessWidget {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        OutlinedButton.icon(
+                          key: const Key('settlement-download-pdf-btn'),
+                          onPressed: busy
+                              ? null
+                              : () => onDownloadPdf(openVersion!),
+                          icon: const Icon(Icons.picture_as_pdf_outlined),
+                          label: Text(l10n.downloadOfficialPdf),
+                        ),
+                        const SizedBox(height: 10),
                         FilledButton.icon(
                           key: const Key('accept-report-btn'),
                           onPressed: busy
@@ -1140,6 +1191,18 @@ class _MilestoneRow extends StatelessWidget {
       ),
     );
   }
+}
+
+String? _meaningfulFindingNote(InspectionFinding finding) {
+  final note = finding.technicalNotes.trim();
+  if (note.isEmpty) return null;
+  final lower = note.toLowerCase();
+  if (lower == 'none' ||
+      lower == 'không có' ||
+      lower == finding.defectLabel.trim().toLowerCase()) {
+    return null;
+  }
+  return note;
 }
 
 class _InvoiceLine extends StatelessWidget {

@@ -559,6 +559,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get assignedDroneLabel => 'Drone phân công';
 
   @override
+  String get inspectorLabel => 'Kiểm định viên';
+
+  @override
+  String get managerLabel => 'Quản lý';
+
+  @override
   String get flightPermitLabel => 'Giấy phép bay';
 
   @override
@@ -584,9 +590,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noFindingsYet => 'Chưa ghi nhận lỗi nào.';
 
   @override
-  String recommendedActionPrefix(Object action) {
-    return 'Khuyến nghị xử lý: $action';
-  }
+  String get noteLabel => 'Ghi chú';
 
   @override
   String get noReportVersionsYet =>

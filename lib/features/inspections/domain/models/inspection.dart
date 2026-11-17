@@ -11,6 +11,7 @@ class Inspection {
     this.objective,
     this.inspectorId,
     this.inspectorName,
+    this.managerName,
     this.droneId,
     this.droneSerialNumber,
     this.droneModel,
@@ -42,6 +43,7 @@ class Inspection {
       objective: json['objective'] as String?,
       inspectorId: json['inspectorId'] as String?,
       inspectorName: json['inspectorName'] as String?,
+      managerName: json['managerName'] as String?,
       droneId: json['droneId'] as String?,
       droneSerialNumber: json['droneSerialNumber'] as String?,
       droneModel: json['droneModel'] as String?,
@@ -74,6 +76,7 @@ class Inspection {
   final String? objective;
   final String? inspectorId;
   final String? inspectorName;
+  final String? managerName;
   final String? droneId;
   final String? droneSerialNumber;
   final String? droneModel;
@@ -167,7 +170,6 @@ class InspectionFinding {
     required this.severity,
     required this.technicalNotes,
     this.evidenceId,
-    this.recommendedAction,
     this.modelName,
     this.confidence,
     this.isDeleted = false,
@@ -183,7 +185,6 @@ class InspectionFinding {
       defectLabel: (json['defectLabel'] as String?) ?? '',
       severity: (json['severity'] as String?) ?? 'LOW',
       technicalNotes: (json['technicalNotes'] as String?) ?? '',
-      recommendedAction: json['recommendedAction'] as String?,
       modelName: json['modelName'] as String?,
       confidence: (json['confidence'] as num?)?.toDouble(),
       isDeleted: (json['isDeleted'] as bool?) ?? false,
@@ -198,7 +199,6 @@ class InspectionFinding {
   final String defectLabel;
   final String severity;
   final String technicalNotes;
-  final String? recommendedAction;
   final String? modelName;
   final double? confidence;
   final bool isDeleted;

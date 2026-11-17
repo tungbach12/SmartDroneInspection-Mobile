@@ -173,12 +173,28 @@ void main() {
           assetId: 'a-1',
           assetName: 'Nhat Tan Bridge',
           status: 'COMPLETED',
+          inspectorName: 'Pham Van Bay',
+          managerName: 'Tran Minh Quan Ly',
+          droneModel: 'Matrice 350 RTK',
+          droneSerialNumber: 'SN-001',
+          flightPermitFileName: 'permit-2026.pdf',
           reportStatus: 'PUBLISHED',
           reportVersionNo: 1,
           reportAccepted: false,
           paymentStatus: 'PAYMENT_DUE',
           clarificationCount: 0,
         ),
+        findings: [
+          InspectionFinding(
+            id: 'f-1',
+            inspectionId: 'insp-1',
+            status: 'CONFIRMED',
+            findingCode: 'F-1',
+            defectLabel: 'Bolt oxidation',
+            severity: 'HIGH',
+            technicalNotes: 'Light surface oxidation on span 2 bolts.',
+          ),
+        ],
         reportVersions: [version],
         paymentStatus: ReportPaymentStatus(
           reportAccepted: false,
@@ -207,6 +223,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(find.text('Inspector: Pham Van Bay'), findsOneWidget);
+      expect(find.text('Manager: Tran Minh Quan Ly'), findsOneWidget);
+      expect(find.textContaining('SN-001'), findsNothing);
+      await tester.scrollUntilVisible(
+        find.text('F-1 · Bolt oxidation'),
+        200,
+        scrollable: find.descendant(
+          of: find.byType(ListView).first,
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(find.text('F-1 · Bolt oxidation'), findsOneWidget);
+      expect(
+        find.text(
+          'Note: Light surface oxidation on span 2 bolts.',
+          findRichText: true,
+        ),
+        findsOneWidget,
+      );
+
       // Switch to Report tab.
       await tester.tap(find.text('Report'));
       await tester.pumpAndSettle();
@@ -219,6 +255,10 @@ void main() {
       // Switch to Settlement tab.
       await tester.tap(find.text('Settlement'));
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('settlement-download-pdf-btn')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('accept-report-btn')), findsOneWidget);
       expect(
         find.byKey(const Key('request-clarification-btn')),
