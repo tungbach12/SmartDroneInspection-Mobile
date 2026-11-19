@@ -854,4 +854,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userRoleMaintenanceEngineer => 'Maintenance Engineer';
+
+  @override
+  String verdictExpiredChip(Object count) {
+    return '$count verdicts expired';
+  }
+
+  @override
+  String verdictExpiringSoonChip(Object count) {
+    return '$count verdicts expire in 14d';
+  }
+
+  @override
+  String paymentDueOn(Object date) {
+    return 'Due $date';
+  }
+
+  @override
+  String get paymentOverdue => 'Overdue';
+
+  @override
+  String get paymentNoticePdf => 'Notice PDF';
+
+  @override
+  String get paymentReceiptPdf => 'Receipt PDF';
+
+  @override
+  String get inspectionChatTitle => 'Inspection chat';
+
+  @override
+  String get typeInspectionMessageHint => 'Message the inspector…';
+
+  @override
+  String get attachFile => 'Attach';
+
+  @override
+  String get knowledgeMatchesTitle => 'Matched cases & standards';
+
+  @override
+  String knowledgeMatchPercent(Object percent) {
+    return '$percent% match';
+  }
+
+  @override
+  String knowledgeCasesCount(Object count) {
+    return '$count cases';
+  }
+
+  @override
+  String knowledgeStandardsCount(Object count) {
+    return '$count standards';
+  }
+
+  @override
+  String get showDetails => 'Show details';
 }

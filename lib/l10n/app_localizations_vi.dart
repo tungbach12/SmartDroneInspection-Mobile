@@ -858,4 +858,58 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get userRoleMaintenanceEngineer => 'Kỹ sư bảo trì';
+
+  @override
+  String verdictExpiredChip(Object count) {
+    return '$count kết luận hết hạn';
+  }
+
+  @override
+  String verdictExpiringSoonChip(Object count) {
+    return '$count hết hạn trong 14 ngày';
+  }
+
+  @override
+  String paymentDueOn(Object date) {
+    return 'Đến hạn $date';
+  }
+
+  @override
+  String get paymentOverdue => 'Quá hạn';
+
+  @override
+  String get paymentNoticePdf => 'PDF thông báo';
+
+  @override
+  String get paymentReceiptPdf => 'PDF biên lai';
+
+  @override
+  String get inspectionChatTitle => 'Trao đổi kiểm định';
+
+  @override
+  String get typeInspectionMessageHint => 'Nhắn cho kiểm định viên…';
+
+  @override
+  String get attachFile => 'Đính kèm';
+
+  @override
+  String get knowledgeMatchesTitle => 'Ca tương đồng & tiêu chuẩn';
+
+  @override
+  String knowledgeMatchPercent(Object percent) {
+    return '$percent% khớp';
+  }
+
+  @override
+  String knowledgeCasesCount(Object count) {
+    return '$count ca';
+  }
+
+  @override
+  String knowledgeStandardsCount(Object count) {
+    return '$count tiêu chuẩn';
+  }
+
+  @override
+  String get showDetails => 'Xem chi tiết';
 }
