@@ -3,7 +3,10 @@ import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_chat.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/knowledge_recommendation.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/reinspection_verification.dart';
 
 class CustomerInspectionBundle {
   const CustomerInspectionBundle({
@@ -14,6 +17,7 @@ class CustomerInspectionBundle {
     this.findings = const <InspectionFinding>[],
     this.reportVersions = const <InspectionReportVersion>[],
     this.paymentStatus,
+    this.reinspectionVerifications = const <ReinspectionVerification>[],
   });
 
   final Inspection inspection;
@@ -23,6 +27,7 @@ class CustomerInspectionBundle {
   final List<InspectionFinding> findings;
   final List<InspectionReportVersion> reportVersions;
   final ReportPaymentStatus? paymentStatus;
+  final List<ReinspectionVerification> reinspectionVerifications;
 }
 
 final inspectionBundleProvider =
@@ -43,6 +48,9 @@ final inspectionBundleProvider =
       final findingsFuture = repo.listFindings(inspectionId);
       final versionsFuture = repo.listReportVersions(inspectionId);
       final paymentFuture = repo.getReportPaymentStatus(inspectionId);
+      final verificationsFuture = repo.listReinspectionVerifications(
+        inspectionId,
+      );
 
       final workflowRes = await workflowFuture;
       final sessionsRes = await sessionsFuture;
@@ -50,6 +58,7 @@ final inspectionBundleProvider =
       final findingsRes = await findingsFuture;
       final versionsRes = await versionsFuture;
       final paymentRes = await paymentFuture;
+      final verificationsRes = await verificationsFuture;
 
       return CustomerInspectionBundle(
         inspection: inspection,
@@ -71,6 +80,10 @@ final inspectionBundleProvider =
         paymentStatus: paymentRes is ApiSuccess<ReportPaymentStatus>
             ? paymentRes.data
             : null,
+        reinspectionVerifications:
+            verificationsRes is ApiSuccess<List<ReinspectionVerification>>
+            ? verificationsRes.data
+            : const <ReinspectionVerification>[],
       );
     });
 
@@ -85,6 +98,36 @@ final reportAiSummaryProvider =
             inspectionId: args.inspectionId,
             versionId: args.versionId,
           );
+      return switch (res) {
+        ApiSuccess(:final data) => data,
+        ApiError() => null,
+      };
+    });
+
+/// Inspector <-> Customer chat thread. Null when the endpoint is unavailable.
+final inspectionChatProvider =
+    FutureProvider.family<InspectionChatThread?, String>((
+      ref,
+      inspectionId,
+    ) async {
+      final res = await ref
+          .read(inspectionRepositoryProvider)
+          .getInspectionChat(inspectionId);
+      return switch (res) {
+        ApiSuccess(:final data) => data,
+        ApiError() => null,
+      };
+    });
+
+/// Optional DroneKnowledgeAI references. A 404/older backend yields null.
+final knowledgeRecommendationsProvider =
+    FutureProvider.family<KnowledgeRecommendationResponse?, String>((
+      ref,
+      inspectionId,
+    ) async {
+      final res = await ref
+          .read(inspectionRepositoryProvider)
+          .getKnowledgeRecommendations(inspectionId, limit: 4);
       return switch (res) {
         ApiSuccess(:final data) => data,
         ApiError() => null,

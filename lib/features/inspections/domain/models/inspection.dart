@@ -12,6 +12,9 @@ class Inspection {
     this.inspectorId,
     this.inspectorName,
     this.managerName,
+    this.managerEmail,
+    this.managerPhone,
+    this.paymentDueAt,
     this.droneId,
     this.droneSerialNumber,
     this.droneModel,
@@ -44,6 +47,9 @@ class Inspection {
       inspectorId: json['inspectorId'] as String?,
       inspectorName: json['inspectorName'] as String?,
       managerName: json['managerName'] as String?,
+      managerEmail: json['managerEmail'] as String?,
+      managerPhone: json['managerPhone'] as String?,
+      paymentDueAt: json['paymentDueAt'] as String?,
       droneId: json['droneId'] as String?,
       droneSerialNumber: json['droneSerialNumber'] as String?,
       droneModel: json['droneModel'] as String?,
@@ -77,6 +83,9 @@ class Inspection {
   final String? inspectorId;
   final String? inspectorName;
   final String? managerName;
+  final String? managerEmail;
+  final String? managerPhone;
+  final String? paymentDueAt;
   final String? droneId;
   final String? droneSerialNumber;
   final String? droneModel;
@@ -315,6 +324,7 @@ class ReportPaymentStatus {
     this.vatAmount,
     this.paymentMethod,
     this.paymentReference,
+    this.paymentDueAt,
   });
 
   factory ReportPaymentStatus.fromJson(Map<String, dynamic> json) {
@@ -330,6 +340,7 @@ class ReportPaymentStatus {
       vatAmount: (json['vatAmount'] as num?)?.toDouble(),
       paymentMethod: json['paymentMethod'] as String?,
       paymentReference: json['paymentReference'] as String?,
+      paymentDueAt: json['paymentDueAt'] as String?,
     );
   }
 
@@ -344,6 +355,17 @@ class ReportPaymentStatus {
   final double? vatAmount;
   final String? paymentMethod;
   final String? paymentReference;
+  final String? paymentDueAt;
+
+  bool get isPaymentDue => paymentStatus.toUpperCase() == 'PAYMENT_DUE';
+
+  /// True once the Net-15 window has lapsed (used for the compact overdue chip).
+  bool isPaymentOverdue([DateTime? now]) {
+    if (paymentDueAt == null) return false;
+    final due = DateTime.tryParse(paymentDueAt!)?.toLocal();
+    if (due == null) return false;
+    return !(now ?? DateTime.now()).isBefore(due);
+  }
 }
 
 class PayosCheckoutDetails {

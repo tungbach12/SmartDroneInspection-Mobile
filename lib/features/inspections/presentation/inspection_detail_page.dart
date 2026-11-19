@@ -8,7 +8,10 @@ import 'package:smart_drone_inspection/features/auth/presentation/auth_error_hel
 import 'package:smart_drone_inspection/features/inspections/data/inspection_repository.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/verdict_expiry.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/inspection_chat_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/widgets/knowledge_references_strip.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 import 'package:smart_drone_inspection/shared/widgets/common_widgets.dart';
@@ -116,6 +119,34 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     switch (res) {
       case ApiSuccess(:final data):
         final fileName = 'inspection-report-v${version.versionNo}.pdf';
+        final saved = await FilePicker.saveFile(
+          dialogTitle: fileName,
+          fileName: fileName,
+          bytes: data,
+        );
+        if (mounted && saved != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.documentSavedTo(fileName))),
+          );
+        }
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
+    }
+  }
+
+  Future<void> _downloadPaymentDocument(bool paid) async {
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .downloadPaymentDocument(widget.inspectionId);
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess(:final data):
+        final fileName = paid ? 'payment-receipt.pdf' : 'payment-notice.pdf';
         final saved = await FilePicker.saveFile(
           dialogTitle: fileName,
           fileName: fileName,
@@ -318,6 +349,19 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.inspectionDetailTitle),
+          actions: [
+            IconButton(
+              key: const Key('inspection-chat-btn'),
+              tooltip: l10n.inspectionChatTitle,
+              icon: const Icon(Icons.chat_bubble_outline_rounded),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      InspectionChatPage(inspectionId: widget.inspectionId),
+                ),
+              ),
+            ),
+          ],
           bottom: TabBar(
             tabs: [
               Tab(text: l10n.tabTracking),
@@ -366,11 +410,55 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   onRequestClarification: _requestClarification,
                   onPayPayos: _payWithPayos,
                   onPayVnpay: _payWithVnpay,
+                  onDownloadPaymentDocument: _downloadPaymentDocument,
                 ),
               ],
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class _VerdictExpiryBanner extends StatelessWidget {
+  const _VerdictExpiryBanner({required this.summary});
+
+  final VerdictExpirySummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final expired = summary.expiredCount > 0;
+    final (bg, fg) = statusColorsForTone(
+      context,
+      expired ? StatusTone.danger : StatusTone.warning,
+    );
+    return Container(
+      key: const Key('verdict-expiry-banner'),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: fg.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, size: 18, color: fg),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              expired
+                  ? l10n.verdictExpiredChip(summary.expiredCount)
+                  : l10n.verdictExpiringSoonChip(summary.expiringSoon.length),
+              style: TextStyle(
+                color: fg,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -395,6 +483,9 @@ class _TrackingTab extends StatelessWidget {
     final inspection = bundle.inspection;
     final status = bundle.workflowState?.status ?? inspection.status;
     final hasPublished = bundle.reportVersions.any((v) => v.isPublished);
+    final verdictExpiry = summarizeVerdictExpiry(
+      bundle.reinspectionVerifications,
+    );
 
     final s1 = [
       'IN_PROGRESS',
@@ -428,6 +519,11 @@ class _TrackingTab extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          if (!verdictExpiry.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _VerdictExpiryBanner(summary: verdictExpiry),
+            ),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -890,6 +986,8 @@ class _OfficialReportTab extends ConsumerWidget {
                     error: (_, _) =>
                         Text(openVersion!.summary ?? l10n.nothingHereYet),
                   ),
+                  const SizedBox(height: 12),
+                  KnowledgeReferencesStrip(inspectionId: inspectionId),
                 ],
               ),
             ),
@@ -911,6 +1009,7 @@ class _SettlementTab extends StatelessWidget {
     required this.onRequestClarification,
     required this.onPayPayos,
     required this.onPayVnpay,
+    required this.onDownloadPaymentDocument,
   });
 
   final CustomerInspectionBundle bundle;
@@ -923,6 +1022,7 @@ class _SettlementTab extends StatelessWidget {
   onRequestClarification;
   final VoidCallback onPayPayos;
   final VoidCallback onPayVnpay;
+  final ValueChanged<bool> onDownloadPaymentDocument;
 
   @override
   Widget build(BuildContext context) {
@@ -936,6 +1036,7 @@ class _SettlementTab extends StatelessWidget {
 
     final payment = bundle.paymentStatus;
     final isPaid = payment?.paid ?? bundle.inspection.isPaid;
+    final overdue = !isPaid && (payment?.isPaymentOverdue() ?? false);
     final isAccepted =
         (payment?.reportAccepted ??
             bundle.inspection.reportAccepted ??
@@ -1029,6 +1130,47 @@ class _SettlementTab extends StatelessWidget {
             const SizedBox(height: 12),
           ],
 
+          if (isPaid || (payment?.isPaymentDue ?? false))
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    StatusPill(
+                      label: isPaid
+                          ? l10n.paymentStatusPaid
+                          : overdue
+                          ? l10n.paymentOverdue
+                          : l10n.paymentDueOn(
+                              formatDateShort(payment?.paymentDueAt),
+                            ),
+                      tone: isPaid
+                          ? StatusTone.success
+                          : overdue
+                          ? StatusTone.danger
+                          : StatusTone.warning,
+                      showDot: true,
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      key: const Key('payment-document-btn'),
+                      onPressed: busy
+                          ? null
+                          : () => onDownloadPaymentDocument(isPaid),
+                      icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                      label: Text(
+                        isPaid ? l10n.paymentReceiptPdf : l10n.paymentNoticePdf,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (isPaid || (payment?.isPaymentDue ?? false))
+            const SizedBox(height: 12),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),

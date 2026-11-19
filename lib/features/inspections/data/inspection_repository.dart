@@ -6,7 +6,24 @@ import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_chat.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/knowledge_recommendation.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/reinspection_verification.dart';
+
+/// A pick-to-upload chat attachment. Paths are used on device; bytes cover
+/// platforms where only the in-memory file is available.
+class InspectionChatAttachmentInput {
+  const InspectionChatAttachmentInput({
+    required this.fileName,
+    this.path,
+    this.bytes,
+  });
+
+  final String fileName;
+  final String? path;
+  final Uint8List? bytes;
+}
 
 class InspectionRepository {
   InspectionRepository(this._dio);
@@ -276,6 +293,133 @@ class InspectionRepository {
         '/inspections/$inspectionId/vnpay/create-payment-url',
       );
       return ApiResult.success(VnpayCheckoutDetails.fromJson(response.data!));
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// Resolved re-inspection verdicts with their validity window.
+  Future<ApiResult<List<ReinspectionVerification>>>
+  listReinspectionVerifications(String inspectionId) async {
+    try {
+      final response = await _dio.get<dynamic>(
+        '/inspections/$inspectionId/reinspection-verifications',
+      );
+      final list = response.data is List
+          ? response.data as List<dynamic>
+          : const <dynamic>[];
+      return ApiResult.success(
+        list
+            .map(
+              (e) => ReinspectionVerification.fromJson(
+                Map<String, dynamic>.from(e as Map),
+              ),
+            )
+            .toList(),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// Payment notice (unpaid) or receipt (paid) PDF bytes.
+  Future<ApiResult<Uint8List>> downloadPaymentDocument(
+    String inspectionId,
+  ) async {
+    try {
+      final response = await _dio.get<List<int>>(
+        '/inspections/$inspectionId/report/payment-document',
+        options: Options(responseType: ResponseType.bytes),
+      );
+      return ApiResult.success(
+        Uint8List.fromList(response.data ?? const <int>[]),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectionChatThread>> getInspectionChat(
+    String inspectionId,
+  ) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/inspections/$inspectionId/messages',
+      );
+      return ApiResult.success(InspectionChatThread.fromJson(response.data!));
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectionChatThread>> postInspectionMessage({
+    required String inspectionId,
+    required String body,
+    List<InspectionChatAttachmentInput> files =
+        const <InspectionChatAttachmentInput>[],
+  }) async {
+    try {
+      final form = FormData.fromMap({
+        'body': body,
+        'files': [
+          for (final file in files)
+            file.bytes != null
+                ? MultipartFile.fromBytes(file.bytes!, filename: file.fileName)
+                : MultipartFile.fromFile(file.path!, filename: file.fileName),
+        ],
+      });
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/inspections/$inspectionId/messages',
+        data: form,
+      );
+      return ApiResult.success(InspectionChatThread.fromJson(response.data!));
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectionChatThread>> markInspectionMessagesRead(
+    String inspectionId,
+  ) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/inspections/$inspectionId/messages/read',
+      );
+      return ApiResult.success(InspectionChatThread.fromJson(response.data!));
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<Uint8List>> downloadInspectionMessageAttachment({
+    required String inspectionId,
+    required String messageId,
+    required String attachmentId,
+  }) async {
+    try {
+      final response = await _dio.get<List<int>>(
+        '/inspections/$inspectionId/messages/$messageId/attachments/$attachmentId',
+        options: Options(responseType: ResponseType.bytes),
+      );
+      return ApiResult.success(
+        Uint8List.fromList(response.data ?? const <int>[]),
+      );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  /// Optional DroneKnowledgeAI references; a 404/old backend degrades to null.
+  Future<ApiResult<KnowledgeRecommendationResponse>>
+  getKnowledgeRecommendations(String inspectionId, {int limit = 4}) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/inspections/$inspectionId/knowledge-recommendations',
+        queryParameters: {'limit': limit},
+      );
+      return ApiResult.success(
+        KnowledgeRecommendationResponse.fromJson(response.data!),
+      );
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
     }

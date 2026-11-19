@@ -1669,6 +1669,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maintenance Engineer'**
   String get userRoleMaintenanceEngineer;
+
+  /// No description provided for @verdictExpiredChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} verdicts expired'**
+  String verdictExpiredChip(Object count);
+
+  /// No description provided for @verdictExpiringSoonChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} verdicts expire in 14d'**
+  String verdictExpiringSoonChip(Object count);
+
+  /// No description provided for @paymentDueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String paymentDueOn(Object date);
+
+  /// No description provided for @paymentOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get paymentOverdue;
+
+  /// No description provided for @paymentNoticePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice PDF'**
+  String get paymentNoticePdf;
+
+  /// No description provided for @paymentReceiptPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt PDF'**
+  String get paymentReceiptPdf;
+
+  /// No description provided for @inspectionChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection chat'**
+  String get inspectionChatTitle;
+
+  /// No description provided for @typeInspectionMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message the inspector…'**
+  String get typeInspectionMessageHint;
+
+  /// No description provided for @attachFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach'**
+  String get attachFile;
+
+  /// No description provided for @knowledgeMatchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched cases & standards'**
+  String get knowledgeMatchesTitle;
+
+  /// No description provided for @knowledgeMatchPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% match'**
+  String knowledgeMatchPercent(Object percent);
+
+  /// No description provided for @knowledgeCasesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} cases'**
+  String knowledgeCasesCount(Object count);
+
+  /// No description provided for @knowledgeStandardsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} standards'**
+  String knowledgeStandardsCount(Object count);
+
+  /// No description provided for @showDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Show details'**
+  String get showDetails;
 }
 
 class _AppLocalizationsDelegate
