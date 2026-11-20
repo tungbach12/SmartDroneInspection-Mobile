@@ -919,7 +919,7 @@ class _OfficialReportTab extends ConsumerWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons.auto_awesome_rounded,
+                        Icons.summarize_outlined,
                         size: 20,
                         color: Theme.of(context).colorScheme.primary,
                       ),
