@@ -128,30 +128,6 @@ class CustomerDashboardPage extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 14),
-            MotionEntrance(
-              delay: const Duration(milliseconds: 80),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: PrimaryGradientButton(
-                      height: 48,
-                      icon: Icons.add_rounded,
-                      label: l10n.quickActionNewRequest,
-                      onPressed: () => context.push('/requests/new'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.go('/assets'),
-                      icon: const Icon(Icons.domain_add_outlined, size: 18),
-                      label: Text(l10n.quickActionRegisterAsset),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 22),
 
             _SectionHeader(

@@ -47,13 +47,15 @@ class _ContractsPageState extends ConsumerState<ContractsPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        key: const Key('new-service-request-fab'),
-        heroTag: 'new-service-request-fab',
-        onPressed: () => context.push('/requests/new'),
-        icon: const Icon(Icons.add_rounded),
-        label: Text(l10n.newServiceRequest),
-      ),
+      floatingActionButton: (asyncRequests.value?.isNotEmpty ?? false)
+          ? FloatingActionButton.extended(
+              key: const Key('new-service-request-fab'),
+              heroTag: 'new-service-request-fab',
+              onPressed: () => context.push('/requests/new'),
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l10n.newServiceRequest),
+            )
+          : null,
       body: Column(
         children: [
           Padding(
