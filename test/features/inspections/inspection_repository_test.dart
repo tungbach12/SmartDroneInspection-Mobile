@@ -119,7 +119,7 @@ void main() {
             return;
           }
           if (options.method == 'POST' &&
-              options.path == '/inspections/insp-1/payos/create-payment-link') {
+              options.path == '/inspections/insp-1/sepay/create-payment-link') {
             handler.resolve(
               Response(
                 requestOptions: options,
@@ -128,7 +128,7 @@ void main() {
                   'orderCode': 998877,
                   'amount': 11000000,
                   'paymentLinkId': 'pl-1',
-                  'checkoutUrl': 'https://pay.payos.vn/web/998877',
+                  'checkoutUrl': 'https://pay.sepay.vn/web/998877',
                   'qrCode': '000201010212...',
                 },
               ),
@@ -195,7 +195,7 @@ void main() {
     );
   });
 
-  test('settlement flow calls accept, clarification with reason query, PayOS, and VNPay', () async {
+  test('settlement flow calls accept, clarification with reason query, Sepay, and VNPay', () async {
     final acceptRes = await repository.acceptReport(
       inspectionId: 'insp-1',
       versionId: 'ver-1',
@@ -217,8 +217,8 @@ void main() {
     expect(paymentStatus, isA<ApiSuccess<ReportPaymentStatus>>());
     expect((paymentStatus as ApiSuccess<ReportPaymentStatus>).data.vatRate, 10);
 
-    final payos = await repository.createPayosPaymentLink('insp-1');
-    expect((payos as ApiSuccess<PayosCheckoutDetails>).data.orderCode, 998877);
+    final sepay = await repository.createSepayPaymentLink('insp-1');
+    expect((sepay as ApiSuccess<SepayCheckoutDetails>).data.orderCode, 998877);
 
     final vnpay = await repository.createVnpayPaymentUrl('insp-1');
     expect(

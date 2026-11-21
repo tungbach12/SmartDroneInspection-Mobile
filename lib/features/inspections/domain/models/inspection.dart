@@ -368,8 +368,8 @@ class ReportPaymentStatus {
   }
 }
 
-class PayosCheckoutDetails {
-  const PayosCheckoutDetails({
+class SepayCheckoutDetails {
+  const SepayCheckoutDetails({
     required this.orderCode,
     required this.amount,
     required this.paymentLinkId,
@@ -377,8 +377,8 @@ class PayosCheckoutDetails {
     required this.qrCode,
   });
 
-  factory PayosCheckoutDetails.fromJson(Map<String, dynamic> json) {
-    return PayosCheckoutDetails(
+  factory SepayCheckoutDetails.fromJson(Map<String, dynamic> json) {
+    return SepayCheckoutDetails(
       orderCode: (json['orderCode'] as num?)?.toInt() ?? 0,
       amount: (json['amount'] as num?)?.toDouble() ?? 0,
       paymentLinkId: (json['paymentLinkId'] as String?) ?? '',

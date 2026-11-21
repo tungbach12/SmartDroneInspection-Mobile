@@ -272,14 +272,14 @@ class InspectionRepository {
     }
   }
 
-  Future<ApiResult<PayosCheckoutDetails>> createPayosPaymentLink(
+  Future<ApiResult<SepayCheckoutDetails>> createSepayPaymentLink(
     String inspectionId,
   ) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
-        '/inspections/$inspectionId/payos/create-payment-link',
+        '/inspections/$inspectionId/sepay/create-payment-link',
       );
-      return ApiResult.success(PayosCheckoutDetails.fromJson(response.data!));
+      return ApiResult.success(SepayCheckoutDetails.fromJson(response.data!));
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
     }

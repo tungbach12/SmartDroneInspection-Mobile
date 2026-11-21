@@ -288,11 +288,11 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     }
   }
 
-  Future<void> _payWithPayos() async {
+  Future<void> _payWithSepay() async {
     setState(() => _actionBusy = true);
     final res = await ref
         .read(inspectionRepositoryProvider)
-        .createPayosPaymentLink(widget.inspectionId);
+        .createSepayPaymentLink(widget.inspectionId);
     if (!mounted) return;
     setState(() => _actionBusy = false);
 
@@ -304,7 +304,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
         }
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.payosOrderReady(data.orderCode))),
+          SnackBar(content: Text(context.l10n.sepayOrderReady(data.orderCode))),
         );
         _refreshBundle();
       case ApiError(:final failure):
@@ -408,7 +408,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   onDownloadPdf: _downloadReportPdf,
                   onAcceptReport: _acceptReport,
                   onRequestClarification: _requestClarification,
-                  onPayPayos: _payWithPayos,
+                  onPaySepay: _payWithSepay,
                   onPayVnpay: _payWithVnpay,
                   onDownloadPaymentDocument: _downloadPaymentDocument,
                 ),
@@ -1007,7 +1007,7 @@ class _SettlementTab extends StatelessWidget {
     required this.onDownloadPdf,
     required this.onAcceptReport,
     required this.onRequestClarification,
-    required this.onPayPayos,
+    required this.onPaySepay,
     required this.onPayVnpay,
     required this.onDownloadPaymentDocument,
   });
@@ -1020,7 +1020,7 @@ class _SettlementTab extends StatelessWidget {
   final ValueChanged<InspectionReportVersion> onAcceptReport;
   final void Function(InspectionReportVersion, int priorCount)
   onRequestClarification;
-  final VoidCallback onPayPayos;
+  final VoidCallback onPaySepay;
   final VoidCallback onPayVnpay;
   final ValueChanged<bool> onDownloadPaymentDocument;
 
@@ -1199,7 +1199,7 @@ class _SettlementTab extends StatelessWidget {
                         if (payment?.orderCode != null) ...[
                           const SizedBox(height: 8),
                           Text(
-                            '${payment?.paymentMethod ?? 'PayOS'} #${payment!.orderCode}',
+                            '${payment?.paymentMethod ?? 'Sepay'} #${payment!.orderCode}',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -1227,10 +1227,10 @@ class _SettlementTab extends StatelessWidget {
                         ),
                         const SizedBox(height: 14),
                         FilledButton.icon(
-                          key: const Key('pay-payos-btn'),
-                          onPressed: busy ? null : onPayPayos,
+                          key: const Key('pay-sepay-btn'),
+                          onPressed: busy ? null : onPaySepay,
                           icon: const Icon(Icons.qr_code_2_rounded),
-                          label: Text(l10n.payWithPayos),
+                          label: Text(l10n.payWithSepay),
                         ),
                         const SizedBox(height: 10),
                         OutlinedButton.icon(
