@@ -46,13 +46,15 @@ class _AssetsPageState extends ConsumerState<AssetsPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        key: const Key('register-asset-fab'),
-        heroTag: 'register-asset-fab',
-        onPressed: () => _showAssetFormDialog(context),
-        icon: const Icon(Icons.add_rounded),
-        label: Text(l10n.registerAsset),
-      ),
+      floatingActionButton: (asyncAssets.value?.isNotEmpty ?? false)
+          ? FloatingActionButton.extended(
+              key: const Key('register-asset-fab'),
+              heroTag: 'register-asset-fab',
+              onPressed: () => _showAssetFormDialog(context),
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l10n.registerAsset),
+            )
+          : null,
       body: Column(
         children: [
           Padding(
