@@ -17,6 +17,7 @@ import 'package:smart_drone_inspection/features/inspections/domain/models/inspec
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_detail_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/widgets/sepay_qr_dialog.dart';
 import 'package:smart_drone_inspection/features/notifications/domain/models/app_notification.dart';
 import 'package:smart_drone_inspection/features/notifications/presentation/providers/notification_providers.dart';
 import 'package:smart_drone_inspection/l10n/app_localizations.dart';
@@ -289,6 +290,49 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Verify email'), findsOneWidget);
       expect(find.text('Reset password'), findsWidgets);
+    },
+  );
+
+  testWidgets(
+    'SepayQrDialog shows bank details, SDI transfer content, and settles when check succeeds',
+    (tester) async {
+      var settled = false;
+      const details = SepayCheckoutDetails(
+        orderCode: 987654321,
+        amount: 5000000,
+        paymentLinkId: '987654321',
+        checkoutUrl:
+            'https://vietqr.app/img?acc=07723264801&bank=TPB&amount=5000000&des=SDI987654321&holder=TEST%20HOLDER',
+        qrCode: 'SDI987654321',
+      );
+
+      await tester.pumpWidget(
+        _wrapApp(
+          SepayQrDialog(
+            details: details,
+            checkPaymentStatus: () async => const ApiResult.success(
+              ReportPaymentStatus(
+                reportAccepted: true,
+                paid: true,
+                paymentStatus: 'PAID',
+              ),
+            ),
+            onSettled: () => settled = true,
+          ),
+          const [],
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Sepay VietQR payment'), findsOneWidget);
+      expect(find.text('TPB'), findsOneWidget);
+      expect(find.text('07723264801'), findsOneWidget);
+      expect(find.text('SDI987654321'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('sepay-check-status-btn')));
+      await tester.pumpAndSettle();
+
+      expect(settled, isTrue);
     },
   );
 }

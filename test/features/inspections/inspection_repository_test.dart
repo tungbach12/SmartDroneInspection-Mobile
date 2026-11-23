@@ -152,6 +152,12 @@ void main() {
             );
             return;
           }
+          if (options.method == 'POST' &&
+              options.path ==
+                  '/inspections/insp-1/report/cancel-unpaid-order') {
+            handler.resolve(Response(requestOptions: options, statusCode: 204));
+            return;
+          }
           handler.reject(DioException(requestOptions: options));
         },
       ),
@@ -224,6 +230,14 @@ void main() {
     expect(
       (vnpay as ApiSuccess<VnpayCheckoutDetails>).data.txnRef,
       'TXN556677',
+    );
+    expect(requests.last.queryParameters['client'], 'mobile');
+
+    final cancelRes = await repository.cancelUnpaidPaymentOrder('insp-1');
+    expect(cancelRes, isA<ApiSuccess<void>>());
+    expect(
+      requests.last.path,
+      '/inspections/insp-1/report/cancel-unpaid-order',
     );
   });
 }

@@ -1376,6 +1376,90 @@ abstract class AppLocalizations {
   /// **'Refresh status'**
   String get refreshPaymentStatus;
 
+  /// No description provided for @sepayQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepay VietQR payment'**
+  String get sepayQrTitle;
+
+  /// No description provided for @sepayQrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this VietQR code with your banking app. Payment confirms automatically within a few minutes.'**
+  String get sepayQrSubtitle;
+
+  /// No description provided for @bankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get bankLabel;
+
+  /// No description provided for @accountNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get accountNumberLabel;
+
+  /// No description provided for @accountHolderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account holder'**
+  String get accountHolderLabel;
+
+  /// No description provided for @transferContentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer content'**
+  String get transferContentLabel;
+
+  /// No description provided for @copiedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copiedLabel;
+
+  /// No description provided for @copyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyLabel;
+
+  /// No description provided for @qrUnavailableFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'QR image unavailable. Use the bank details below to transfer manually.'**
+  String get qrUnavailableFallback;
+
+  /// No description provided for @keepTransferContentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the transfer content unchanged so the payment can be matched automatically.'**
+  String get keepTransferContentHint;
+
+  /// No description provided for @checkPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Check payment status'**
+  String get checkPaymentStatus;
+
+  /// No description provided for @checkingPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get checkingPaymentStatus;
+
+  /// No description provided for @resetPaymentOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset payment order'**
+  String get resetPaymentOrder;
+
+  /// No description provided for @paymentOrderCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid payment order cleared. You can choose a payment method again.'**
+  String get paymentOrderCleared;
+
   /// No description provided for @inspectionStatusScheduled.
   ///
   /// In en, this message translates to:
