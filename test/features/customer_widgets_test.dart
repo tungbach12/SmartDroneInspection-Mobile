@@ -301,8 +301,7 @@ void main() {
         orderCode: 987654321,
         amount: 5000000,
         paymentLinkId: '987654321',
-        checkoutUrl:
-            'https://vietqr.app/img?acc=07723264801&bank=TPB&amount=5000000&des=SDI987654321&holder=TEST%20HOLDER',
+        checkoutUrl: 'https://vietqr.app/img?acc=07723264801&bank=TPB&amount=5000000&des=SDI987654321&holder=TEST%20HOLDER',
         qrCode: 'SDI987654321',
       );
 
@@ -324,7 +323,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Sepay VietQR payment'), findsOneWidget);
+      expect(find.text('Sepay VietQR'), findsOneWidget);
       expect(find.text('TPB'), findsOneWidget);
       expect(find.text('07723264801'), findsOneWidget);
       expect(find.text('SDI987654321'), findsOneWidget);

@@ -1379,14 +1379,8 @@ abstract class AppLocalizations {
   /// No description provided for @sepayQrTitle.
   ///
   /// In en, this message translates to:
-  /// **'Sepay VietQR payment'**
+  /// **'Sepay VietQR'**
   String get sepayQrTitle;
-
-  /// No description provided for @sepayQrSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan this VietQR code with your banking app. Payment confirms automatically within a few minutes.'**
-  String get sepayQrSubtitle;
 
   /// No description provided for @bankLabel.
   ///
@@ -1427,19 +1421,13 @@ abstract class AppLocalizations {
   /// No description provided for @qrUnavailableFallback.
   ///
   /// In en, this message translates to:
-  /// **'QR image unavailable. Use the bank details below to transfer manually.'**
+  /// **'QR unavailable'**
   String get qrUnavailableFallback;
-
-  /// No description provided for @keepTransferContentHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Keep the transfer content unchanged so the payment can be matched automatically.'**
-  String get keepTransferContentHint;
 
   /// No description provided for @checkPaymentStatus.
   ///
   /// In en, this message translates to:
-  /// **'Check payment status'**
+  /// **'Check status'**
   String get checkPaymentStatus;
 
   /// No description provided for @checkingPaymentStatus.
@@ -1451,13 +1439,13 @@ abstract class AppLocalizations {
   /// No description provided for @resetPaymentOrder.
   ///
   /// In en, this message translates to:
-  /// **'Reset payment order'**
+  /// **'Reset order'**
   String get resetPaymentOrder;
 
   /// No description provided for @paymentOrderCleared.
   ///
   /// In en, this message translates to:
-  /// **'Unpaid payment order cleared. You can choose a payment method again.'**
+  /// **'Payment order cleared.'**
   String get paymentOrderCleared;
 
   /// No description provided for @inspectionStatusScheduled.

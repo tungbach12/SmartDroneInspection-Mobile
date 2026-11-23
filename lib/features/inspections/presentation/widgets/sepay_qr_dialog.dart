@@ -124,12 +124,6 @@ class _SepayQrDialogState extends State<SepayQrDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              l10n.sepayQrSubtitle,
-              style: theme.textTheme.bodySmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 14),
             if (widget.details.checkoutUrl.isNotEmpty && !_qrLoadError)
               Container(
                 padding: const EdgeInsets.all(10),
@@ -220,14 +214,6 @@ class _SepayQrDialogState extends State<SepayQrDialog> {
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _copiedKey == 'content'
-                  ? l10n.copiedLabel
-                  : l10n.keepTransferContentHint,
-              style: theme.textTheme.bodySmall,
-              textAlign: TextAlign.center,
             ),
           ],
         ),

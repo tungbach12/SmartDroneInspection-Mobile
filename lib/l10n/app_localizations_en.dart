@@ -704,11 +704,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refreshPaymentStatus => 'Refresh status';
 
   @override
-  String get sepayQrTitle => 'Sepay VietQR payment';
-
-  @override
-  String get sepayQrSubtitle =>
-      'Scan this VietQR code with your banking app. Payment confirms automatically within a few minutes.';
+  String get sepayQrTitle => 'Sepay VietQR';
 
   @override
   String get bankLabel => 'Bank';
@@ -729,25 +725,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copyLabel => 'Copy';
 
   @override
-  String get qrUnavailableFallback =>
-      'QR image unavailable. Use the bank details below to transfer manually.';
+  String get qrUnavailableFallback => 'QR unavailable';
 
   @override
-  String get keepTransferContentHint =>
-      'Keep the transfer content unchanged so the payment can be matched automatically.';
-
-  @override
-  String get checkPaymentStatus => 'Check payment status';
+  String get checkPaymentStatus => 'Check status';
 
   @override
   String get checkingPaymentStatus => 'Checking…';
 
   @override
-  String get resetPaymentOrder => 'Reset payment order';
+  String get resetPaymentOrder => 'Reset order';
 
   @override
-  String get paymentOrderCleared =>
-      'Unpaid payment order cleared. You can choose a payment method again.';
+  String get paymentOrderCleared => 'Payment order cleared.';
 
   @override
   String get inspectionStatusScheduled => 'Scheduled';

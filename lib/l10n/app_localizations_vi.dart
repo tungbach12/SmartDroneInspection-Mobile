@@ -708,11 +708,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get refreshPaymentStatus => 'Cập nhật trạng thái';
 
   @override
-  String get sepayQrTitle => 'Thanh toán VietQR (Sepay)';
-
-  @override
-  String get sepayQrSubtitle =>
-      'Quét mã VietQR bằng ứng dụng ngân hàng. Hệ thống sẽ tự động xác nhận sau vài phút.';
+  String get sepayQrTitle => 'VietQR (Sepay)';
 
   @override
   String get bankLabel => 'Ngân hàng';
@@ -724,7 +720,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountHolderLabel => 'Chủ tài khoản';
 
   @override
-  String get transferContentLabel => 'Nội dung chuyển khoản';
+  String get transferContentLabel => 'Nội dung CK';
 
   @override
   String get copiedLabel => 'Đã sao chép';
@@ -733,25 +729,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get copyLabel => 'Sao chép';
 
   @override
-  String get qrUnavailableFallback =>
-      'Không tải được ảnh QR. Vui lòng chuyển khoản thủ công theo thông tin bên dưới.';
+  String get qrUnavailableFallback => 'Không tải được ảnh QR';
 
   @override
-  String get keepTransferContentHint =>
-      'Giữ nguyên nội dung chuyển khoản để hệ thống tự động đối soát.';
-
-  @override
-  String get checkPaymentStatus => 'Kiểm tra thanh toán ngay';
+  String get checkPaymentStatus => 'Kiểm tra';
 
   @override
   String get checkingPaymentStatus => 'Đang kiểm tra…';
 
   @override
-  String get resetPaymentOrder => 'Đổi phương thức / Hủy đơn';
+  String get resetPaymentOrder => 'Đổi cổng';
 
   @override
-  String get paymentOrderCleared =>
-      'Đã hủy đơn chưa thanh toán. Bạn có thể chọn lại phương thức thanh toán.';
+  String get paymentOrderCleared => 'Đã hủy đơn thanh toán.';
 
   @override
   String get inspectionStatusScheduled => 'Đã lên lịch';
