@@ -9,7 +9,6 @@ class AuthUser {
     required this.roles,
     this.phoneNumber,
     this.avatarUrl,
-    this.organizationId,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
@@ -30,7 +29,6 @@ class AuthUser {
       roles: roles,
       phoneNumber: json['phoneNumber'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
-      organizationId: json['organizationId'] as String?,
     );
   }
 
@@ -40,11 +38,10 @@ class AuthUser {
   final List<UserRole> roles;
   final String? phoneNumber;
   final String? avatarUrl;
-  final String? organizationId;
 
   bool hasRole(UserRole role) => roles.contains(role);
 
-  /// Customer mobile app exclusively permits CUSTOMER (including normalized ORG_MANAGER).
+  /// Customer mobile app exclusively permits CUSTOMER.
   bool get isCustomer => roles.contains(UserRole.customer);
 
   AuthUser copyWith({
@@ -54,7 +51,6 @@ class AuthUser {
     List<UserRole>? roles,
     String? phoneNumber,
     String? avatarUrl,
-    String? organizationId,
   }) {
     return AuthUser(
       id: id ?? this.id,
@@ -63,7 +59,6 @@ class AuthUser {
       roles: roles ?? this.roles,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      organizationId: organizationId ?? this.organizationId,
     );
   }
 }

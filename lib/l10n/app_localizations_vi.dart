@@ -207,7 +207,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get customerOnlyAccessNotice =>
-      'Ứng dụng di động chỉ dành riêng cho tài khoản Khách hàng. Kiểm định viên và Quản lý nền tảng vui lòng sử dụng cổng web.';
+      'Ứng dụng di động chỉ dành riêng cho tài khoản Khách hàng. Kiểm định viên và Quản lý vui lòng sử dụng cổng web.';
 
   @override
   String get registrationSuccess =>
@@ -424,7 +424,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get noQuoteYet =>
-      'Quản lý nền tảng đang xem xét yêu cầu và sẽ phát hành báo giá sớm.';
+      'Quản lý đang xem xét yêu cầu và sẽ phát hành báo giá sớm.';
 
   @override
   String get quoteScopeLabel => 'Tóm tắt phạm vi';
@@ -455,7 +455,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get typeMessageHint => 'Nhắn tin cho Quản lý nền tảng…';
+  String get typeMessageHint => 'Nhắn tin cho Quản lý…';
 
   @override
   String get noMessagesYet =>
@@ -466,7 +466,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get contractNotUploadedYet =>
-      'Đang chờ Quản lý nền tảng tải bản scan hợp đồng đã ký.';
+      'Đang chờ Quản lý tải bản scan hợp đồng đã ký.';
 
   @override
   String get downloadContract => 'Tải / Lưu hợp đồng';
@@ -620,7 +620,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get reportUnpublishedNotice =>
-      'Bản PDF chính thức sẽ mở tải xuống sau khi Quản lý nền tảng phát hành phiên bản này.';
+      'Bản PDF chính thức sẽ mở tải xuống sau khi Quản lý phát hành phiên bản này.';
 
   @override
   String get settlementStepAccept => '1. Nghiệm thu báo cáo';
@@ -673,7 +673,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get clarificationLimitReached =>
-      'Đã đạt giới hạn tối đa 02 lần yêu cầu làm rõ. Vui lòng liên hệ Quản lý nền tảng để đối soát.';
+      'Đã đạt giới hạn tối đa 02 lần yêu cầu làm rõ. Vui lòng liên hệ Quản lý để đối soát.';
 
   @override
   String get clarificationReasonHint =>
@@ -797,11 +797,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountTitle => 'Tài khoản & Cài đặt';
 
   @override
-  String organizationLabel(Object id) {
-    return 'Mã tổ chức: $id';
-  }
-
-  @override
   String get preferencesSection => 'Tùy chọn hiển thị';
 
   @override
@@ -848,16 +843,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get userRoleCustomer => 'Khách hàng';
 
   @override
-  String get userRolePlatformManager => 'Quản lý nền tảng';
+  String get userRoleManager => 'Quản lý';
 
   @override
   String get userRoleAdmin => 'Quản trị viên';
 
   @override
   String get userRoleInspector => 'Kiểm định viên';
-
-  @override
-  String get userRoleMaintenanceEngineer => 'Kỹ sư bảo trì';
 
   @override
   String verdictExpiredChip(Object count) {

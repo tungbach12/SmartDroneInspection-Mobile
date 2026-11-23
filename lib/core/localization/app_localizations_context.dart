@@ -8,11 +8,10 @@ extension AppLocalizationsContext on BuildContext {
 }
 
 String localizedRole(AppLocalizations l10n, String role) => switch (role) {
-  'CUSTOMER' || 'ORG_MANAGER' => l10n.userRoleCustomer,
-  'MANAGER' || 'PLATFORM_MANAGER' => l10n.userRolePlatformManager,
+  'CUSTOMER' => l10n.userRoleCustomer,
+  'MANAGER' => l10n.userRoleManager,
   'ADMIN' => l10n.userRoleAdmin,
   'INSPECTOR' => l10n.userRoleInspector,
-  'MAINTENANCE_ENGINEER' => l10n.userRoleMaintenanceEngineer,
   _ => role,
 };
 

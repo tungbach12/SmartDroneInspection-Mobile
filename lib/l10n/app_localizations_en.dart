@@ -207,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get customerOnlyAccessNotice =>
-      'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.';
+      'This mobile app is exclusively for Customer accounts. Inspectors and Managers should use the web portal.';
 
   @override
   String get registrationSuccess => 'Account created! You can now sign in.';
@@ -420,7 +420,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noQuoteYet =>
-      'Platform Manager is reviewing your request and will issue a quotation shortly.';
+      'Manager is reviewing your request and will issue a quotation shortly.';
 
   @override
   String get quoteScopeLabel => 'Scope summary';
@@ -451,7 +451,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get typeMessageHint => 'Write a message to Platform Manager…';
+  String get typeMessageHint => 'Write a message to Manager…';
 
   @override
   String get noMessagesYet =>
@@ -462,7 +462,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contractNotUploadedYet =>
-      'Pending signed paper contract scan from Platform Manager.';
+      'Pending signed paper contract scan from Manager.';
 
   @override
   String get downloadContract => 'Download / Save contract';
@@ -546,7 +546,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get milestoneEvidenceAi => 'Evidence intake & AI detection';
 
   @override
-  String get milestoneManagerReview => 'Platform Manager review';
+  String get milestoneManagerReview => 'Manager review';
 
   @override
   String get milestonePublished => 'Official report published';
@@ -616,7 +616,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportUnpublishedNotice =>
-      'Report PDF download becomes available once Platform Manager publishes this version.';
+      'Report PDF download becomes available once Manager publishes this version.';
 
   @override
   String get settlementStepAccept => '1. Accept official report';
@@ -669,7 +669,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clarificationLimitReached =>
-      'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.';
+      'Maximum of 2 clarification requests reached. Contact Manager directly for resolution.';
 
   @override
   String get clarificationReasonHint =>
@@ -793,11 +793,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountTitle => 'Account & Settings';
 
   @override
-  String organizationLabel(Object id) {
-    return 'Organization ID: $id';
-  }
-
-  @override
   String get preferencesSection => 'Preferences';
 
   @override
@@ -844,16 +839,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userRoleCustomer => 'Customer';
 
   @override
-  String get userRolePlatformManager => 'Platform Manager';
+  String get userRoleManager => 'Manager';
 
   @override
   String get userRoleAdmin => 'Administrator';
 
   @override
   String get userRoleInspector => 'Inspector';
-
-  @override
-  String get userRoleMaintenanceEngineer => 'Maintenance Engineer';
 
   @override
   String verdictExpiredChip(Object count) {

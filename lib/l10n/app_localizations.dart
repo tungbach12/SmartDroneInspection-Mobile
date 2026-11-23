@@ -473,7 +473,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerOnlyAccessNotice.
   ///
   /// In en, this message translates to:
-  /// **'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.'**
+  /// **'This mobile app is exclusively for Customer accounts. Inspectors and Managers should use the web portal.'**
   String get customerOnlyAccessNotice;
 
   /// No description provided for @registrationSuccess.
@@ -875,7 +875,7 @@ abstract class AppLocalizations {
   /// No description provided for @noQuoteYet.
   ///
   /// In en, this message translates to:
-  /// **'Platform Manager is reviewing your request and will issue a quotation shortly.'**
+  /// **'Manager is reviewing your request and will issue a quotation shortly.'**
   String get noQuoteYet;
 
   /// No description provided for @quoteScopeLabel.
@@ -929,7 +929,7 @@ abstract class AppLocalizations {
   /// No description provided for @typeMessageHint.
   ///
   /// In en, this message translates to:
-  /// **'Write a message to Platform Manager…'**
+  /// **'Write a message to Manager…'**
   String get typeMessageHint;
 
   /// No description provided for @noMessagesYet.
@@ -947,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @contractNotUploadedYet.
   ///
   /// In en, this message translates to:
-  /// **'Pending signed paper contract scan from Platform Manager.'**
+  /// **'Pending signed paper contract scan from Manager.'**
   String get contractNotUploadedYet;
 
   /// No description provided for @downloadContract.
@@ -1109,7 +1109,7 @@ abstract class AppLocalizations {
   /// No description provided for @milestoneManagerReview.
   ///
   /// In en, this message translates to:
-  /// **'Platform Manager review'**
+  /// **'Manager review'**
   String get milestoneManagerReview;
 
   /// No description provided for @milestonePublished.
@@ -1229,7 +1229,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportUnpublishedNotice.
   ///
   /// In en, this message translates to:
-  /// **'Report PDF download becomes available once Platform Manager publishes this version.'**
+  /// **'Report PDF download becomes available once Manager publishes this version.'**
   String get reportUnpublishedNotice;
 
   /// No description provided for @settlementStepAccept.
@@ -1319,7 +1319,7 @@ abstract class AppLocalizations {
   /// No description provided for @clarificationLimitReached.
   ///
   /// In en, this message translates to:
-  /// **'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.'**
+  /// **'Maximum of 2 clarification requests reached. Contact Manager directly for resolution.'**
   String get clarificationLimitReached;
 
   /// No description provided for @clarificationReasonHint.
@@ -1550,12 +1550,6 @@ abstract class AppLocalizations {
   /// **'Account & Settings'**
   String get accountTitle;
 
-  /// No description provided for @organizationLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Organization ID: {id}'**
-  String organizationLabel(Object id);
-
   /// No description provided for @preferencesSection.
   ///
   /// In en, this message translates to:
@@ -1646,11 +1640,11 @@ abstract class AppLocalizations {
   /// **'Customer'**
   String get userRoleCustomer;
 
-  /// No description provided for @userRolePlatformManager.
+  /// No description provided for @userRoleManager.
   ///
   /// In en, this message translates to:
-  /// **'Platform Manager'**
-  String get userRolePlatformManager;
+  /// **'Manager'**
+  String get userRoleManager;
 
   /// No description provided for @userRoleAdmin.
   ///
@@ -1663,12 +1657,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inspector'**
   String get userRoleInspector;
-
-  /// No description provided for @userRoleMaintenanceEngineer.
-  ///
-  /// In en, this message translates to:
-  /// **'Maintenance Engineer'**
-  String get userRoleMaintenanceEngineer;
 
   /// No description provided for @verdictExpiredChip.
   ///
