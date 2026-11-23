@@ -11,6 +11,7 @@ import 'package:smart_drone_inspection/features/inspections/domain/models/inspec
 import 'package:smart_drone_inspection/features/inspections/domain/verdict_expiry.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_chat_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/widgets/customer_inspector_rating_card.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/widgets/knowledge_references_strip.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
@@ -38,6 +39,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
 
   void _refreshBundle() {
     ref.invalidate(inspectionBundleProvider(widget.inspectionId));
+    ref.invalidate(inspectorRatingProvider(widget.inspectionId));
     ref.read(inspectionsNotifierProvider.notifier).refresh();
   }
 
@@ -554,9 +556,32 @@ class _TrackingTab extends StatelessWidget {
                   if (inspection.inspectorName != null &&
                       inspection.inspectorName!.trim().isNotEmpty) ...[
                     const SizedBox(height: 6),
-                    Text(
-                      '${l10n.inspectorLabel}: ${inspection.inspectorName!.trim()}',
-                      style: Theme.of(context).textTheme.bodySmall,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            '${l10n.inspectorLabel}: ${inspection.inspectorName!.trim()}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (inspection.inspectorAverageRating != null &&
+                            inspection.inspectorRatingCount > 0) ...[
+                          const SizedBox(width: 8),
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 15,
+                            color: Color(0xFFF59E0B),
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            '${inspection.inspectorAverageRating!.toStringAsFixed(1)} (${inspection.inspectorRatingCount})',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                   if (inspection.managerName != null &&
@@ -1283,6 +1308,8 @@ class _SettlementTab extends StatelessWidget {
                     ),
             ),
           ),
+          const SizedBox(height: 12),
+          CustomerInspectorRatingCard(inspectionId: bundle.inspection.id),
         ],
       ),
     );

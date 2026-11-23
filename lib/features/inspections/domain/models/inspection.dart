@@ -11,6 +11,8 @@ class Inspection {
     this.objective,
     this.inspectorId,
     this.inspectorName,
+    this.inspectorAverageRating,
+    this.inspectorRatingCount = 0,
     this.managerName,
     this.managerEmail,
     this.managerPhone,
@@ -46,6 +48,10 @@ class Inspection {
       objective: json['objective'] as String?,
       inspectorId: json['inspectorId'] as String?,
       inspectorName: json['inspectorName'] as String?,
+      inspectorAverageRating:
+          (json['inspectorAverageRating'] as num?)?.toDouble(),
+      inspectorRatingCount:
+          (json['inspectorRatingCount'] as num?)?.toInt() ?? 0,
       managerName: json['managerName'] as String?,
       managerEmail: json['managerEmail'] as String?,
       managerPhone: json['managerPhone'] as String?,
@@ -82,6 +88,8 @@ class Inspection {
   final String? objective;
   final String? inspectorId;
   final String? inspectorName;
+  final double? inspectorAverageRating;
+  final int inspectorRatingCount;
   final String? managerName;
   final String? managerEmail;
   final String? managerPhone;

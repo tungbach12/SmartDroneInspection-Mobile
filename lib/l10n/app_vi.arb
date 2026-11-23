@@ -297,5 +297,17 @@
   "@knowledgeCasesCount": {"placeholders": {"count": {}}},
   "knowledgeStandardsCount": "{count} tiêu chuẩn",
   "@knowledgeStandardsCount": {"placeholders": {"count": {}}},
-  "showDetails": "Xem chi tiết"
+  "showDetails": "Xem chi tiết",
+  "rateInspectorAction": "Đánh giá Kiểm định viên",
+  "editRatingAction": "Sửa đánh giá",
+  "rateInspectorSubtitle": "Đánh giá chất lượng thực hiện",
+  "yourRatingLabel": "Đánh giá của bạn",
+  "ratingOverallLabel": "Tổng quan",
+  "ratingCriteriaEvidence": "Bằng chứng & báo cáo",
+  "ratingCriteriaCommunication": "Giao tiếp",
+  "ratingCriteriaProfessionalism": "Chuyên nghiệp",
+  "ratingCommentHint": "Nhận xét (không bắt buộc)",
+  "submitRatingAction": "Gửi đánh giá",
+  "savingLabel": "Đang lưu…",
+  "ratingSavedMessage": "Đã lưu đánh giá."
 }

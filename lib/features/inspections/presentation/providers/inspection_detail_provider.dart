@@ -5,6 +5,7 @@ import 'package:smart_drone_inspection/features/inspections/data/inspection_repo
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_chat.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspector_rating.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/knowledge_recommendation.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/reinspection_verification.dart';
 
@@ -128,6 +129,20 @@ final knowledgeRecommendationsProvider =
       final res = await ref
           .read(inspectionRepositoryProvider)
           .getKnowledgeRecommendations(inspectionId, limit: 4);
+      return switch (res) {
+        ApiSuccess(:final data) => data,
+        ApiError() => null,
+      };
+    });
+
+final inspectorRatingProvider =
+    FutureProvider.family<InspectorRatingBundle?, String>((
+      ref,
+      inspectionId,
+    ) async {
+      final res = await ref
+          .read(inspectionRepositoryProvider)
+          .getInspectorRating(inspectionId);
       return switch (res) {
         ApiSuccess(:final data) => data,
         ApiError() => null,

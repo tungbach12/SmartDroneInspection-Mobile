@@ -1741,6 +1741,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show details'**
   String get showDetails;
+
+  /// No description provided for @rateInspectorAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Inspector'**
+  String get rateInspectorAction;
+
+  /// No description provided for @editRatingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit rating'**
+  String get editRatingAction;
+
+  /// No description provided for @rateInspectorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate inspection performance'**
+  String get rateInspectorSubtitle;
+
+  /// No description provided for @yourRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating'**
+  String get yourRatingLabel;
+
+  /// No description provided for @ratingOverallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get ratingOverallLabel;
+
+  /// No description provided for @ratingCriteriaEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence & report'**
+  String get ratingCriteriaEvidence;
+
+  /// No description provided for @ratingCriteriaCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get ratingCriteriaCommunication;
+
+  /// No description provided for @ratingCriteriaProfessionalism.
+  ///
+  /// In en, this message translates to:
+  /// **'Professionalism'**
+  String get ratingCriteriaProfessionalism;
+
+  /// No description provided for @ratingCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment (optional)'**
+  String get ratingCommentHint;
+
+  /// No description provided for @submitRatingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit rating'**
+  String get submitRatingAction;
+
+  /// No description provided for @savingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get savingLabel;
+
+  /// No description provided for @ratingSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating saved.'**
+  String get ratingSavedMessage;
 }
 
 class _AppLocalizationsDelegate

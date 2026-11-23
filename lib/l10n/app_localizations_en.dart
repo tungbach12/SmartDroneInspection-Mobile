@@ -900,4 +900,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showDetails => 'Show details';
+
+  @override
+  String get rateInspectorAction => 'Rate Inspector';
+
+  @override
+  String get editRatingAction => 'Edit rating';
+
+  @override
+  String get rateInspectorSubtitle => 'Rate inspection performance';
+
+  @override
+  String get yourRatingLabel => 'Your rating';
+
+  @override
+  String get ratingOverallLabel => 'Overall';
+
+  @override
+  String get ratingCriteriaEvidence => 'Evidence & report';
+
+  @override
+  String get ratingCriteriaCommunication => 'Communication';
+
+  @override
+  String get ratingCriteriaProfessionalism => 'Professionalism';
+
+  @override
+  String get ratingCommentHint => 'Comment (optional)';
+
+  @override
+  String get submitRatingAction => 'Submit rating';
+
+  @override
+  String get savingLabel => 'Saving…';
+
+  @override
+  String get ratingSavedMessage => 'Rating saved.';
 }
