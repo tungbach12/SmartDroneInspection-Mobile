@@ -129,9 +129,11 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
     super.initState();
     final my = widget.bundle.myRating;
     _overallScore = my?.overallScore ?? 5;
-    final keys = widget.bundle.expectedCriteriaKeys.isNotEmpty
-        ? widget.bundle.expectedCriteriaKeys
-        : _defaultCustomerCriteria;
+    final keys = widget.bundle.expectedCriteria.isNotEmpty
+        ? widget.bundle.expectedCriteria.map((c) => c.code).toList()
+        : widget.bundle.expectedCriteriaKeys.isNotEmpty
+            ? widget.bundle.expectedCriteriaKeys
+            : _defaultCustomerCriteria;
     _criteria = {
       for (final k in keys) k: my?.criterionScores[k] ?? 5,
     };
@@ -197,9 +199,23 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text(
-                        _criterionLabel(l10n, entry.key),
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _criterionLabel(context, l10n, entry.key),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          if (_criterionDescription(context, entry.key)
+                              case final hint?)
+                            Text(
+                              hint,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.grey.shade600),
+                            ),
+                        ],
                       ),
                     ),
                     _StarSelector(
@@ -234,13 +250,30 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
     );
   }
 
-  String _criterionLabel(dynamic l10n, String key) {
+  String _criterionLabel(BuildContext context, dynamic l10n, String key) {
+    final lang = Localizations.localeOf(context).languageCode;
+    for (final def in widget.bundle.expectedCriteria) {
+      if (def.code == key) {
+        return def.localizedLabel(lang);
+      }
+    }
     return switch (key) {
       'evidenceQuality' => l10n.ratingCriteriaEvidence as String,
       'communication' => l10n.ratingCriteriaCommunication as String,
       'professionalism' => l10n.ratingCriteriaProfessionalism as String,
       _ => key,
     };
+  }
+
+  String? _criterionDescription(BuildContext context, String key) {
+    final lang = Localizations.localeOf(context).languageCode;
+    for (final def in widget.bundle.expectedCriteria) {
+      if (def.code == key) {
+        final desc = def.localizedDescription(lang)?.trim();
+        return desc != null && desc.isNotEmpty ? desc : null;
+      }
+    }
+    return null;
   }
 
   Future<void> _submit() async {

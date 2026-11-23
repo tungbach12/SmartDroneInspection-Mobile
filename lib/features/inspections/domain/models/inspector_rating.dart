@@ -1,3 +1,36 @@
+class RatingCriterionDefinition {
+  const RatingCriterionDefinition({
+    required this.code,
+    required this.labelEn,
+    required this.labelVi,
+    this.descriptionEn,
+    this.descriptionVi,
+  });
+
+  factory RatingCriterionDefinition.fromJson(Map<String, dynamic> json) {
+    final code = (json['code'] as String?) ?? '';
+    return RatingCriterionDefinition(
+      code: code,
+      labelEn: (json['labelEn'] as String?) ?? code,
+      labelVi: (json['labelVi'] as String?) ?? code,
+      descriptionEn: json['descriptionEn'] as String?,
+      descriptionVi: json['descriptionVi'] as String?,
+    );
+  }
+
+  final String code;
+  final String labelEn;
+  final String labelVi;
+  final String? descriptionEn;
+  final String? descriptionVi;
+
+  String localizedLabel(String languageCode) =>
+      languageCode == 'vi' ? labelVi : labelEn;
+
+  String? localizedDescription(String languageCode) =>
+      languageCode == 'vi' ? (descriptionVi ?? descriptionEn) : descriptionEn;
+}
+
 class InspectorRatingItem {
   const InspectorRatingItem({
     required this.id,
@@ -70,6 +103,7 @@ class InspectorRatingBundle {
     this.inspectorName,
     this.ineligibleReason,
     this.expectedCriteriaKeys = const <String>[],
+    this.expectedCriteria = const <RatingCriterionDefinition>[],
     this.editableUntil,
     this.myRating,
     this.inspectorAverageRating,
@@ -78,6 +112,7 @@ class InspectorRatingBundle {
 
   factory InspectorRatingBundle.fromJson(Map<String, dynamic> json) {
     final keysRaw = json['expectedCriteriaKeys'];
+    final criteriaRaw = json['expectedCriteria'];
     final myRaw = json['myRating'];
     return InspectorRatingBundle(
       inspectionId: (json['inspectionId'] as String?) ?? '',
@@ -89,6 +124,12 @@ class InspectorRatingBundle {
       expectedCriteriaKeys: keysRaw is List
           ? keysRaw.map((e) => e.toString()).toList()
           : const <String>[],
+      expectedCriteria: criteriaRaw is List
+          ? criteriaRaw
+              .whereType<Map>()
+              .map((e) => RatingCriterionDefinition.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
+          : const <RatingCriterionDefinition>[],
       editableUntil: json['editableUntil'] as String?,
       myRating: myRaw is Map
           ? InspectorRatingItem.fromJson(Map<String, dynamic>.from(myRaw))
@@ -105,6 +146,7 @@ class InspectorRatingBundle {
   final String? ineligibleReason;
   final String actorRole;
   final List<String> expectedCriteriaKeys;
+  final List<RatingCriterionDefinition> expectedCriteria;
   final String? editableUntil;
   final InspectorRatingItem? myRating;
   final double? inspectorAverageRating;
