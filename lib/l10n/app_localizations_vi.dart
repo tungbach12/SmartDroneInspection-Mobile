@@ -1,4 +1,9 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
 
 /// The translations for Vietnamese (`vi`).
 class AppLocalizationsVi extends AppLocalizations {
@@ -83,13 +88,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get signIn => 'Đăng nhập';
 
   @override
-  String get signInSubtitle => 'Đăng nhập để quản lý tài sản, yêu cầu dịch vụ, báo cáo chính thức và thanh toán.';
+  String get signInSubtitle =>
+      'Đăng nhập để quản lý tài sản, yêu cầu dịch vụ, báo cáo chính thức và thanh toán.';
 
   @override
-  String get authRegisterSubtitle => 'Thiết lập tài khoản Cổng Khách hàng và xác thực email của bạn.';
+  String get authRegisterSubtitle =>
+      'Thiết lập tài khoản Cổng Khách hàng và xác thực email của bạn.';
 
   @override
-  String get authResetSubtitle => 'Nhập email đã đăng ký để nhận mã khôi phục 6 chữ số.';
+  String get authResetSubtitle =>
+      'Nhập email đã đăng ký để nhận mã khôi phục 6 chữ số.';
 
   @override
   String get stepAccountDetails => 'Thông tin tài khoản';
@@ -179,7 +187,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get setNewPassword => 'Đặt mật khẩu mới';
 
   @override
-  String get passwordSetupNotice => 'Bạn cần đặt mật khẩu mới trước khi tiếp tục.';
+  String get passwordSetupNotice =>
+      'Bạn cần đặt mật khẩu mới trước khi tiếp tục.';
 
   @override
   String get passwordsDoNotMatch => 'Mật khẩu xác nhận không khớp.';
@@ -197,25 +206,31 @@ class AppLocalizationsVi extends AppLocalizations {
   String get invalidCredentials => 'Email hoặc mật khẩu không đúng.';
 
   @override
-  String get customerOnlyAccessNotice => 'Ứng dụng di động chỉ dành riêng cho tài khoản Khách hàng. Kiểm định viên và Quản lý nền tảng vui lòng sử dụng cổng web.';
+  String get customerOnlyAccessNotice =>
+      'Ứng dụng di động chỉ dành riêng cho tài khoản Khách hàng. Kiểm định viên và Quản lý nền tảng vui lòng sử dụng cổng web.';
 
   @override
-  String get registrationSuccess => 'Tạo tài khoản thành công! Bạn có thể đăng nhập ngay.';
+  String get registrationSuccess =>
+      'Tạo tài khoản thành công! Bạn có thể đăng nhập ngay.';
 
   @override
-  String get pendingAirspaceReviewNotice => 'Đã gửi đăng ký và đang chờ xét duyệt vùng bay. Chúng tôi sẽ liên hệ sau khi đánh giá.';
+  String get pendingAirspaceReviewNotice =>
+      'Đã gửi đăng ký và đang chờ xét duyệt vùng bay. Chúng tôi sẽ liên hệ sau khi đánh giá.';
 
   @override
-  String get passwordResetSuccess => 'Đã cập nhật mật khẩu. Vui lòng đăng nhập bằng mật khẩu mới.';
+  String get passwordResetSuccess =>
+      'Đã cập nhật mật khẩu. Vui lòng đăng nhập bằng mật khẩu mới.';
 
   @override
-  String get passwordChangedSuccess => 'Đã đổi mật khẩu. Vui lòng đăng nhập lại.';
+  String get passwordChangedSuccess =>
+      'Đã đổi mật khẩu. Vui lòng đăng nhập lại.';
 
   @override
   String get serverError => 'Lỗi máy chủ. Vui lòng thử lại.';
 
   @override
-  String get cannotReachServer => 'Không thể kết nối máy chủ. Kiểm tra mạng và thử lại.';
+  String get cannotReachServer =>
+      'Không thể kết nối máy chủ. Kiểm tra mạng và thử lại.';
 
   @override
   String get notFoundError => 'Không tìm thấy dữ liệu.';
@@ -307,13 +322,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get longitudeOptional => 'Kinh độ (không bắt buộc)';
 
   @override
-  String get structureHeightMeters => 'Chiều cao công trình (m, không bắt buộc)';
+  String get structureHeightMeters =>
+      'Chiều cao công trình (m, không bắt buộc)';
 
   @override
   String get footprintAreaSqm => 'Diện tích mặt bằng (m², không bắt buộc)';
 
   @override
-  String get inspectionItemsLabel => 'Hạng mục kiểm định (cách nhau bởi dấu phẩy)';
+  String get inspectionItemsLabel =>
+      'Hạng mục kiểm định (cách nhau bởi dấu phẩy)';
 
   @override
   String get assetDocuments => 'Tài liệu tài sản';
@@ -363,7 +380,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get selectAsset => 'Chọn tài sản đang hoạt động';
 
   @override
-  String get noActiveAssetsForRequest => 'Vui lòng đăng ký tài sản Đang hoạt động trước khi tạo yêu cầu.';
+  String get noActiveAssetsForRequest =>
+      'Vui lòng đăng ký tài sản Đang hoạt động trước khi tạo yêu cầu.';
 
   @override
   String get requestTypeLabel => 'Hình thức lịch trình';
@@ -383,7 +401,8 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get leadTime20DaysError => 'Ngày bắt đầu phải cách hôm nay tối thiểu 20 ngày.';
+  String get leadTime20DaysError =>
+      'Ngày bắt đầu phải cách hôm nay tối thiểu 20 ngày.';
 
   @override
   String get timeWindowLabel => 'Khung giờ kiểm định';
@@ -404,7 +423,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get quoteSectionTitle => 'Báo giá dịch vụ';
 
   @override
-  String get noQuoteYet => 'Quản lý nền tảng đang xem xét yêu cầu và sẽ phát hành báo giá sớm.';
+  String get noQuoteYet =>
+      'Quản lý nền tảng đang xem xét yêu cầu và sẽ phát hành báo giá sớm.';
 
   @override
   String get quoteScopeLabel => 'Tóm tắt phạm vi';
@@ -438,13 +458,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get typeMessageHint => 'Nhắn tin cho Quản lý nền tảng…';
 
   @override
-  String get noMessagesYet => 'Chưa có tin nhắn. Hãy trao đổi phạm vi hoặc báo giá tại đây.';
+  String get noMessagesYet =>
+      'Chưa có tin nhắn. Hãy trao đổi phạm vi hoặc báo giá tại đây.';
 
   @override
   String get signedContractTitle => 'Hợp đồng giấy đã ký';
 
   @override
-  String get contractNotUploadedYet => 'Đang chờ Quản lý nền tảng tải bản scan hợp đồng đã ký.';
+  String get contractNotUploadedYet =>
+      'Đang chờ Quản lý nền tảng tải bản scan hợp đồng đã ký.';
 
   @override
   String get downloadContract => 'Tải / Lưu hợp đồng';
@@ -453,7 +475,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get contractLegalBasisButton => 'Cơ sở pháp lý';
 
   @override
-  String get contractLegalBasisText => 'Hợp đồng ký tay được quét và lưu trữ đáp ứng yêu cầu lưu trữ chứng từ giao dịch thương mại và Bộ luật Dân sự.';
+  String get contractLegalBasisText =>
+      'Hợp đồng ký tay được quét và lưu trữ đáp ứng yêu cầu lưu trữ chứng từ giao dịch thương mại và Bộ luật Dân sự.';
 
   @override
   String get occurrencesTitle => 'Các đợt thực hiện';
@@ -570,7 +593,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noteLabel => 'Ghi chú';
 
   @override
-  String get noReportVersionsYet => 'Báo cáo chính thức sẽ hiển thị tại đây sau khi được phát hành.';
+  String get noReportVersionsYet =>
+      'Báo cáo chính thức sẽ hiển thị tại đây sau khi được phát hành.';
 
   @override
   String reportVersionLabel(Object version) {
@@ -595,7 +619,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get downloadOfficialPdf => 'Tải báo cáo PDF chính thức';
 
   @override
-  String get reportUnpublishedNotice => 'Bản PDF chính thức sẽ mở tải xuống sau khi Quản lý nền tảng phát hành phiên bản này.';
+  String get reportUnpublishedNotice =>
+      'Bản PDF chính thức sẽ mở tải xuống sau khi Quản lý nền tảng phát hành phiên bản này.';
 
   @override
   String get settlementStepAccept => '1. Nghiệm thu báo cáo';
@@ -632,7 +657,8 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get reportAcceptedSuccess => 'Đã nghiệm thu báo cáo. Vui lòng hoàn tất thanh toán bên dưới.';
+  String get reportAcceptedSuccess =>
+      'Đã nghiệm thu báo cáo. Vui lòng hoàn tất thanh toán bên dưới.';
 
   @override
   String get requestClarification => 'Yêu cầu làm rõ';
@@ -646,10 +672,12 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get clarificationLimitReached => 'Đã đạt giới hạn tối đa 02 lần yêu cầu làm rõ. Vui lòng liên hệ Quản lý nền tảng để đối soát.';
+  String get clarificationLimitReached =>
+      'Đã đạt giới hạn tối đa 02 lần yêu cầu làm rõ. Vui lòng liên hệ Quản lý nền tảng để đối soát.';
 
   @override
-  String get clarificationReasonHint => 'Nêu rõ vị trí lỗi chưa chính xác, ảnh mờ hoặc mức độ nghiêm trọng cần xem xét lại…';
+  String get clarificationReasonHint =>
+      'Nêu rõ vị trí lỗi chưa chính xác, ảnh mờ hoặc mức độ nghiêm trọng cần xem xét lại…';
 
   @override
   String get clarificationSubmitted => 'Đã gửi yêu cầu làm rõ.';
@@ -661,10 +689,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get payWithVnpay => 'Thanh toán VNPay';
 
   @override
-  String get net15Notice => 'Thời hạn thanh toán Net 15: Vui lòng thanh toán trong vòng 15 ngày. Bản PDF tải trước khi thanh toán mang dấu xem trước.';
+  String get net15Notice =>
+      'Thời hạn thanh toán Net 15: Vui lòng thanh toán trong vòng 15 ngày. Bản PDF tải trước khi thanh toán mang dấu xem trước.';
 
   @override
-  String get paymentPaidBanner => 'Thanh toán thành công! Dịch vụ kiểm định và hồ sơ bàn giao đã được xác thực hoàn tất.';
+  String get paymentPaidBanner =>
+      'Thanh toán thành công! Dịch vụ kiểm định và hồ sơ bàn giao đã được xác thực hoàn tất.';
 
   @override
   String sepayOrderReady(Object orderCode) {
@@ -805,7 +835,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get logoutAllDevices => 'Đăng xuất khỏi mọi thiết bị';
 
   @override
-  String get logoutAllConfirm => 'Đăng xuất khỏi tất cả phiên đang hoạt động trên web và di động?';
+  String get logoutAllConfirm =>
+      'Đăng xuất khỏi tất cả phiên đang hoạt động trên web và di động?';
 
   @override
   String get signOut => 'Đăng xuất';

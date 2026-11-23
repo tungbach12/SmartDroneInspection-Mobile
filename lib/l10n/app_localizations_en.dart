@@ -1,4 +1,9 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
 
 /// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
@@ -83,13 +88,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in';
 
   @override
-  String get signInSubtitle => 'Sign in to manage assets, service requests, official reports, and payments.';
+  String get signInSubtitle =>
+      'Sign in to manage assets, service requests, official reports, and payments.';
 
   @override
-  String get authRegisterSubtitle => 'Set up your Customer Portal account and verify your email.';
+  String get authRegisterSubtitle =>
+      'Set up your Customer Portal account and verify your email.';
 
   @override
-  String get authResetSubtitle => 'Enter your registered email to receive a 6-digit reset code.';
+  String get authResetSubtitle =>
+      'Enter your registered email to receive a 6-digit reset code.';
 
   @override
   String get stepAccountDetails => 'Account details';
@@ -179,7 +187,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setNewPassword => 'Set new password';
 
   @override
-  String get passwordSetupNotice => 'You must set a new password before continuing.';
+  String get passwordSetupNotice =>
+      'You must set a new password before continuing.';
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match.';
@@ -197,25 +206,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidCredentials => 'Invalid email or password.';
 
   @override
-  String get customerOnlyAccessNotice => 'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.';
+  String get customerOnlyAccessNotice =>
+      'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.';
 
   @override
   String get registrationSuccess => 'Account created! You can now sign in.';
 
   @override
-  String get pendingAirspaceReviewNotice => 'Registration submitted and pending airspace review. We will contact you after assessment.';
+  String get pendingAirspaceReviewNotice =>
+      'Registration submitted and pending airspace review. We will contact you after assessment.';
 
   @override
-  String get passwordResetSuccess => 'Password updated. Sign in with your new password.';
+  String get passwordResetSuccess =>
+      'Password updated. Sign in with your new password.';
 
   @override
-  String get passwordChangedSuccess => 'Password changed. Please sign in again.';
+  String get passwordChangedSuccess =>
+      'Password changed. Please sign in again.';
 
   @override
   String get serverError => 'Server error. Please try again.';
 
   @override
-  String get cannotReachServer => 'Cannot reach the server. Check your connection.';
+  String get cannotReachServer =>
+      'Cannot reach the server. Check your connection.';
 
   @override
   String get notFoundError => 'Record not found.';
@@ -363,7 +377,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectAsset => 'Select active asset';
 
   @override
-  String get noActiveAssetsForRequest => 'Register an Active asset before creating a service request.';
+  String get noActiveAssetsForRequest =>
+      'Register an Active asset before creating a service request.';
 
   @override
   String get requestTypeLabel => 'Service schedule';
@@ -404,7 +419,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quoteSectionTitle => 'Quotation';
 
   @override
-  String get noQuoteYet => 'Platform Manager is reviewing your request and will issue a quotation shortly.';
+  String get noQuoteYet =>
+      'Platform Manager is reviewing your request and will issue a quotation shortly.';
 
   @override
   String get quoteScopeLabel => 'Scope summary';
@@ -438,13 +454,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typeMessageHint => 'Write a message to Platform Manager…';
 
   @override
-  String get noMessagesYet => 'No messages yet. Ask questions about scope or pricing here.';
+  String get noMessagesYet =>
+      'No messages yet. Ask questions about scope or pricing here.';
 
   @override
   String get signedContractTitle => 'Signed paper contract';
 
   @override
-  String get contractNotUploadedYet => 'Pending signed paper contract scan from Platform Manager.';
+  String get contractNotUploadedYet =>
+      'Pending signed paper contract scan from Platform Manager.';
 
   @override
   String get downloadContract => 'Download / Save contract';
@@ -453,7 +471,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractLegalBasisButton => 'Legal & e-signature basis';
 
   @override
-  String get contractLegalBasisText => 'Offline wet-signed contracts uploaded as verified scans comply with Vietnamese Electronic Transactions & Civil Code record-keeping requirements for commercial service execution.';
+  String get contractLegalBasisText =>
+      'Offline wet-signed contracts uploaded as verified scans comply with Vietnamese Electronic Transactions & Civil Code record-keeping requirements for commercial service execution.';
 
   @override
   String get occurrencesTitle => 'Scheduled occurrences';
@@ -570,7 +589,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noteLabel => 'Note';
 
   @override
-  String get noReportVersionsYet => 'The official report will appear here once published.';
+  String get noReportVersionsYet =>
+      'The official report will appear here once published.';
 
   @override
   String reportVersionLabel(Object version) {
@@ -595,7 +615,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadOfficialPdf => 'Download official PDF';
 
   @override
-  String get reportUnpublishedNotice => 'Report PDF download becomes available once Platform Manager publishes this version.';
+  String get reportUnpublishedNotice =>
+      'Report PDF download becomes available once Platform Manager publishes this version.';
 
   @override
   String get settlementStepAccept => '1. Accept official report';
@@ -632,7 +653,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reportAcceptedSuccess => 'Report accepted. Complete payment below.';
+  String get reportAcceptedSuccess =>
+      'Report accepted. Complete payment below.';
 
   @override
   String get requestClarification => 'Request clarification';
@@ -646,10 +668,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get clarificationLimitReached => 'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.';
+  String get clarificationLimitReached =>
+      'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.';
 
   @override
-  String get clarificationReasonHint => 'Describe inaccurate defect locations, unclear photos, or severity questions…';
+  String get clarificationReasonHint =>
+      'Describe inaccurate defect locations, unclear photos, or severity questions…';
 
   @override
   String get clarificationSubmitted => 'Clarification request submitted.';
@@ -661,10 +685,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payWithVnpay => 'Pay via VNPay';
 
   @override
-  String get net15Notice => 'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.';
+  String get net15Notice =>
+      'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.';
 
   @override
-  String get paymentPaidBanner => 'Payment confirmed! Inspection deliverables are officially verified and archived.';
+  String get paymentPaidBanner =>
+      'Payment confirmed! Inspection deliverables are officially verified and archived.';
 
   @override
   String sepayOrderReady(Object orderCode) {
@@ -805,7 +831,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutAllDevices => 'Sign out all devices';
 
   @override
-  String get logoutAllConfirm => 'Sign out of every active session on web and mobile?';
+  String get logoutAllConfirm =>
+      'Sign out of every active session on web and mobile?';
 
   @override
   String get signOut => 'Sign out';
