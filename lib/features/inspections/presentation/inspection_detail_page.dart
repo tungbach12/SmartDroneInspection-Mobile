@@ -324,27 +324,6 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
     }
   }
 
-  Future<void> _cancelUnpaidOrder() async {
-    setState(() => _actionBusy = true);
-    final res = await ref
-        .read(inspectionRepositoryProvider)
-        .cancelUnpaidPaymentOrder(widget.inspectionId);
-    if (!mounted) return;
-    setState(() => _actionBusy = false);
-
-    switch (res) {
-      case ApiSuccess():
-        _refreshBundle();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.paymentOrderCleared)),
-        );
-      case ApiError(:final failure):
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(describeApiFailure(context, failure))),
-        );
-    }
-  }
-
   Future<void> _payWithVnpay() async {
     setState(() => _actionBusy = true);
     final res = await ref
@@ -441,7 +420,6 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   onRequestClarification: _requestClarification,
                   onPaySepay: _payWithSepay,
                   onPayVnpay: _payWithVnpay,
-                  onCancelUnpaidOrder: _cancelUnpaidOrder,
                   onDownloadPaymentDocument: _downloadPaymentDocument,
                 ),
               ],
@@ -1041,7 +1019,6 @@ class _SettlementTab extends StatelessWidget {
     required this.onRequestClarification,
     required this.onPaySepay,
     required this.onPayVnpay,
-    required this.onCancelUnpaidOrder,
     required this.onDownloadPaymentDocument,
   });
 
@@ -1055,7 +1032,6 @@ class _SettlementTab extends StatelessWidget {
   onRequestClarification;
   final VoidCallback onPaySepay;
   final VoidCallback onPayVnpay;
-  final VoidCallback onCancelUnpaidOrder;
   final ValueChanged<bool> onDownloadPaymentDocument;
 
   @override
@@ -1274,15 +1250,6 @@ class _SettlementTab extends StatelessWidget {
                           label: Text(l10n.payWithVnpay),
                         ),
                         const SizedBox(height: 8),
-                        if (payment?.orderCode != null) ...[
-                          TextButton.icon(
-                            key: const Key('cancel-unpaid-order-btn'),
-                            onPressed: busy ? null : onCancelUnpaidOrder,
-                            icon: const Icon(Icons.restart_alt_rounded),
-                            label: Text(l10n.resetPaymentOrder),
-                          ),
-                          const SizedBox(height: 4),
-                        ],
                         TextButton.icon(
                           onPressed: busy ? null : onRefresh,
                           icon: const Icon(Icons.refresh_rounded),
