@@ -576,9 +576,8 @@ class _TrackingTab extends StatelessWidget {
                           const SizedBox(width: 2),
                           Text(
                             '${inspection.inspectorAverageRating!.toStringAsFixed(1)} (${inspection.inspectorRatingCount})',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(fontWeight: FontWeight.w700),
                           ),
                         ],
                       ],

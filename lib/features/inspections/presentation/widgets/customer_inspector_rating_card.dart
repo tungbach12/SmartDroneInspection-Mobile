@@ -87,10 +87,8 @@ class CustomerInspectorRatingCard extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (ctx) => _RatingFormSheet(
-        inspectionId: inspectionId,
-        bundle: bundle,
-      ),
+      builder: (ctx) =>
+          _RatingFormSheet(inspectionId: inspectionId, bundle: bundle),
     );
     if (saved == true) {
       ref.invalidate(inspectorRatingProvider(inspectionId));
@@ -100,10 +98,7 @@ class CustomerInspectorRatingCard extends ConsumerWidget {
 }
 
 class _RatingFormSheet extends ConsumerStatefulWidget {
-  const _RatingFormSheet({
-    required this.inspectionId,
-    required this.bundle,
-  });
+  const _RatingFormSheet({required this.inspectionId, required this.bundle});
 
   final String inspectionId;
   final InspectorRatingBundle bundle;
@@ -132,11 +127,9 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
     final keys = widget.bundle.expectedCriteria.isNotEmpty
         ? widget.bundle.expectedCriteria.map((c) => c.code).toList()
         : widget.bundle.expectedCriteriaKeys.isNotEmpty
-            ? widget.bundle.expectedCriteriaKeys
-            : _defaultCustomerCriteria;
-    _criteria = {
-      for (final k in keys) k: my?.criterionScores[k] ?? 5,
-    };
+        ? widget.bundle.expectedCriteriaKeys
+        : _defaultCustomerCriteria;
+    _criteria = {for (final k in keys) k: my?.criterionScores[k] ?? 5};
     _commentController = TextEditingController(text: my?.comment ?? '');
   }
 
@@ -165,9 +158,8 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
                     widget.bundle.myRating != null
                         ? l10n.editRatingAction
                         : l10n.rateInspectorAction,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                 ),
                 IconButton(
@@ -210,9 +202,7 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
                               case final hint?)
                             Text(
                               hint,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(color: Colors.grey.shade600),
                             ),
                         ],
@@ -298,9 +288,7 @@ class _RatingFormSheetState extends ConsumerState<_RatingFormSheet> {
         Navigator.of(context).pop(true);
       case ApiError(:final failure):
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(describeApiFailure(context, failure)),
-          ),
+          SnackBar(content: Text(describeApiFailure(context, failure))),
         );
     }
   }

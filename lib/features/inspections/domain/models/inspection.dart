@@ -48,8 +48,8 @@ class Inspection {
       objective: json['objective'] as String?,
       inspectorId: json['inspectorId'] as String?,
       inspectorName: json['inspectorName'] as String?,
-      inspectorAverageRating:
-          (json['inspectorAverageRating'] as num?)?.toDouble(),
+      inspectorAverageRating: (json['inspectorAverageRating'] as num?)
+          ?.toDouble(),
       inspectorRatingCount:
           (json['inspectorRatingCount'] as num?)?.toInt() ?? 0,
       managerName: json['managerName'] as String?,

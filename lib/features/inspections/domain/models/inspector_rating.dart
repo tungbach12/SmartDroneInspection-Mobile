@@ -126,16 +126,22 @@ class InspectorRatingBundle {
           : const <String>[],
       expectedCriteria: criteriaRaw is List
           ? criteriaRaw
-              .whereType<Map>()
-              .map((e) => RatingCriterionDefinition.fromJson(Map<String, dynamic>.from(e)))
-              .toList()
+                .whereType<Map>()
+                .map(
+                  (e) => RatingCriterionDefinition.fromJson(
+                    Map<String, dynamic>.from(e),
+                  ),
+                )
+                .toList()
           : const <RatingCriterionDefinition>[],
       editableUntil: json['editableUntil'] as String?,
       myRating: myRaw is Map
           ? InspectorRatingItem.fromJson(Map<String, dynamic>.from(myRaw))
           : null,
-      inspectorAverageRating: (json['inspectorAverageRating'] as num?)?.toDouble(),
-      inspectorRatingCount: (json['inspectorRatingCount'] as num?)?.toInt() ?? 0,
+      inspectorAverageRating: (json['inspectorAverageRating'] as num?)
+          ?.toDouble(),
+      inspectorRatingCount:
+          (json['inspectorRatingCount'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -165,9 +171,9 @@ class UpsertInspectorRatingRequest {
   final String? comment;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'overallScore': overallScore,
-        'criterionScores': criterionScores,
-        if (comment != null && comment!.trim().isNotEmpty)
-          'comment': comment!.trim(),
-      };
+    'overallScore': overallScore,
+    'criterionScores': criterionScores,
+    if (comment != null && comment!.trim().isNotEmpty)
+      'comment': comment!.trim(),
+  };
 }

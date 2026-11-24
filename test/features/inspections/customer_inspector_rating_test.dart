@@ -95,9 +95,7 @@ void main() {
     final repo = _StubRatingRepository();
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          inspectionRepositoryProvider.overrideWithValue(repo),
-        ],
+        overrides: [inspectionRepositoryProvider.overrideWithValue(repo)],
         child: const MaterialApp(
           locale: Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
