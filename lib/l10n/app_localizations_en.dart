@@ -686,7 +686,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get net15Notice =>
-      'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.';
+      'Net 15 payment term: Settle within 15 days to complete your service.';
 
   @override
   String get paymentPaidBanner =>
@@ -702,6 +702,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refreshPaymentStatus => 'Refresh status';
+
+  @override
+  String get sepayQrTitle => 'Sepay VietQR';
+
+  @override
+  String get bankLabel => 'Bank';
+
+  @override
+  String get accountNumberLabel => 'Account number';
+
+  @override
+  String get accountHolderLabel => 'Account holder';
+
+  @override
+  String get transferContentLabel => 'Transfer content';
+
+  @override
+  String get copiedLabel => 'Copied';
+
+  @override
+  String get copyLabel => 'Copy';
+
+  @override
+  String get qrUnavailableFallback => 'QR unavailable';
+
+  @override
+  String get checkPaymentStatus => 'Check status';
+
+  @override
+  String get checkingPaymentStatus => 'Checking…';
+
+  @override
+  String get resetPaymentOrder => 'Reset order';
+
+  @override
+  String get paymentOrderCleared => 'Payment order cleared.';
 
   @override
   String get inspectionStatusScheduled => 'Scheduled';

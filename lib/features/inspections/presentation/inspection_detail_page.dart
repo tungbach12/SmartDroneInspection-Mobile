@@ -13,6 +13,7 @@ import 'package:smart_drone_inspection/features/inspections/presentation/inspect
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/widgets/customer_inspector_rating_card.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/widgets/knowledge_references_strip.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/widgets/sepay_qr_dialog.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 import 'package:smart_drone_inspection/shared/widgets/common_widgets.dart';
@@ -292,23 +293,32 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
 
   Future<void> _payWithSepay() async {
     setState(() => _actionBusy = true);
-    final res = await ref
-        .read(inspectionRepositoryProvider)
-        .createSepayPaymentLink(widget.inspectionId);
+    final repo = ref.read(inspectionRepositoryProvider);
+    final res = await repo.createSepayPaymentLink(widget.inspectionId);
     if (!mounted) return;
     setState(() => _actionBusy = false);
 
     switch (res) {
       case ApiSuccess(:final data):
-        final uri = Uri.tryParse(data.checkoutUrl);
-        if (uri != null) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.sepayOrderReady(data.orderCode))),
-        );
         _refreshBundle();
+        await showDialog<bool>(
+          context: context,
+          builder: (_) => SepayQrDialog(
+            details: data,
+            checkPaymentStatus: () =>
+                repo.getReportPaymentStatus(widget.inspectionId),
+            onSettled: () {
+              if (!mounted) return;
+              _refreshBundle();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.l10n.paymentPaidBanner)),
+              );
+            },
+          ),
+        );
+        if (mounted) {
+          _refreshBundle();
+        }
       case ApiError(:final failure):
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(describeApiFailure(context, failure))),

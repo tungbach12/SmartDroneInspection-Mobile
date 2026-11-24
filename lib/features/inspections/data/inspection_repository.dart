@@ -292,8 +292,20 @@ class InspectionRepository {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         '/inspections/$inspectionId/vnpay/create-payment-url',
+        queryParameters: const {'client': 'mobile'},
       );
       return ApiResult.success(VnpayCheckoutDetails.fromJson(response.data!));
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<void>> cancelUnpaidPaymentOrder(String inspectionId) async {
+    try {
+      await _dio.post<void>(
+        '/inspections/$inspectionId/report/cancel-unpaid-order',
+      );
+      return const ApiResult.success(null);
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
     }
