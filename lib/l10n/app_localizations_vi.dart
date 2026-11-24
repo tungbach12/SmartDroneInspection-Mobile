@@ -690,7 +690,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get net15Notice =>
-      'Thời hạn thanh toán Net 15: Vui lòng thanh toán trong vòng 15 ngày. Bản PDF tải trước khi thanh toán mang dấu xem trước.';
+      'Thời hạn thanh toán Net 15: Thanh toán trong vòng 15 ngày để hoàn tất dịch vụ.';
 
   @override
   String get paymentPaidBanner =>

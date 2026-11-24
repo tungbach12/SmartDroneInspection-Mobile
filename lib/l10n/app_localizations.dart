@@ -1349,7 +1349,7 @@ abstract class AppLocalizations {
   /// No description provided for @net15Notice.
   ///
   /// In en, this message translates to:
-  /// **'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.'**
+  /// **'Net 15 payment term: Settle within 15 days to complete your service.'**
   String get net15Notice;
 
   /// No description provided for @paymentPaidBanner.

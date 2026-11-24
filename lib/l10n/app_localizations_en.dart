@@ -686,7 +686,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get net15Notice =>
-      'Net 15 payment term: Please settle within 15 days. Downloads prior to payment remain preview copies.';
+      'Net 15 payment term: Settle within 15 days to complete your service.';
 
   @override
   String get paymentPaidBanner =>
