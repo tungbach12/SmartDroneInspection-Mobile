@@ -8,6 +8,8 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_en.dart';
 import 'app_localizations_vi.dart';
 
+// ignore_for_file: type=lint
+
 /// Callers can lookup localized strings with an instance of AppLocalizations
 /// returned by `AppLocalizations.of(context)`.
 ///
@@ -60,15 +62,17 @@ import 'app_localizations_vi.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -80,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('vi')
+    Locale('vi'),
   ];
 
   /// No description provided for @appName.
@@ -468,7 +473,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerOnlyAccessNotice.
   ///
   /// In en, this message translates to:
-  /// **'This mobile app is exclusively for Customer accounts. Inspectors and Platform Managers should use the web portal.'**
+  /// **'This mobile app is exclusively for Customer accounts. Inspectors and Managers should use the web portal.'**
   String get customerOnlyAccessNotice;
 
   /// No description provided for @registrationSuccess.
@@ -870,7 +875,7 @@ abstract class AppLocalizations {
   /// No description provided for @noQuoteYet.
   ///
   /// In en, this message translates to:
-  /// **'Platform Manager is reviewing your request and will issue a quotation shortly.'**
+  /// **'Manager is reviewing your request and will issue a quotation shortly.'**
   String get noQuoteYet;
 
   /// No description provided for @quoteScopeLabel.
@@ -924,7 +929,7 @@ abstract class AppLocalizations {
   /// No description provided for @typeMessageHint.
   ///
   /// In en, this message translates to:
-  /// **'Write a message to Platform Manager…'**
+  /// **'Write a message to Manager…'**
   String get typeMessageHint;
 
   /// No description provided for @noMessagesYet.
@@ -942,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @contractNotUploadedYet.
   ///
   /// In en, this message translates to:
-  /// **'Pending signed paper contract scan from Platform Manager.'**
+  /// **'Pending signed paper contract scan from Manager.'**
   String get contractNotUploadedYet;
 
   /// No description provided for @downloadContract.
@@ -1104,7 +1109,7 @@ abstract class AppLocalizations {
   /// No description provided for @milestoneManagerReview.
   ///
   /// In en, this message translates to:
-  /// **'Platform Manager review'**
+  /// **'Manager review'**
   String get milestoneManagerReview;
 
   /// No description provided for @milestonePublished.
@@ -1224,7 +1229,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportUnpublishedNotice.
   ///
   /// In en, this message translates to:
-  /// **'Report PDF download becomes available once Platform Manager publishes this version.'**
+  /// **'Report PDF download becomes available once Manager publishes this version.'**
   String get reportUnpublishedNotice;
 
   /// No description provided for @settlementStepAccept.
@@ -1314,7 +1319,7 @@ abstract class AppLocalizations {
   /// No description provided for @clarificationLimitReached.
   ///
   /// In en, this message translates to:
-  /// **'Maximum of 2 clarification requests reached. Contact Platform Manager directly for resolution.'**
+  /// **'Maximum of 2 clarification requests reached. Contact Manager directly for resolution.'**
   String get clarificationLimitReached;
 
   /// No description provided for @clarificationReasonHint.
@@ -1545,12 +1550,6 @@ abstract class AppLocalizations {
   /// **'Account & Settings'**
   String get accountTitle;
 
-  /// No description provided for @organizationLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Organization ID: {id}'**
-  String organizationLabel(Object id);
-
   /// No description provided for @preferencesSection.
   ///
   /// In en, this message translates to:
@@ -1641,11 +1640,11 @@ abstract class AppLocalizations {
   /// **'Customer'**
   String get userRoleCustomer;
 
-  /// No description provided for @userRolePlatformManager.
+  /// No description provided for @userRoleManager.
   ///
   /// In en, this message translates to:
-  /// **'Platform Manager'**
-  String get userRolePlatformManager;
+  /// **'Manager'**
+  String get userRoleManager;
 
   /// No description provided for @userRoleAdmin.
   ///
@@ -1658,12 +1657,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inspector'**
   String get userRoleInspector;
-
-  /// No description provided for @userRoleMaintenanceEngineer.
-  ///
-  /// In en, this message translates to:
-  /// **'Maintenance Engineer'**
-  String get userRoleMaintenanceEngineer;
 
   /// No description provided for @verdictExpiredChip.
   ///
@@ -1748,9 +1741,82 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show details'**
   String get showDetails;
+
+  /// No description provided for @rateInspectorAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Inspector'**
+  String get rateInspectorAction;
+
+  /// No description provided for @editRatingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit rating'**
+  String get editRatingAction;
+
+  /// No description provided for @rateInspectorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate inspection performance'**
+  String get rateInspectorSubtitle;
+
+  /// No description provided for @yourRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating'**
+  String get yourRatingLabel;
+
+  /// No description provided for @ratingOverallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get ratingOverallLabel;
+
+  /// No description provided for @ratingCriteriaEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence & report'**
+  String get ratingCriteriaEvidence;
+
+  /// No description provided for @ratingCriteriaCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get ratingCriteriaCommunication;
+
+  /// No description provided for @ratingCriteriaProfessionalism.
+  ///
+  /// In en, this message translates to:
+  /// **'Professionalism'**
+  String get ratingCriteriaProfessionalism;
+
+  /// No description provided for @ratingCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment (optional)'**
+  String get ratingCommentHint;
+
+  /// No description provided for @submitRatingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit rating'**
+  String get submitRatingAction;
+
+  /// No description provided for @savingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get savingLabel;
+
+  /// No description provided for @ratingSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating saved.'**
+  String get ratingSavedMessage;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1759,25 +1825,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'vi'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'vi'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'vi': return AppLocalizationsVi();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'vi':
+      return AppLocalizationsVi();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

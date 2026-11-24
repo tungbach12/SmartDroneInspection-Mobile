@@ -19,7 +19,6 @@ class _TestAuthNotifier extends AuthNotifier {
       email: 'customer@example.com',
       fullName: 'Nguyen Van A',
       roles: [UserRole.customer],
-      organizationId: 'org-1',
     ),
   );
 }

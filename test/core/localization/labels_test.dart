@@ -4,16 +4,15 @@ import 'package:smart_drone_inspection/core/localization/locale_labels.dart';
 import 'package:smart_drone_inspection/l10n/app_localizations.dart';
 
 void main() {
-  test('localizes roles including legacy aliases in EN and VI', () {
+  test('localizes the four active roles in EN and VI', () {
     final en = lookupAppLocalizations(const Locale('en'));
     final vi = lookupAppLocalizations(const Locale('vi'));
 
     expect(localizedRole(en, 'CUSTOMER'), 'Customer');
-    expect(localizedRole(en, 'ORG_MANAGER'), 'Customer');
-    expect(localizedRole(en, 'MANAGER'), 'Platform Manager');
-    expect(localizedRole(en, 'PLATFORM_MANAGER'), 'Platform Manager');
+    expect(localizedRole(en, 'MANAGER'), 'Manager');
+    expect(localizedRole(en, 'ADMIN'), 'Administrator');
     expect(localizedRole(vi, 'CUSTOMER'), 'Khách hàng');
-    expect(localizedRole(vi, 'ORG_MANAGER'), 'Khách hàng');
+    expect(localizedRole(vi, 'MANAGER'), 'Quản lý');
     expect(localizedRole(vi, 'INSPECTOR'), 'Kiểm định viên');
   });
 
