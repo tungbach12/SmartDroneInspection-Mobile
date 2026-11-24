@@ -12,6 +12,7 @@ import 'package:smart_drone_inspection/features/inspections/domain/verdict_expir
 import 'package:smart_drone_inspection/features/inspections/presentation/inspection_chat_page.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspection_detail_provider.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/widgets/knowledge_references_strip.dart';
+import 'package:smart_drone_inspection/features/inspections/presentation/widgets/sepay_qr_dialog.dart';
 import 'package:smart_drone_inspection/features/inspections/presentation/providers/inspections_provider.dart';
 import 'package:smart_drone_inspection/shared/widgets/async_value_widget.dart';
 import 'package:smart_drone_inspection/shared/widgets/common_widgets.dart';
@@ -290,23 +291,53 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
 
   Future<void> _payWithSepay() async {
     setState(() => _actionBusy = true);
-    final res = await ref
-        .read(inspectionRepositoryProvider)
-        .createSepayPaymentLink(widget.inspectionId);
+    final repo = ref.read(inspectionRepositoryProvider);
+    final res = await repo.createSepayPaymentLink(widget.inspectionId);
     if (!mounted) return;
     setState(() => _actionBusy = false);
 
     switch (res) {
       case ApiSuccess(:final data):
-        final uri = Uri.tryParse(data.checkoutUrl);
-        if (uri != null) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.sepayOrderReady(data.orderCode))),
-        );
         _refreshBundle();
+        await showDialog<bool>(
+          context: context,
+          builder: (_) => SepayQrDialog(
+            details: data,
+            checkPaymentStatus: () =>
+                repo.getReportPaymentStatus(widget.inspectionId),
+            onSettled: () {
+              if (!mounted) return;
+              _refreshBundle();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.l10n.paymentPaidBanner)),
+              );
+            },
+          ),
+        );
+        if (mounted) {
+          _refreshBundle();
+        }
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeApiFailure(context, failure))),
+        );
+    }
+  }
+
+  Future<void> _cancelUnpaidOrder() async {
+    setState(() => _actionBusy = true);
+    final res = await ref
+        .read(inspectionRepositoryProvider)
+        .cancelUnpaidPaymentOrder(widget.inspectionId);
+    if (!mounted) return;
+    setState(() => _actionBusy = false);
+
+    switch (res) {
+      case ApiSuccess():
+        _refreshBundle();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.paymentOrderCleared)),
+        );
       case ApiError(:final failure):
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(describeApiFailure(context, failure))),
@@ -410,6 +441,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
                   onRequestClarification: _requestClarification,
                   onPaySepay: _payWithSepay,
                   onPayVnpay: _payWithVnpay,
+                  onCancelUnpaidOrder: _cancelUnpaidOrder,
                   onDownloadPaymentDocument: _downloadPaymentDocument,
                 ),
               ],
@@ -1009,6 +1041,7 @@ class _SettlementTab extends StatelessWidget {
     required this.onRequestClarification,
     required this.onPaySepay,
     required this.onPayVnpay,
+    required this.onCancelUnpaidOrder,
     required this.onDownloadPaymentDocument,
   });
 
@@ -1022,6 +1055,7 @@ class _SettlementTab extends StatelessWidget {
   onRequestClarification;
   final VoidCallback onPaySepay;
   final VoidCallback onPayVnpay;
+  final VoidCallback onCancelUnpaidOrder;
   final ValueChanged<bool> onDownloadPaymentDocument;
 
   @override
@@ -1240,6 +1274,15 @@ class _SettlementTab extends StatelessWidget {
                           label: Text(l10n.payWithVnpay),
                         ),
                         const SizedBox(height: 8),
+                        if (payment?.orderCode != null) ...[
+                          TextButton.icon(
+                            key: const Key('cancel-unpaid-order-btn'),
+                            onPressed: busy ? null : onCancelUnpaidOrder,
+                            icon: const Icon(Icons.restart_alt_rounded),
+                            label: Text(l10n.resetPaymentOrder),
+                          ),
+                          const SizedBox(height: 4),
+                        ],
                         TextButton.icon(
                           onPressed: busy ? null : onRefresh,
                           icon: const Icon(Icons.refresh_rounded),

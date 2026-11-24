@@ -704,6 +704,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refreshPaymentStatus => 'Refresh status';
 
   @override
+  String get sepayQrTitle => 'Sepay VietQR';
+
+  @override
+  String get bankLabel => 'Bank';
+
+  @override
+  String get accountNumberLabel => 'Account number';
+
+  @override
+  String get accountHolderLabel => 'Account holder';
+
+  @override
+  String get transferContentLabel => 'Transfer content';
+
+  @override
+  String get copiedLabel => 'Copied';
+
+  @override
+  String get copyLabel => 'Copy';
+
+  @override
+  String get qrUnavailableFallback => 'QR unavailable';
+
+  @override
+  String get checkPaymentStatus => 'Check status';
+
+  @override
+  String get checkingPaymentStatus => 'Checking…';
+
+  @override
+  String get resetPaymentOrder => 'Reset order';
+
+  @override
+  String get paymentOrderCleared => 'Payment order cleared.';
+
+  @override
   String get inspectionStatusScheduled => 'Scheduled';
 
   @override

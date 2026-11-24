@@ -177,6 +177,25 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
+      GoRoute(
+        path: '/inspections/:inspectionId/settlement',
+        pageBuilder: (context, state) {
+          return _buildSmoothPage(
+            state: state,
+            child: InspectionDetailPage(
+              inspectionId: state.pathParameters['inspectionId']!,
+              initialTab: 2,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/:inspectionId/settlement',
+        redirect: (context, state) {
+          final id = state.pathParameters['inspectionId']!;
+          return '/inspections/$id?tab=2';
+        },
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppScaffold(shell),
         branches: [

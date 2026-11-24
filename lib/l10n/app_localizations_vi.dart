@@ -708,6 +708,42 @@ class AppLocalizationsVi extends AppLocalizations {
   String get refreshPaymentStatus => 'Cập nhật trạng thái';
 
   @override
+  String get sepayQrTitle => 'VietQR (Sepay)';
+
+  @override
+  String get bankLabel => 'Ngân hàng';
+
+  @override
+  String get accountNumberLabel => 'Số tài khoản';
+
+  @override
+  String get accountHolderLabel => 'Chủ tài khoản';
+
+  @override
+  String get transferContentLabel => 'Nội dung CK';
+
+  @override
+  String get copiedLabel => 'Đã sao chép';
+
+  @override
+  String get copyLabel => 'Sao chép';
+
+  @override
+  String get qrUnavailableFallback => 'Không tải được ảnh QR';
+
+  @override
+  String get checkPaymentStatus => 'Kiểm tra';
+
+  @override
+  String get checkingPaymentStatus => 'Đang kiểm tra…';
+
+  @override
+  String get resetPaymentOrder => 'Đổi cổng';
+
+  @override
+  String get paymentOrderCleared => 'Đã hủy đơn thanh toán.';
+
+  @override
   String get inspectionStatusScheduled => 'Đã lên lịch';
 
   @override

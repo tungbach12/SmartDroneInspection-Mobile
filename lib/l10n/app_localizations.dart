@@ -1376,6 +1376,78 @@ abstract class AppLocalizations {
   /// **'Refresh status'**
   String get refreshPaymentStatus;
 
+  /// No description provided for @sepayQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepay VietQR'**
+  String get sepayQrTitle;
+
+  /// No description provided for @bankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get bankLabel;
+
+  /// No description provided for @accountNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get accountNumberLabel;
+
+  /// No description provided for @accountHolderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account holder'**
+  String get accountHolderLabel;
+
+  /// No description provided for @transferContentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer content'**
+  String get transferContentLabel;
+
+  /// No description provided for @copiedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copiedLabel;
+
+  /// No description provided for @copyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyLabel;
+
+  /// No description provided for @qrUnavailableFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'QR unavailable'**
+  String get qrUnavailableFallback;
+
+  /// No description provided for @checkPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Check status'**
+  String get checkPaymentStatus;
+
+  /// No description provided for @checkingPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get checkingPaymentStatus;
+
+  /// No description provided for @resetPaymentOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset order'**
+  String get resetPaymentOrder;
+
+  /// No description provided for @paymentOrderCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment order cleared.'**
+  String get paymentOrderCleared;
+
   /// No description provided for @inspectionStatusScheduled.
   ///
   /// In en, this message translates to:
