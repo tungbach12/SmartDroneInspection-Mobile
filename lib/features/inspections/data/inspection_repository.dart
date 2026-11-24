@@ -8,6 +8,7 @@ import 'package:smart_drone_inspection/core/network/providers.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_chat.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/inspection_evidence.dart';
+import 'package:smart_drone_inspection/features/inspections/domain/models/inspector_rating.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/knowledge_recommendation.dart';
 import 'package:smart_drone_inspection/features/inspections/domain/models/reinspection_verification.dart';
 
@@ -432,6 +433,34 @@ class InspectionRepository {
       return ApiResult.success(
         KnowledgeRecommendationResponse.fromJson(response.data!),
       );
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectorRatingBundle>> getInspectorRating(
+    String inspectionId,
+  ) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/inspections/$inspectionId/inspector-rating',
+      );
+      return ApiResult.success(InspectorRatingBundle.fromJson(response.data!));
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
+  Future<ApiResult<InspectorRatingBundle>> upsertInspectorRating({
+    required String inspectionId,
+    required UpsertInspectorRatingRequest request,
+  }) async {
+    try {
+      final response = await _dio.put<Map<String, dynamic>>(
+        '/inspections/$inspectionId/inspector-rating',
+        data: request.toJson(),
+      );
+      return ApiResult.success(InspectorRatingBundle.fromJson(response.data!));
     } on DioException catch (error) {
       return ApiResult.failure(mapDioError(error));
     }

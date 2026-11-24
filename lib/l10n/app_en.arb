@@ -309,5 +309,17 @@
   "@knowledgeCasesCount": {"placeholders": {"count": {}}},
   "knowledgeStandardsCount": "{count} standards",
   "@knowledgeStandardsCount": {"placeholders": {"count": {}}},
-  "showDetails": "Show details"
+  "showDetails": "Show details",
+  "rateInspectorAction": "Rate Inspector",
+  "editRatingAction": "Edit rating",
+  "rateInspectorSubtitle": "Rate inspection performance",
+  "yourRatingLabel": "Your rating",
+  "ratingOverallLabel": "Overall",
+  "ratingCriteriaEvidence": "Evidence & report",
+  "ratingCriteriaCommunication": "Communication",
+  "ratingCriteriaProfessionalism": "Professionalism",
+  "ratingCommentHint": "Comment (optional)",
+  "submitRatingAction": "Submit rating",
+  "savingLabel": "Saving…",
+  "ratingSavedMessage": "Rating saved."
 }

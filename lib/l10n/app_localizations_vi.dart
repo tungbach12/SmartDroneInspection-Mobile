@@ -940,4 +940,40 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get showDetails => 'Xem chi tiết';
+
+  @override
+  String get rateInspectorAction => 'Đánh giá Kiểm định viên';
+
+  @override
+  String get editRatingAction => 'Sửa đánh giá';
+
+  @override
+  String get rateInspectorSubtitle => 'Đánh giá chất lượng thực hiện';
+
+  @override
+  String get yourRatingLabel => 'Đánh giá của bạn';
+
+  @override
+  String get ratingOverallLabel => 'Tổng quan';
+
+  @override
+  String get ratingCriteriaEvidence => 'Bằng chứng & báo cáo';
+
+  @override
+  String get ratingCriteriaCommunication => 'Giao tiếp';
+
+  @override
+  String get ratingCriteriaProfessionalism => 'Chuyên nghiệp';
+
+  @override
+  String get ratingCommentHint => 'Nhận xét (không bắt buộc)';
+
+  @override
+  String get submitRatingAction => 'Gửi đánh giá';
+
+  @override
+  String get savingLabel => 'Đang lưu…';
+
+  @override
+  String get ratingSavedMessage => 'Đã lưu đánh giá.';
 }
