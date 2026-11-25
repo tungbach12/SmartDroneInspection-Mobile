@@ -97,6 +97,7 @@ class CustomerRegistrationResult {
     required this.organizationName,
     required this.organizationCode,
     this.registrationStatus,
+    this.airspaceClassification,
     this.reviewMessage,
     this.user,
   });
@@ -107,6 +108,7 @@ class CustomerRegistrationResult {
       organizationName: json['organizationName'] as String? ?? '',
       organizationCode: json['organizationCode'] as String? ?? '',
       registrationStatus: json['registrationStatus'] as String?,
+      airspaceClassification: json['airspaceClassification'] as String?,
       reviewMessage: json['reviewMessage'] as String?,
       user: userRaw is Map
           ? AuthUser.fromJson(Map<String, dynamic>.from(userRaw))
@@ -117,11 +119,14 @@ class CustomerRegistrationResult {
   final String organizationName;
   final String organizationCode;
   final String? registrationStatus;
+  final String? airspaceClassification;
   final String? reviewMessage;
   final AuthUser? user;
 
-  bool get isPendingAirspaceReview =>
-      registrationStatus == 'PENDING_AIRSPACE_REVIEW';
+  bool get isPendingAirspaceReview => false;
+
+  bool get isRestrictedAirspace =>
+      airspaceClassification != null && airspaceClassification != 'CLEAR_ZONE';
 }
 
 /// Customer mobile authentication repository.

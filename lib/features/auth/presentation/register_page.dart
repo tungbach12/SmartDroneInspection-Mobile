@@ -127,21 +127,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     setState(() => _submitting = false);
     switch (res) {
       case ApiSuccess(:final data):
-        if (data.isPendingAirspaceReview) {
-          setState(
-            () => _reviewMessage =
-                data.reviewMessage ?? context.l10n.pendingAirspaceReviewNotice,
-          );
-          return;
-        }
+        final msg = (data.isRestrictedAirspace && (data.reviewMessage?.isNotEmpty ?? false))
+            ? data.reviewMessage!
+            : context.l10n.registrationSuccess;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.registrationSuccess)),
+          SnackBar(content: Text(msg)),
         );
         context.go(
           '/login',
           extra: {
             'email': _email.text.trim(),
-            'banner': context.l10n.registrationSuccess,
+            'banner': msg,
           },
         );
       case ApiError(:final failure):
