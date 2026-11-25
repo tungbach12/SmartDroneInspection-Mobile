@@ -127,18 +127,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     setState(() => _submitting = false);
     switch (res) {
       case ApiSuccess(:final data):
-        final msg = (data.isRestrictedAirspace && (data.reviewMessage?.isNotEmpty ?? false))
+        final msg =
+            (data.isRestrictedAirspace &&
+                (data.reviewMessage?.isNotEmpty ?? false))
             ? data.reviewMessage!
             : context.l10n.registrationSuccess;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(msg)));
         context.go(
           '/login',
-          extra: {
-            'email': _email.text.trim(),
-            'banner': msg,
-          },
+          extra: {'email': _email.text.trim(), 'banner': msg},
         );
       case ApiError(:final failure):
         setState(() => _error = describeAuthFailure(context, failure));
