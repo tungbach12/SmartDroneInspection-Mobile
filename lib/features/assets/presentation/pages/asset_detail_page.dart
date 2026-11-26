@@ -301,17 +301,6 @@ class _AssetDetailPageState extends ConsumerState<AssetDetailPage> {
                         const SizedBox(height: 10),
                         Text(asset.description!),
                       ],
-                      if (asset.inspectionItems.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 6,
-                          children: [
-                            for (final item in asset.inspectionItems)
-                              Chip(label: Text(item)),
-                          ],
-                        ),
-                      ],
                       if (!asset.isRetired) ...[
                         const SizedBox(height: 16),
                         Row(
