@@ -279,7 +279,6 @@ class _CreateAssetSheetState extends ConsumerState<_CreateAssetSheet> {
   final _description = TextEditingController();
   final _height = TextEditingController();
   final _area = TextEditingController();
-  final _items = TextEditingController();
   String? _selectedCategoryId;
   bool _saving = false;
   String? _error;
@@ -292,7 +291,6 @@ class _CreateAssetSheetState extends ConsumerState<_CreateAssetSheet> {
     _description.dispose();
     _height.dispose();
     _area.dispose();
-    _items.dispose();
     super.dispose();
   }
 
@@ -304,12 +302,6 @@ class _CreateAssetSheetState extends ConsumerState<_CreateAssetSheet> {
       _saving = true;
       _error = null;
     });
-    final items = _items.text
-        .split(',')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
-
     final res = await ref
         .read(assetListProvider.notifier)
         .createAsset(
@@ -323,7 +315,6 @@ class _CreateAssetSheetState extends ConsumerState<_CreateAssetSheet> {
                 : _description.text.trim(),
             structureHeightMeters: double.tryParse(_height.text.trim()),
             footprintAreaSquareMeters: double.tryParse(_area.text.trim()),
-            inspectionItems: items,
           ),
         );
     if (!mounted) return;
@@ -434,13 +425,6 @@ class _CreateAssetSheetState extends ConsumerState<_CreateAssetSheet> {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _items,
-                decoration: InputDecoration(
-                  labelText: l10n.inspectionItemsLabel,
-                ),
               ),
               const SizedBox(height: 12),
               TextFormField(
