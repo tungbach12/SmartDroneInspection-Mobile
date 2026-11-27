@@ -15,11 +15,13 @@ class SepayQrDialog extends StatefulWidget {
     required this.details,
     required this.checkPaymentStatus,
     required this.onSettled,
+    this.onMockPay,
   });
 
   final SepayCheckoutDetails details;
   final Future<ApiResult<ReportPaymentStatus>> Function() checkPaymentStatus;
   final VoidCallback onSettled;
+  final Future<ApiResult<void>> Function()? onMockPay;
 
   @override
   State<SepayQrDialog> createState() => _SepayQrDialogState();
@@ -28,6 +30,7 @@ class SepayQrDialog extends StatefulWidget {
 class _SepayQrDialogState extends State<SepayQrDialog> {
   Timer? _pollTimer;
   bool _checking = false;
+  bool _mockBusy = false;
   bool _qrLoadError = false;
   String? _copiedKey;
 
@@ -95,6 +98,20 @@ class _SepayQrDialogState extends State<SepayQrDialog> {
         setState(() => _copiedKey = null);
       }
     });
+  }
+
+  Future<void> _triggerMockPay() async {
+    final mockPay = widget.onMockPay;
+    if (mockPay == null || _mockBusy) return;
+    setState(() => _mockBusy = true);
+    final res = await mockPay();
+    if (!mounted) return;
+    setState(() => _mockBusy = false);
+    if (res case ApiSuccess()) {
+      _pollTimer?.cancel();
+      Navigator.of(context).pop(true);
+      widget.onSettled();
+    }
   }
 
   @override
@@ -219,9 +236,37 @@ class _SepayQrDialogState extends State<SepayQrDialog> {
         ),
       ),
       actions: [
+        if (widget.onMockPay != null)
+          Semantics(
+            label: 'Mock pay',
+            button: true,
+            child: InkWell(
+              key: const Key('sepay-mock-pay-btn'),
+              borderRadius: BorderRadius.circular(12),
+              onTap: _mockBusy ? null : _triggerMockPay,
+              child: Padding(
+                padding: const EdgeInsets.all(6),
+                child: _mockBusy
+                    ? const SizedBox(
+                        width: 10,
+                        height: 10,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFBAE6FD),
+                          shape: BoxShape.circle,
+                        ),
+                        child: SizedBox(width: 8, height: 8),
+                      ),
+              ),
+            ),
+          ),
         TextButton(
           key: const Key('sepay-check-status-btn'),
-          onPressed: _checking ? null : () => _pollStatus(silent: false),
+          onPressed: (_checking || _mockBusy)
+              ? null
+              : () => _pollStatus(silent: false),
           child: Text(
             _checking ? l10n.checkingPaymentStatus : l10n.checkPaymentStatus,
           ),

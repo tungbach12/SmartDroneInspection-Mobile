@@ -307,6 +307,7 @@ class _InspectionDetailPageState extends ConsumerState<InspectionDetailPage> {
             details: data,
             checkPaymentStatus: () =>
                 repo.getReportPaymentStatus(widget.inspectionId),
+            onMockPay: () => repo.mockConfirmSepayPayment(widget.inspectionId),
             onSettled: () {
               if (!mounted) return;
               _refreshBundle();
