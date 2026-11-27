@@ -52,7 +52,9 @@ class _HydrationGate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hydrating = ref.watch(
-      authNotifierProvider.select((value) => value.isLoading),
+      authNotifierProvider.select(
+        (value) => value.isLoading && !value.hasValue && !value.hasError,
+      ),
     );
     if (hydrating || localeLoading) {
       return const Scaffold(body: BrandLoadingView(message: 'Customer Portal'));

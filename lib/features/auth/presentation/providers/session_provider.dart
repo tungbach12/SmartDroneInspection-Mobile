@@ -55,7 +55,6 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     required String email,
     required String password,
   }) async {
-    state = const AsyncLoading<AuthSession>();
     final result = await ref
         .read(authRepositoryProvider)
         .login(email: email, password: password);
@@ -66,7 +65,6 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     required String challengeToken,
     required String code,
   }) async {
-    state = const AsyncLoading<AuthSession>();
     final result = await ref
         .read(authRepositoryProvider)
         .verifyLoginOtp(challengeToken: challengeToken, code: code);
@@ -86,7 +84,6 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     required String accessToken,
     required String refreshToken,
   }) async {
-    state = const AsyncLoading<AuthSession>();
     final tokens = ref.read(tokenStoreProvider);
     await tokens.save(access: accessToken, refresh: refreshToken);
     final result = await ref
@@ -100,7 +97,6 @@ class AuthNotifier extends AsyncNotifier<AuthSession> {
     required String currentPassword,
     required String newPassword,
   }) async {
-    state = const AsyncLoading<AuthSession>();
     final result = await ref
         .read(authRepositoryProvider)
         .completeInitialPasswordSetup(
