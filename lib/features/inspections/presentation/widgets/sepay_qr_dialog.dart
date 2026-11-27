@@ -107,10 +107,15 @@ class _SepayQrDialogState extends State<SepayQrDialog> {
     final res = await mockPay();
     if (!mounted) return;
     setState(() => _mockBusy = false);
-    if (res case ApiSuccess()) {
-      _pollTimer?.cancel();
-      Navigator.of(context).pop(true);
-      widget.onSettled();
+    switch (res) {
+      case ApiSuccess():
+        _pollTimer?.cancel();
+        Navigator.of(context).pop(true);
+        widget.onSettled();
+      case ApiError(:final failure):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(failure.message)),
+        );
     }
   }
 
