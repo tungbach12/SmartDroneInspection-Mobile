@@ -129,6 +129,8 @@
   "leadTime20DaysNotice": "Schedule at least {days} days ahead (earliest: {date}).",
   "@leadTime20DaysNotice": {"placeholders": {"days": {}, "date": {}}},
   "leadTime20DaysError": "Date must be at least 20 days from today.",
+  "leadTimeDaysError": "Date must be at least {days} days from today.",
+  "@leadTimeDaysError": {"placeholders": {"days": {}}},
   "timeWindowLabel": "Inspection hours",
   "recurrenceMonthsLabel": "Repeat every (months)",
   "occurrenceCountLabel": "Number of cycles",

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
+import 'package:smart_drone_inspection/core/utils/formatters.dart';
 import 'package:smart_drone_inspection/features/auth/presentation/providers/session_provider.dart';
 import 'package:smart_drone_inspection/features/contracts/data/contract_repository.dart';
 import 'package:smart_drone_inspection/features/contracts/domain/models/service_request.dart';
@@ -32,6 +33,16 @@ class ServiceRequestsNotifier extends AsyncNotifier<List<ServiceRequest>> {
     return res;
   }
 }
+
+final serviceRequestLeadDaysProvider = FutureProvider<int>((ref) async {
+  final res = await ref
+      .read(contractRepositoryProvider)
+      .getSchedulingPolicyLeadDays();
+  return switch (res) {
+    ApiSuccess(:final data) => data,
+    ApiError() => minimumInspectionLeadDays,
+  };
+});
 
 final serviceRequestsProvider =
     AsyncNotifierProvider<ServiceRequestsNotifier, List<ServiceRequest>>(

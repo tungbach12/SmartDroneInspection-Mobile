@@ -58,8 +58,12 @@ String formatLocationDisplay(String? raw) {
   return trimmed;
 }
 
-DateTime earliestAllowedRequestDate([DateTime? now]) {
+DateTime earliestAllowedRequestDate([
+  DateTime? now,
+  int leadDays = minimumInspectionLeadDays,
+]) {
   final base = (now ?? DateTime.now()).toLocal();
   final today = DateTime(base.year, base.month, base.day);
-  return today.add(const Duration(days: minimumInspectionLeadDays));
+  final safeLeadDays = leadDays < 0 ? 0 : leadDays;
+  return today.add(Duration(days: safeLeadDays));
 }

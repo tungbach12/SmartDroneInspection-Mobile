@@ -17,6 +17,10 @@ void main() {
       earliestAllowedRequestDate(DateTime(2026, 10, 1, 14, 30)),
       DateTime(2026, 10, 21),
     );
+    expect(
+      earliestAllowedRequestDate(DateTime(2026, 10, 1, 14, 30), 7),
+      DateTime(2026, 10, 8),
+    );
   });
 
   test('ServiceRequest.effectiveStatus elevates OPEN when occurrences are ASSIGNED', () {
@@ -66,6 +70,17 @@ void main() {
         InterceptorsWrapper(
           onRequest: (options, handler) {
             requests.add(options);
+            if (options.method == 'GET' &&
+                options.path == '/contracts/requests/scheduling-policy') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {'minimumLeadDays': 10},
+                ),
+              );
+              return;
+            }
             if (options.method == 'GET' &&
                 options.path == '/contracts/requests') {
               handler.resolve(
@@ -158,6 +173,9 @@ void main() {
 
       final readRes = await repo.markMessagesRead('req-1');
       expect(readRes, isA<ApiSuccess<ServiceRequest>>());
+
+      final policyRes = await repo.getSchedulingPolicyLeadDays();
+      expect((policyRes as ApiSuccess<int>).data, 10);
     });
   });
 }
