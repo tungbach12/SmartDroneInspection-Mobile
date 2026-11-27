@@ -401,6 +401,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leadTime20DaysError => 'Date must be at least 20 days from today.';
 
   @override
+  String leadTimeDaysError(Object days) {
+    return 'Date must be at least $days days from today.';
+  }
+
+  @override
   String get timeWindowLabel => 'Inspection hours';
 
   @override

@@ -129,6 +129,8 @@
   "leadTime20DaysNotice": "Đặt lịch trước tối thiểu {days} ngày (sớm nhất: {date}).",
   "@leadTime20DaysNotice": {"placeholders": {"days": {}, "date": {}}},
   "leadTime20DaysError": "Ngày bắt đầu phải cách hôm nay tối thiểu 20 ngày.",
+  "leadTimeDaysError": "Ngày bắt đầu phải cách hôm nay tối thiểu {days} ngày.",
+  "@leadTimeDaysError": {"placeholders": {"days": {}}},
   "timeWindowLabel": "Khung giờ kiểm định",
   "recurrenceMonthsLabel": "Chu kỳ lặp (tháng)",
   "occurrenceCountLabel": "Số đợt kiểm định",

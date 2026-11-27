@@ -29,7 +29,7 @@ class _CreateServiceRequestPageState
   int _recurrenceMonths = 3;
   String _windowStart = '08:00';
   String _windowEnd = '17:00';
-  late DateTime _selectedDate = earliestAllowedRequestDate();
+  DateTime? _selectedDate;
   bool _submitting = false;
   String? _error;
 
@@ -47,11 +47,12 @@ class _CreateServiceRequestPageState
     return '$y-$m-$d';
   }
 
-  Future<void> _pickDate() async {
-    final minDate = earliestAllowedRequestDate();
+  Future<void> _pickDate(int leadDays) async {
+    final minDate = earliestAllowedRequestDate(null, leadDays);
+    final current = _selectedDate ?? minDate;
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate.isBefore(minDate) ? minDate : _selectedDate,
+      initialDate: current.isBefore(minDate) ? minDate : current,
       firstDate: minDate,
       lastDate: minDate.add(const Duration(days: 730)),
     );
@@ -60,13 +61,14 @@ class _CreateServiceRequestPageState
     }
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(int leadDays) async {
     if (!_formKey.currentState!.validate() || _selectedAssetId == null) {
       return;
     }
-    final minDate = earliestAllowedRequestDate();
-    if (_selectedDate.isBefore(minDate)) {
-      setState(() => _error = context.l10n.leadTime20DaysError);
+    final minDate = earliestAllowedRequestDate(null, leadDays);
+    final effectiveDate = _selectedDate ?? minDate;
+    if (effectiveDate.isBefore(minDate)) {
+      setState(() => _error = context.l10n.leadTimeDaysError(leadDays));
       return;
     }
 
@@ -85,8 +87,8 @@ class _CreateServiceRequestPageState
           CreateServiceRequestInput(
             assetId: _selectedAssetId!,
             description: _description.text.trim(),
-            requestedFrom: _isoDate(_selectedDate),
-            requestedUntil: _isoDate(_selectedDate),
+            requestedFrom: _isoDate(effectiveDate),
+            requestedUntil: _isoDate(effectiveDate),
             windowStart: _windowStart,
             windowEnd: _windowEnd,
             requestType: _requestType,
@@ -118,7 +120,15 @@ class _CreateServiceRequestPageState
         .where((a) => a.isActive)
         .toList();
     _selectedAssetId ??= assets.isNotEmpty ? assets.first.id : null;
-    final earliestStr = _isoDate(earliestAllowedRequestDate());
+    final leadDays =
+        ref.watch(serviceRequestLeadDaysProvider).value ??
+        minimumInspectionLeadDays;
+    final minDate = earliestAllowedRequestDate(null, leadDays);
+    final effectiveSelectedDate =
+        (_selectedDate == null || _selectedDate!.isBefore(minDate))
+        ? minDate
+        : _selectedDate!;
+    final earliestStr = _isoDate(minDate);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.newServiceRequest)),
@@ -215,10 +225,10 @@ class _CreateServiceRequestPageState
                             contentPadding: EdgeInsets.zero,
                             title: Text(l10n.preferredStartDate),
                             subtitle: Text(
-                              '${_isoDate(_selectedDate)} · ${l10n.leadTime20DaysNotice(minimumInspectionLeadDays, earliestStr)}',
+                              '${_isoDate(effectiveSelectedDate)} · ${l10n.leadTime20DaysNotice(leadDays, earliestStr)}',
                             ),
                             trailing: const Icon(Icons.calendar_month_rounded),
-                            onTap: _pickDate,
+                            onTap: () => _pickDate(leadDays),
                           ),
                           const SizedBox(height: 8),
                           Row(
@@ -341,7 +351,9 @@ class _CreateServiceRequestPageState
                           const SizedBox(height: 18),
                           FilledButton(
                             key: const Key('submit-service-request-btn'),
-                            onPressed: _submitting ? null : _submit,
+                            onPressed: _submitting
+                                ? null
+                                : () => _submit(leadDays),
                             child: Text(
                               _submitting ? l10n.submitting : l10n.confirm,
                             ),

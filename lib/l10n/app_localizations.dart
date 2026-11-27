@@ -836,6 +836,12 @@ abstract class AppLocalizations {
   /// **'Date must be at least 20 days from today.'**
   String get leadTime20DaysError;
 
+  /// No description provided for @leadTimeDaysError.
+  ///
+  /// In en, this message translates to:
+  /// **'Date must be at least {days} days from today.'**
+  String leadTimeDaysError(Object days);
+
   /// No description provided for @timeWindowLabel.
   ///
   /// In en, this message translates to:

@@ -405,6 +405,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'Ngày bắt đầu phải cách hôm nay tối thiểu 20 ngày.';
 
   @override
+  String leadTimeDaysError(Object days) {
+    return 'Ngày bắt đầu phải cách hôm nay tối thiểu $days ngày.';
+  }
+
+  @override
   String get timeWindowLabel => 'Khung giờ kiểm định';
 
   @override
