@@ -5,12 +5,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_drone_inspection/core/network/api_failure.dart';
 import 'package:smart_drone_inspection/core/network/api_result.dart';
 import 'package:smart_drone_inspection/core/network/providers.dart';
+import 'package:smart_drone_inspection/core/utils/formatters.dart';
 import 'package:smart_drone_inspection/features/contracts/domain/models/service_request.dart';
 
 class ContractRepository {
   ContractRepository(this._dio);
 
   final Dio _dio;
+
+  Future<ApiResult<int>> getSchedulingPolicyLeadDays() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/contracts/requests/scheduling-policy',
+      );
+      final raw = response.data?['minimumLeadDays'];
+      final leadDays = raw is num ? raw.toInt() : minimumInspectionLeadDays;
+      return ApiResult.success(leadDays);
+    } on DioException catch (e) {
+      return ApiResult.failure(mapDioError(e));
+    }
+  }
 
   Future<ApiResult<List<ServiceRequest>>> listRequests() async {
     try {
