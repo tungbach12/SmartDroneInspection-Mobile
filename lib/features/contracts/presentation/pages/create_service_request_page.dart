@@ -169,6 +169,7 @@ class _CreateServiceRequestPageState
                           ],
                           DropdownButtonFormField<String>(
                             initialValue: _selectedAssetId,
+                            isExpanded: true,
                             decoration: InputDecoration(
                               labelText: l10n.selectAsset,
                             ),
@@ -176,7 +177,11 @@ class _CreateServiceRequestPageState
                               for (final asset in assets)
                                 DropdownMenuItem(
                                   value: asset.id,
-                                  child: Text('${asset.name} (${asset.code})'),
+                                  child: Text(
+                                    '${asset.name} (${asset.code})',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
                             ],
                             onChanged: (v) =>
