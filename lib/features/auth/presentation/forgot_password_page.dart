@@ -180,9 +180,19 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       ),
                     ),
                   ),
-                  validator: (v) => (v == null || v.length < 15)
-                      ? l10n.minimum15Characters
-                      : null,
+                  validator: (v) {
+                    if (v == null || v.length < 8 || v.length > 128) {
+                      return '8-128 chars (uppercase, number & symbol) or 20+ passphrase';
+                    }
+                    final hasUpper = RegExp(r'[A-Z]').hasMatch(v);
+                    final hasDigit = RegExp(r'[0-9]').hasMatch(v);
+                    final hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(v);
+                    if (v.length < 20 &&
+                        (!hasUpper || !hasDigit || !hasSpecial)) {
+                      return 'Include uppercase, number & symbol (or 20+ chars)';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 13),
                 TextFormField(
@@ -195,8 +205,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       size: 20,
                     ),
                   ),
-                  validator: (v) =>
-                      (v == null || v.isEmpty) ? l10n.required : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return l10n.required;
+                    if (v != _newPassword.text) return l10n.passwordsDoNotMatch;
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 18),
                 PrimaryGradientButton(

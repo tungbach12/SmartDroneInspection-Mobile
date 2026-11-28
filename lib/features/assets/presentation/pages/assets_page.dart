@@ -408,20 +408,42 @@ class _CreateAssetSheetState extends ConsumerState<_CreateAssetSheet> {
                   Expanded(
                     child: TextFormField(
                       controller: _height,
-                      keyboardType: TextInputType.number,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       decoration: InputDecoration(
                         labelText: l10n.structureHeightMeters,
                       ),
+                      validator: (v) {
+                        final raw = v?.trim() ?? '';
+                        if (raw.isEmpty) return null;
+                        final parsed = double.tryParse(raw);
+                        if (parsed == null || parsed <= 0) {
+                          return '> 0';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: TextFormField(
                       controller: _area,
-                      keyboardType: TextInputType.number,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       decoration: InputDecoration(
                         labelText: l10n.footprintAreaSqm,
                       ),
+                      validator: (v) {
+                        final raw = v?.trim() ?? '';
+                        if (raw.isEmpty) return null;
+                        final parsed = double.tryParse(raw);
+                        if (parsed == null || parsed <= 0) {
+                          return '> 0';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
