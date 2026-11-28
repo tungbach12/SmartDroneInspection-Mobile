@@ -286,6 +286,15 @@ class InspectionRepository {
     }
   }
 
+  Future<ApiResult<void>> mockConfirmSepayPayment(String inspectionId) async {
+    try {
+      await _dio.post<void>('/inspections/$inspectionId/sepay/mock-pay');
+      return const ApiResult.success(null);
+    } on DioException catch (error) {
+      return ApiResult.failure(mapDioError(error));
+    }
+  }
+
   Future<ApiResult<VnpayCheckoutDetails>> createVnpayPaymentUrl(
     String inspectionId,
   ) async {
